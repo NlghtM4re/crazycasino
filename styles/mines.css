@@ -1,0 +1,385 @@
+/* Main container */
+.game-box {
+  border: 3px solid #333;
+  border-radius: 16px;
+  background: #181818;
+  padding: 20px;
+  margin: 5px;
+  max-width: 1200px;
+  box-shadow: 0 4px 32px #000a;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  box-sizing: border-box;
+  z-index: 1000;
+  padding-right: 30px;
+}
+
+/* Top controls row */
+.game-controls-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Controls */
+.mine-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.bet-controls,
+.bomb-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.bet-controls input[type="number"] {
+  width: 70px;
+  text-align: center;
+  font-size: 1rem;
+  padding: 5px;
+  border: 2px solid #10b981;
+  border-radius: 5px;
+  background-color: #0f172a;
+  color: #ffffff;
+}
+
+.mine-controls button,
+#start-game-btn,
+#stop-game-btn {
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: bold;
+  color: #fff;
+  background-color: #10b981;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.mine-controls button:hover,
+#start-game-btn:hover,
+#stop-game-btn:hover {
+  background-color: #38bdf8;
+  transform: scale(1.05);
+}
+
+#start-game-btn {
+  background: #4caf50;
+}
+
+#stop-game-btn {
+  background: #e53935;
+}
+
+#start-game-btn[disabled],
+#stop-game-btn[disabled] {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Game and details container */
+.game-main-row {
+  display: flex;
+  flex-direction: row;
+  gap: 16px;
+  justify-content: center;
+  align-items: flex-start;
+  flex-wrap: nowrap;
+}
+
+/* Detail box */
+.game-details {
+  flex: 0 0 auto;
+  width: 240px;
+  background: #222;
+  border-radius: 10px;
+  padding: 14px;
+  color: #94a3b8;
+  font-size: clamp(12px, 2vw, 14px);
+  box-shadow: 0 2px 8px #0003;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+  min-width: 140px;
+  margin-top: 13px;
+}
+
+/* Game grid wrapper */
+.game-grid-container {
+  flex: 1 1 auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 10px;
+}
+
+/* Game grid */
+#game {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, 70px);
+  gap: 10px;
+  width: auto;
+  margin: auto;
+}
+
+/* Tiles */
+.tile {
+  width: 70px;
+  height: 70px;
+  font-size: 1rem;
+  background: #222;
+  border-radius: 5px;
+  border: 1px solid #444;
+  cursor: pointer;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+  color: inherit;
+}
+
+.tile.revealed {
+  background: #4caf50;
+  color: #fff;
+}
+
+.tile.bomb {
+  background: #e53935;
+  color: #fff;
+}
+
+.tile.disabled-tile {
+  background: #eee;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+/* Message */
+#message {
+  margin-top: 12px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #ffd600;
+  text-align: center;
+  min-height: 24px;
+}
+
+.bet-amount-display-no{
+  display: none;
+}
+
+/* Responsive: tablets and down */
+
+@media (max-width:930px){
+  html.sidebar-collapsed #start-game-btn{
+    margin: auto;
+  }
+}
+
+@media (max-width: 800px){
+  html.sidebar-collapsed .game-main-row{
+    display: block;
+  }
+  html.sidebar-collapsed .game-details{
+    width: 97%;
+  }
+  html.sidebar-collapsed .game-grid-container{
+    margin: auto;
+    padding-top: 10px;
+  }
+  html.sidebar-collapsed #start-game-btn,
+  html.sidebar-collapsed #stop-game-btn {
+    margin: auto;
+    width: 100%;
+  }
+  html.sidebar-collapsed .bet-controls{
+    margin: auto;
+  }
+  html.sidebar-collapsed .bomb-controls{
+    margin: auto;
+  }
+  html.sidebar-collapsed .multiplier{
+    display: flex;
+    margin: auto;
+  }
+  
+  html.sidebar-collapsed .game-details p {
+    margin-top: 5px;
+    margin-bottom: 5px;
+  }
+}
+
+@media (max-width:520px){
+  html.sidebar-collapsed .tile{
+    width: 50px;
+    height: 50px;
+  }
+  html.sidebar-collapsed .bet-amount-display{
+    display: none;
+  }
+  html.sidebar-collapsed .bet-amount-display-no{
+    display: block;
+  }
+
+  html.sidebar-collapsed .game-main-row{
+    display: block;
+  }
+  html.sidebar-collapsed .game-details{
+    margin: auto;
+    width: 100%;
+    padding: 0;
+  }
+  html.sidebar-collapsed .game-grid-container{
+    margin: auto;
+    padding-top: 10px;
+  }
+  html.sidebar-collapsed #start-game-btn,
+  html.sidebar-collapsed #stop-game-btn {
+    margin: auto;
+    width: 100%;
+  }
+  html.sidebar-collapsed .bet-controls{
+    margin: auto;
+  }
+  html.sidebar-collapsed .bomb-controls{
+    margin: auto;
+  }
+  html.sidebar-collapsed .multiplier{
+    display: flex;
+    margin: auto;
+  }
+  
+  html.sidebar-collapsed .game-details p {
+    margin-top: 5px;
+    margin-bottom: 5px;
+  }
+}
+@media (max-width:420px){
+  html.sidebar-collapsed .game-box{
+    font-size: 12px;
+  }
+  html.sidebar-collapsed .tile{
+    width: 45px;
+    height: 45px;
+  }
+}
+
+/*side bar expanded*/
+
+@media (max-width:1130px){
+  html.sidebar-expanded #start-game-btn{
+    margin: auto;
+  }
+}
+
+@media (max-width: 1000px){
+  html.sidebar-expanded .game-main-row{
+    display: block;
+  }
+  html.sidebar-expanded .game-details{
+    width: 97%;
+  }
+  html.sidebar-expanded .game-grid-container{
+    margin: auto;
+    padding-top: 10px;
+  }
+  html.sidebar-expanded #start-game-btn,
+  html.sidebar-expanded #stop-game-btn {
+    margin: auto;
+    width: 100%;
+  }
+  html.sidebar-expanded .bet-controls{
+    margin: auto;
+  }
+  html.sidebar-expanded .bomb-controls{
+    margin: auto;
+  }
+  html.sidebar-expanded .multiplier{
+    display: flex;
+    margin: auto;
+  }
+  
+  html.sidebar-expanded .game-details p {
+    margin-top: 5px;
+    margin-bottom: 5px;
+  }
+}
+
+@media (max-width:720px){
+  html.sidebar-expanded .tile{
+    width: 50px;
+    height: 50px;
+  }
+  html.sidebar-expanded .bet-amount-display{
+    display: none;
+  }
+  html.sidebar-expanded .bet-amount-display-no{
+    display: block;
+  }
+
+  html.sidebar-expanded .game-main-row{
+    display: block;
+  }
+  html.sidebar-expanded .game-details{
+    margin: auto;
+    width: 100%;
+    padding: 0;
+  }
+  html.sidebar-expanded .game-grid-container{
+    margin: auto;
+    padding-top: 10px;
+  }
+  html.sidebar-expanded #start-game-btn,
+  html.sidebar-expanded #stop-game-btn {
+    margin: auto;
+    width: 100%;
+  }
+  html.sidebar-expanded .bet-controls{
+    margin: auto;
+  }
+  html.sidebar-expanded .bomb-controls{
+    margin: auto;
+  }
+  html.sidebar-expanded .multiplier{
+    display: flex;
+    margin: auto;
+  }
+  
+  html.sidebar-expanded .game-details p {
+    margin-top: 5px;
+    margin-bottom: 5px;
+  }
+}
+@media (max-width:620px){
+  html.sidebar-expanded .game-box{
+    font-size: 12px;
+  }
+ html.sidebar-expanded .tile{
+    width: 45px;
+    height: 45px;
+  }
+}
+
+@media (max-width:550px){
+  html.sidebar-expanded #mines-section{
+    display: none;
+  }
+}
+
+@media (max-width:380px){
+  html.sidebar-collapsed #mines-section{
+    display: none;
+  }
+}

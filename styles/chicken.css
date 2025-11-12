@@ -1,0 +1,207 @@
+.chicken {
+  width: 32.5px;
+  height: 32.5px;
+  transform: rotate(-5deg) scale(0.6);
+  z-index: 1005;
+}
+
+/* Tête */
+.head {
+  position: absolute;
+  width: 45px;
+  height: 45px;
+  background: white;
+  border-radius: 50%;
+  top: 7.5px;
+  left: 75px;
+  z-index: 3;
+  box-shadow: inset -3px -3px 6px rgba(0, 0, 0, 0.1);
+}
+
+.tail {
+  position: absolute;
+  top: 22.5px;
+  left: 18.75px;
+  width: 30px;
+  height: 30px;
+  transform: rotate(-35deg);
+  transform-origin: center center;
+  z-index: 0;
+}
+
+.feather {
+  position: absolute;
+  width: 15px;
+  height: 30px;
+  background: linear-gradient(to bottom, #742d2d, #491616);
+  border-radius: 50% 50% 0 0;
+  transform-origin: bottom center;
+}
+
+.feather1 {
+  left: 0px;
+  transform: rotate(-20deg);
+  z-index: 1;
+}
+
+.feather2 {
+  left: 7.5px;
+  transform: rotate(0deg);
+  z-index: 2;
+}
+
+.feather3 {
+  left: 15px;
+  transform: rotate(20deg);
+  z-index: 1;
+}
+
+/* Corps */
+.body {
+  position: absolute;
+  width: 90px;
+  height: 67.5px;
+  background: white;
+  border-radius: 60% 60% 50% 50%;
+  top: 37.5px;
+  left: 30px;
+  box-shadow: inset -3.75px -3.75px 7.5px rgba(0, 0, 0, 0.1);
+}
+
+.belly {
+  width: 45px;
+  height: 30px;
+  background: #f5f5f5;
+  border-radius: 50%;
+  position: absolute;
+  bottom: 7.5px;
+  left: 22.5px;
+}
+
+/* Aile */
+.wing {
+  width: 45px;
+  height: 30px;
+  background: #ddd;
+  position: absolute;
+  top: 56.25px;
+  left: 52.5px;
+  border-radius: 50%;
+  box-shadow: inset 0 2.25px 3.75px rgba(0,0,0,0.2);
+}
+
+/* Œil */
+.eye {
+  width: 15px;
+  height: 15px;
+  background: white;
+  border-radius: 50%;
+  position: absolute;
+  top: 18.75px;
+  left: 97.5px;
+  border: 1.5px solid black;
+  z-index: 4;
+}
+
+.pupil {
+  width: 7.5px;
+  height: 7.5px;
+  background: black;
+  border-radius: 50%;
+  position: absolute;
+  top: 3.75px;
+  left: 3.75px;
+}
+
+.shine {
+  width: 3px;
+  height: 3px;
+  background: white;
+  border-radius: 50%;
+  position: absolute;
+  top: 1.5px;
+  left: 1.5px;
+}
+
+/* Bec */
+.beak-top {
+  width: 15px;
+  height: 10.5px;
+  background: orange;
+  position: absolute;
+  top: 30px;
+  left: 116.25px;
+  clip-path: polygon(0 0, 100% 50%, 0 100%);
+  z-index: 3;
+}
+
+.beak-bottom {
+  width: 13.5px;
+  height: 7.5px;
+  background: darkorange;
+  position: absolute;
+  top: 37.5px;
+  left: 116.25px;
+  clip-path: polygon(0 0, 100% 50%, 0 100%);
+}
+
+/* Crête */
+.comb {
+  width: 11.25px;
+  height: 11.25px;
+  background: linear-gradient(45deg, #d40000, #ff5500);
+  position: absolute;
+  border-radius: 50%;
+  top: 0px;
+  z-index: 6;
+  box-shadow: 0 0 3.75px rgba(255, 100, 0, 0.6);
+}
+
+.comb1 {
+  left: 82.5px;
+}
+
+.comb2 {
+  left: 93.75px;
+}
+
+.comb3 {
+  width: 9px;
+  height: 9px;
+  left: 105px;
+  top: 2.25px;
+  background: linear-gradient(45deg, #d40000, #ff5500);
+  position: absolute;
+  border-radius: 50%;
+  z-index: 5;
+  box-shadow: 0 0 3.75px rgba(255, 100, 0, 0.4);
+}
+
+/* Pattes */
+.leg {
+  width: 7.5px;
+  height: 22.5px;
+  background: orange;
+  position: absolute;
+  top: 97.5px;
+  border-radius: 3.75px;
+  z-index: 0;
+}
+
+.leg-left {
+  left: 48.75px;
+}
+
+.leg-right {
+  left: 78.75px;
+}
+
+.foot {
+  width: 15px;
+  height: 3.75px;
+  background: orange;
+  position: absolute;
+  bottom: -3.75px;
+  left: -3.75px;
+  border-radius: 3.75px;
+}

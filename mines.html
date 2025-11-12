@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Crazy Casino</title>
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9742870781660837" crossorigin="anonymous"></script>
+  <meta name="google-adsense-account" content="ca-pub-9742870781660837">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles/styles.css" />
+  <link rel="stylesheet" href="styles/mines.css" />
+  <script>
+  (function() {
+    if (localStorage.getItem("sidebarCollapsed") === "true") {
+      document.documentElement.classList.add("sidebar-collapsed");
+    }
+  })();
+</script>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+        <nav>
+          <ul>
+            <li style="padding-top: 0;">
+              <a><button class="toggle-sidebar" onclick="toggleSidebar()">☰</button></a>
+            </li>
+            <li><a href="index.html">🛖 <span>Home</span></a></li>
+          </ul>
+          <div class="game-section">
+            <h3 class="game-section-title"><span class="game-title-text">Games</span></h3>
+            <ul class="game-links">
+              <li><a href="slot.html">🍉 <span>Slot</span></a></li>
+              <li><a href="chicken.html">🐔 <span>Chicken Road</span></a></li>
+              <li><a href="mines.html">💣 <span>Mines</span></a></li>
+              <li><a href="crash.html">🚀 <span>Crash</span></a></li>
+            </ul>
+          </div>
+          <ul>
+            <li><a href="bank.html">💳 <span>Bank</span></a></li>
+            <li><a href="help.html">❓ <span>Help</span></a></li>
+            <li><a href="update.html">❕ <span>Update</span></a></li>
+          </ul>
+        </nav>
+      </aside>
+    <header class="top-bar">
+      <div class="logo"><a href="index.html" style="color: white; text-decoration: none;">Crazy Casino</a></div>
+      <div class="money-display">
+        <div class="credit-display">Credits: <span id="credits"></span></div>
+        <div class="dept-display">Debt: <span id="debt">0</span></div>
+      </div>
+    </header>
+
+    <main class="main-content"> 
+
+      <section id="mines-section" class="mines-section" style="padding: 0;">
+        <h3 style="margin: 0; display: flex;">Mine Game</h3>
+              <div class="game-box">
+                <div class="game-controls-row">
+                    <div class="mine-controls">
+                    <div class="bet-controls">
+                        <label for="bet" class="bet-amount-display">Bet Amount</label>
+                        <label class="bet-amount-display-no">Bet:</label>
+                        <button id="min-bet-btn" onclick="setMinBet()">MIN</button>
+                        <input type="number" id="bet" placeholder="$1" min="0.01" step="0.01" value="1" />
+                        <button id="max-bet-btn" onclick="setMaxBet()">MAX</button>
+                    </div>
+                    <div class="bomb-controls">
+                        <label>Bombs</label>
+                        <button onclick="decreaseBombs()">-</button>
+                        <span id="bomb-count">5</span>
+                        <button onclick="increaseBombs()">+</button>
+                    </div>
+                    <div class="multiplier">
+                        <span>Tile Multiplier: <span id="pre-game-multiplier">1.20x</span></span>
+                    </div>
+                    <button id="start-game-btn" onclick="startGame()">Start Game</button>
+                    <button id="stop-game-btn" onclick="stopGame()" style="display:none;">Stop Game</button>
+                    </div>
+                </div>
+                <div class="game-main-row">
+                    <div class="game-details">
+                    <p>Tiles left: <span id="tiles-left">0</span></p>
+                    <p>Mine risk: <span id="mine-risk">0%</span></p>
+                    <p>Opened tiles: <span id="opened-tiles">0</span></p>
+                    <p>Potential multiplier: <span id="potential-multiplier">1.00x</span></p>
+                    <p>Potential earnings: <span id="potential-earnings">$0.00</span></p>
+                    </div>
+                    <div class="game-grid-container">
+                      <div id="game"></div>
+                    </div>
+                </div>
+                <div id="message"></div>
+                </div>
+      </section>
+
+    </main>
+  </div>
+
+  <script src="scripts/main.js"></script>
+  <script src="scripts/mines.js"></script>
+</body>
+</html>

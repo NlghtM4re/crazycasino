@@ -1,0 +1,36 @@
+.games-section h2 {
+    font-size: 28px;
+    margin: 20px 0;
+}
+
+.games-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 20px;
+}
+
+.game-card {
+    background: linear-gradient(to top right, #1e293b, #334155);
+    border-radius: 16px;
+    padding: 40px;
+    text-align: center;
+    transition: transform 0.2s ease;
+    cursor: pointer;
+    color: white;
+    text-decoration: none;
+}
+
+.game-card:hover {
+    transform: scale(1.05);
+}
+
+.game-card h3 {
+    margin: 0 0 10px;
+    font-size: 22px;
+    font-weight: 700;
+}
+
+.game-card span {
+    font-size: 14px;
+    color: #94a3b8;
+}

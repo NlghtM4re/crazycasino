@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>MoonCoin Idle Market</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body {
+      font-family: "Segoe UI", sans-serif;
+      background: #0d1117;
+      color: #e6edf3;
+      margin: 0;
+      padding: 20px;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .stats {
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+      margin-bottom: 20px;
+      font-size: 18px;
+    }
+    .card {
+      background: #161b22;
+      border-radius: 12px;
+      padding: 20px;
+      max-width: 500px;
+      margin: 0 auto;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+    }
+    .stock-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+    .price {
+      font-size: 22px;
+      font-weight: bold;
+    }
+    .positive { color: #4caf50; }
+    .negative { color: #f44336; }
+    .controls {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 15px;
+    }
+    button {
+      flex: 1;
+      background: #238636;
+      border: none;
+      color: white;
+      padding: 10px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.2s;
+      font-size: 14px;
+    }
+    button:hover { background: #2ea043; }
+    button.sell { background: #da3633; }
+    button.sell:hover { background: #f85149; }
+    .holdings {
+      text-align: center;
+      font-size: 16px;
+      margin-bottom: 10px;
+    }
+    canvas {
+      width: 100% !important;
+      height: 250px !important;
+    }
+  </style>
+</head>
+<body>
+  <h1>🚀 MoonCoin Idle Market</h1>
+
+  <div class="stats">
+    <div>💰 Cash: $<span id="cash">1000</span></div>
+    <div>📊 Net Worth: $<span id="networth">1000</span></div>
+  </div>
+
+  <div class="card">
+    <div class="stock-header">
+      <div>
+        <div><strong>MoonCoin</strong></div>
+        <div class="price" id="price">$20</div>
+      </div>
+      <div id="change">+0%</div>
+    </div>
+
+    <div class="controls">
+      <button onclick="buy(1)">Buy 1</button>
+      <button onclick="buyMax()">Buy Max</button>
+      <button class="sell" onclick="sell(1)">Sell 1</button>
+      <button class="sell" onclick="sellAll()">Sell All</button>
+    </div>
+
+    <div class="holdings">
+      You own <span id="holdings">0</span> MoonCoins
+    </div>
+
+    <canvas id="chart"></canvas>
+  </div>
+
+  <script>
+    let cash = 1000;
+    let holdings = 0;
+    let price = 20;
+    let lastPrice = 20;
+    let history = [price];
+    const maxHistory = 30;
+
+    // Chart.js setup
+    const ctx = document.getElementById("chart").getContext("2d");
+    const chart = new Chart(ctx, {
+      type: "line",
+      data: {
+        labels: Array(history.length).fill(""),
+        datasets: [{
+          label: "MoonCoin Price",
+          data: history,
+          borderColor: "#3b82f6",
+          backgroundColor: "rgba(59,130,246,0.2)",
+          fill: true,
+          tension: 0.3,
+          pointRadius: 0
+        }]
+      },
+      options: {
+        plugins: { legend: { display: false }},
+        scales: {
+          x: { display: false },
+          y: { beginAtZero: false }
+        }
+      }
+    });
+
+    // Update price randomly
+    function updatePrice() {
+      lastPrice = price;
+      let change = (Math.random() - 0.5) * 4; // -2 to +2
+      price = Math.max(1, +(price + change).toFixed(2));
+
+      // Track history
+      history.push(price);
+      if (history.length > maxHistory) history.shift();
+      chart.data.datasets[0].data = history;
+      chart.data.labels = Array(history.length).fill("");
+      chart.update();
+
+      render();
+    }
+
+    // Buy / Sell
+    function buy(amount) {
+      if (cash >= price * amount) {
+        cash -= price * amount;
+        holdings += amount;
+        render();
+      }
+    }
+    function buyMax() {
+      const amount = Math.floor(cash / price);
+      if (amount > 0) buy(amount);
+    }
+    function sell(amount) {
+      if (holdings >= amount) {
+        cash += price * amount;
+        holdings -= amount;
+        render();
+      }
+    }
+    function sellAll() {
+      if (holdings > 0) sell(holdings);
+    }
+
+    // Idle interest (1% every 10s)
+    setInterval(() => {
+      cash += cash * 0.01;
+      render();
+    }, 10000);
+
+    // Render UI
+    function render() {
+      document.getElementById("cash").textContent = cash.toFixed(2);
+      document.getElementById("holdings").textContent = holdings;
+      document.getElementById("networth").textContent = (cash + holdings * price).toFixed(2);
+      document.getElementById("price").textContent = `$${price}`;
+
+      // Show % change
+      const changePercent = (((price - lastPrice) / lastPrice) * 100).toFixed(2);
+      const changeEl = document.getElementById("change");
+      changeEl.textContent = (changePercent >= 0 ? "+" : "") + changePercent + "%";
+      changeEl.className = changePercent >= 0 ? "positive" : "negative";
+    }
+
+    // Start
+    setInterval(updatePrice, 5000); // update every 5s
+    render();
+  </script>
+</body>
+</html>

@@ -1,0 +1,250 @@
+:root {
+  --bg-dark: #2a2a2a;
+  --bg-medium: #3a3a3a;
+  --bg-light: #444;
+  --accent: #00bcd4;
+  --text: #fff;
+  --muted: #ccc;
+}
+
+body {
+  margin: 0;
+  height: 100vh;
+  display: grid;
+  grid-template-rows: 70px 1fr;
+  grid-template-columns: 1fr 2fr 1fr;
+  grid-template-areas:
+    "header header header"
+    "left center right";
+  background: var(--bg-dark);
+  color: var(--text);
+  font-family: 'Segoe UI', Arial, sans-serif;
+  overflow: hidden; /* prevent page scroll */
+}
+
+header {
+  grid-area: header;
+  background: var(--bg-light);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 30px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+  font-size: 26px;
+  font-weight: bold;
+  color: var(--text);
+}
+
+.header-right {
+  font-size: 16px;
+  color: var(--accent);
+}
+
+.left-panel {
+  grid-area: left;
+  background: var(--bg-medium);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: stretch;
+  padding: 20px;
+  gap: 10px;
+  border-right: 2px solid #555;
+  box-shadow: inset -3px 0 6px rgba(0,0,0,0.3);
+  overflow: hidden;
+}
+
+.left-panel h3 {
+  margin: 0 0 10px 0;
+  text-align: center;
+  border-bottom: 2px solid var(--accent);
+  padding-bottom: 5px;
+}
+
+.chat-messages {
+  flex: 1;
+  overflow-y: auto;
+  background: #444;
+  padding: 10px;
+  padding-right: 5px;
+  border-radius: 6px;
+  margin-bottom: 10px;
+  white-space: pre-wrap; /* preserve line breaks */
+  word-wrap: break-word;
+  word-break: break-word; /* ensure long words wrap */
+}
+
+.chat-messages div {
+  background: #555;
+  padding: 6px 10px;
+  margin-bottom: 6px;
+  border-radius: 6px;
+  word-wrap: break-word;
+  white-space: pre-wrap; /* wrap long text */
+  color: var(--text);
+  font-size: 14px;
+}
+
+.chat-messages div.self {
+  background: var(--accent);
+  color: #000;
+  align-self: flex-end;
+}
+
+.chat-input {
+  display: flex;
+  gap: 5px;
+}
+
+.chat-input input {
+  flex: 1;
+  padding: 8px;
+  border-radius: 6px;
+  border: none;
+  font-size: 16px;
+}
+
+.chat-input button {
+  background: var(--accent);
+  border: none;
+  color: white;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.center {
+  grid-area: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.right-panel {
+  grid-area: right;
+  background: var(--bg-medium);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  padding: 20px;
+  border-left: 2px solid #555;
+  box-shadow: inset 3px 0 6px rgba(0,0,0,0.3);
+  overflow: hidden;
+}
+
+#count {
+  font-size: 72px;
+  font-weight: bold;
+  margin: 20px;
+  color: var(--accent);
+  text-shadow: 0 0 15px rgba(0, 188, 212, 0.5);
+}
+
+button {
+  background: var(--accent);
+  border: none;
+  color: white;
+  padding: 12px 25px;
+  font-size: 18px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+button:hover {
+  background: #0097a7;
+}
+
+#leaderboard {
+  width: 100%;
+  max-height: calc(100% - 50px); /* leave space for rank + button */
+  overflow-y: auto;
+  margin-bottom: 10px;
+  padding-left: 5px; /* add left padding so scrollbar doesn't cover text */
+  box-sizing: border-box;
+}
+
+/* Scrollbars for leaderboard & chat */
+#leaderboard::-webkit-scrollbar,
+.chat-messages::-webkit-scrollbar {
+  width: 10px;
+}
+
+#leaderboard::-webkit-scrollbar-track,
+.chat-messages::-webkit-scrollbar-track {
+  background: #3a3a3a;
+  border-radius: 4px;
+}
+
+#leaderboard::-webkit-scrollbar-thumb,
+.chat-messages::-webkit-scrollbar-thumb {
+  background: var(--accent);
+  border-radius: 4px;
+}
+
+#leaderboard h3 {
+  margin-top: 0;
+  text-align: right;
+  border-bottom: 2px solid var(--accent);
+  padding-bottom: 5px;
+  padding-right: 5px;
+}
+
+#leaderboard ul {
+  list-style: none;
+  padding: 0;
+  margin: 10px 0 0 0;
+  padding-right: 5px;
+}
+
+#leaderboard li {
+  display: flex;
+  justify-content: space-between; /* rank on left, name+score on right */
+  align-items: center;
+  background: #555;
+  margin-bottom: 8px;
+  padding: 6px 10px;
+  border-radius: 6px;
+  color: var(--muted);
+  transition: background 0.2s;
+  word-break: break-word;
+}
+
+#leaderboard li:hover {
+  background: #666;
+}
+
+#my-rank {
+  width: 100%;
+  text-align: right;
+  margin-bottom: 10px;
+}
+
+#change-name {
+  width: 100%;
+}
+
+.rank {
+  flex-shrink: 0;
+  font-weight: bold;
+  min-width: 25px;
+  text-align: left; /* fully left */
+  margin-right: 10px;
+  color: var(--text);
+}
+
+.rank-1 {
+  color: gold;
+  font-size: 20px;
+}
+
+.rank-2 {
+  color: silver;
+}
+
+.rank-3 {
+  color: #cd7f32; /* bronze */
+}
