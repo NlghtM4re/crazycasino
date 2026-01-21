@@ -87,8 +87,17 @@ function maxLoan(){
     return Math.max(0, maxLoanAmount);
 }
 
+function updateMaxLoanDisplay() {
+    document.getElementById("maxLoan").textContent = maxLoan().toFixed(2);
+}
+
 document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("bankCreditsDisplay").textContent = bankCredits.toFixed(2);
-    document.getElementById("maxLoan").textContent = maxLoan().toFixed(2);
+    updateMaxLoanDisplay();
+});
+
+// Update maxLoan display when page loads to ensure dept is initialized
+window.addEventListener("load", () => {
+    updateMaxLoanDisplay();
 });
 
