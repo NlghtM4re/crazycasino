@@ -10,14 +10,15 @@ function takeLoan() {
         return;
     }
 
-    dept += 100;
-    credits += 100;
+    dept += maxLoan();
+    credits += maxLoan();
 
     localStorage.setItem("dept", dept);
     localStorage.setItem("credits", credits);
 
     document.getElementById("credits").textContent = credits.toFixed(2);
     document.getElementById("debt").textContent = dept.toFixed(2);
+    document.getElementById("maxLoan").textContent = maxLoan().toFixed(2);
 }
 
 function payLoan() {
@@ -45,6 +46,7 @@ function payLoan() {
 
     document.getElementById("credits").textContent = credits.toFixed(2);
     document.getElementById("debt").textContent = dept.toFixed(2);
+    document.getElementById("maxLoan").textContent = maxLoan().toFixed(2);
 
     alert(`You successfully paid $${paymentAmount.toFixed(2)} towards your loan.`);
 }
@@ -80,7 +82,13 @@ function takeBank(){
     }
 }
 
+function maxLoan(){
+    const maxLoanAmount = 1000 / Math.pow(2, dept / 1000);
+    return Math.max(0, maxLoanAmount);
+}
+
 document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("bankCreditsDisplay").textContent = bankCredits.toFixed(2);
+    document.getElementById("maxLoan").textContent = maxLoan().toFixed(2);
 });
 

@@ -54,21 +54,21 @@
     <main class="main-content" style="text-align: left; align-items: center;">
 
       <section id="loan-section">
-        <div class="bank">
+        <!--<div class="bank">
           <h2>Bank</h2>
           <div><span id="bankCreditsDisplay">0</span>$</div>
           <button id="deposite" onclick="depositeBank()">Deposite</button>
           <input type="number" placeholder="$" id="depositeInput"><br>
           <button id="take" onclick="takeBank()">Take</button>
           <input type="number" placeholder="$" id="takeInput">
-        </div>
+        </div>-->
 
         <div class="loan">
           <h3>Loan</h3>
           <p>- You can only have loan when you have less than 100 credits <br>
          - You will have to pay your dept back<br>
-         - There is a maximum of 100 credits per loan<br></p>
-          <button onclick="takeLoan(100)">Take $100 Loan</button>
+         - The less dept you have the more you can loan<br></p>
+          <button onclick="takeLoan()">Take <span id="maxLoan">0</span>$ Loan</button>
           <br><br>
           <label for="payment-amount">Payment Amount</label>
           <input type="number" id="payment-amount" min="0" />
