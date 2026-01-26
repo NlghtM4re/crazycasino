@@ -4,11 +4,12 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Crazy Casino</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9742870781660837" crossorigin="anonymous"></script>
   <meta name="google-adsense-account" content="ca-pub-9742870781660837">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles/styles.css" />
-  <link rel="stylesheet" href="styles/game.css" />
+  <link rel="stylesheet" href="styles/index.css" />
   <script>
   (function() {
     if (localStorage.getItem("sidebarCollapsed") === "true") {
@@ -65,22 +66,22 @@
 
       <section id="home-section" class="home-section">
         <h1 style="display: flex; justify-content: center;">Welcome to Crazy Casino</h1>
-        <p style="text-align: center;">Free to play casino</p>
+        <p style="text-align: center; color: rgb(208, 208, 208);">Free to play casino</p>
       </section>
 
       <section id="games-section" class="games-section">
-        <h2>All Games</h2>
         <div class="games-grid">
-          <a class="game-card" href="counter/main.html"><h3>Global Counter</h3><span>(NEW) Try now</span></a>
-          <a class="game-card" href="slot.html"><h3>Slot</h3><span>Try now</span></a>
-          <a class="game-card" href="chicken.html"><h3>Chicken</h3><span>Try now</span></a>
-          <a class="game-card" href="mines.html"><h3>Mine</h3><span>Try now</span></a>
-          <a class="game-card" href="crash.html"><h3>Crash</h3><span>Try now</span></a>
-          <a class="game-card" href="#"><h3>Roulette</h3><span>Coming soon...</span></a>
+          <!--<a class="game-card" href="counter/main.html"><h3>Global Counter</h3><div class="game-icon">🔢</div><p>A real-time counter shared across all players</p><span>Try now</span></a>-->
+          <a class="game-card" href="slot.html"><h3>Slot</h3><div class="game-icon">🎰</div><p>Classic slot machine with 3 reels and spinning action</p><span>Try now</span></a>
+          <a class="game-card" href="chicken.html"><h3>Chicken</h3><div class="game-icon">🐔</div><p>Guide the chicken across the road and avoid obstacles</p><span>Try now</span></a>
+          <a class="game-card" href="mines.html"><h3>Mine</h3><div class="game-icon">💣</div><p>Click tiles to avoid hidden mines and win big</p><span>Try now</span></a>
+          <a class="game-card" href="crash.html"><h3>Crash</h3><div class="game-icon">🚀</div><p>Cash out before the multiplier crashes</p><span>Try now</span></a>
+          <!--<a class="game-card" href="#"><h3>Roulette</h3><span>Coming soon...</span></a>
           <a class="game-card" href="#"><h3>Blackjack</h3><span>Coming soon...</span></a>
           <a class="game-card" href="#"><h3>Red or Black</h3><span>Coming soon...</span></a>
-          <a class="game-card" href="#"><h3>The Dickner Game</h3><span>Coming soon...</span></a>
+          <a class="game-card" href="#"><h3>The Dickner Game</h3><span>Coming soon...</span></a>-->
         </div>
+        <p>More games coming soon...</p>
       </section>
 
     </main>
