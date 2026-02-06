@@ -308,6 +308,12 @@
   border: 1px solid rgba(14, 165, 233, 0.3);
 }
 
+.portfolio-row.profit-loss {
+  background-color: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  font-weight: 700;
+}
+
 .portfolio-row.total {
   background: linear-gradient(90deg, rgba(16, 185, 129, 0.15) 0%, rgba(16, 185, 129, 0.05) 100%);
   border: 1px solid rgba(16, 185, 129, 0.4);
@@ -378,6 +384,37 @@
 .sell-button-secondary:hover {
   background-color: #ef4444;
   color: white;
+}
+
+/* Percentage buttons for selling */
+.sell-percentage-buttons {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+.percentage-btn {
+  padding: 8px 6px;
+  background-color: rgba(239, 68, 68, 0.1);
+  color: #ef4444;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-transform: uppercase;
+}
+
+.percentage-btn:hover {
+  background-color: rgba(239, 68, 68, 0.2);
+  border-color: #ef4444;
+  transform: translateY(-1px);
+}
+
+.percentage-btn:active {
+  transform: translateY(0);
 }
 
 /* Sell buttons row */

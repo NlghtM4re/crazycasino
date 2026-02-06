@@ -16,6 +16,36 @@ let portfolio = {
 
 let sellMarkers = []; // Array of {price, time} for sell markers
 
+// Lifetime statistics tracking
+let lifetimeStats = {
+  totalProfit: 0,
+  totalInvested: 0,
+  sharesBought: 0,
+  sharesSold: 0,
+  totalTrades: 0,
+  profitableTrades: 0,
+  biggestWin: 0,
+  biggestLoss: 0,
+  tradeHistory: [] // Array of {profit, invested}
+};
+
+// Load lifetime stats from localStorage
+function loadLifetimeStats() {
+  const saved = localStorage.getItem('stockMarketLifetimeStats');
+  if (saved) {
+    try {
+      lifetimeStats = JSON.parse(saved);
+    } catch (e) {
+      console.error('Failed to load lifetime stats:', e);
+    }
+  }
+}
+
+// Save lifetime stats to localStorage
+function saveLifetimeStats() {
+  localStorage.setItem('stockMarketLifetimeStats', JSON.stringify(lifetimeStats));
+}
+
 // Save state to localStorage
 function saveState() {
   const state = {
@@ -483,9 +513,10 @@ function buyStock() {
   
   // Update portfolio
   if (portfolio.sharesOwned === 0) {
-    // First buy
+    // First buy after selling - clear old markers
     portfolio.buyPrice = currentValue;
     portfolio.buyMarkers = [{price: currentValue, time: time}];
+    sellMarkers = []; // Clear both buy and sell markers on new buy
   } else {
     // Additional buy - accumulate
     const totalCost = (portfolio.sharesOwned * portfolio.buyPrice) + costInCredits;
@@ -495,6 +526,11 @@ function buyStock() {
   }
   
   portfolio.sharesOwned += buyAmount;
+  
+  // Track lifetime stats
+  lifetimeStats.totalInvested += costInCredits;
+  lifetimeStats.sharesBought += buyAmount;
+  saveLifetimeStats();
   
   // Update UI
   updatePortfolioDisplay();
@@ -514,18 +550,27 @@ function sellAllStock() {
   const newCredits = credits + saleValue;
   updateCredits(newCredits);
   
+  // Calculate profit/loss for this trade
+  const cost = portfolio.sharesOwned * portfolio.buyPrice;
+  const profit = saleValue - cost;
+  
+  // Track lifetime stats
+  lifetimeStats.sharesSold += portfolio.sharesOwned;
+  lifetimeStats.totalProfit += profit;
+  lifetimeStats.totalTrades += 1;
+  if (profit > 0) lifetimeStats.profitableTrades += 1;
+  if (profit > lifetimeStats.biggestWin) lifetimeStats.biggestWin = profit;
+  if (profit < lifetimeStats.biggestLoss) lifetimeStats.biggestLoss = profit;
+  lifetimeStats.tradeHistory.push({profit, invested: cost});
+  saveLifetimeStats();
+  
   // Add sell marker
   sellMarkers.push({price: currentValue, time: time});
   
-  // Reset portfolio
+  // Reset portfolio but keep markers
   portfolio.sharesOwned = 0;
   portfolio.buyPrice = 0;
-  portfolio.buyMarkers = [];
-  
-  // Clear sell markers when all sold
-  if (portfolio.sharesOwned === 0) {
-    sellMarkers = [];
-  }
+  // Keep buy markers until next buy
   
   // Update UI
   updatePortfolioDisplay();
@@ -534,9 +579,9 @@ function sellAllStock() {
 
 // Sell custom amount
 function sellCustomStock() {
-  const sellAmount = parseInt(document.getElementById('sell-amount').value);
+  const sellAmount = parseFloat(document.getElementById('sell-amount').value);
   
-  if (sellAmount <= 0) {
+  if (sellAmount <= 0 || isNaN(sellAmount)) {
     alert('Please enter a valid amount');
     return;
   }
@@ -551,22 +596,42 @@ function sellCustomStock() {
   const newCredits = credits + saleValue;
   updateCredits(newCredits);
   
+  // Calculate profit/loss for this partial trade
+  const cost = sellAmount * portfolio.buyPrice;
+  const profit = saleValue - cost;
+  
+  // Track lifetime stats
+  lifetimeStats.sharesSold += sellAmount;
+  lifetimeStats.totalProfit += profit;
+  lifetimeStats.totalTrades += 1;
+  if (profit > 0) lifetimeStats.profitableTrades += 1;
+  if (profit > lifetimeStats.biggestWin) lifetimeStats.biggestWin = profit;
+  if (profit < lifetimeStats.biggestLoss) lifetimeStats.biggestLoss = profit;
+  lifetimeStats.tradeHistory.push({profit, invested: cost});
+  saveLifetimeStats();
+  
   // Reduce portfolio
   portfolio.sharesOwned -= sellAmount;
   
   // Add sell marker
   sellMarkers.push({price: currentValue, time: time});
   
-  // Clear markers if all sold
-  if (portfolio.sharesOwned === 0) {
-    portfolio.buyMarkers = [];
-    sellMarkers = [];
+  // Hide sell group if all sold, but keep markers
+  if (portfolio.sharesOwned < 0.01) { // Account for floating point precision
+    portfolio.sharesOwned = 0;
     document.getElementById('sell-group').style.display = 'none';
   }
+  // Keep both buy and sell markers until next buy
   
   // Update UI
   updatePortfolioDisplay();
   document.getElementById('sell-amount').value = 0;
+}
+
+// Set sell amount by percentage
+function setSellPercentage(percentage) {
+  const amount = (portfolio.sharesOwned * percentage / 100).toFixed(2);
+  document.getElementById('sell-amount').value = amount;
 }
 
 // Update portfolio display
@@ -580,15 +645,32 @@ function updatePortfolioDisplay() {
     currentPriceEl.textContent = '$' + currentValue.toFixed(2);
   }
   
+  // Calculate profit/loss
+  const totalCost = portfolio.sharesOwned * portfolio.buyPrice;
+  const totalValue = portfolio.sharesOwned * currentValue;
+  const profitLoss = totalValue - totalCost;
+  
+  // Update profit/loss display
+  const profitLossEl = document.getElementById('profit-loss');
+  if (profitLossEl) {
+    const profitLossText = (profitLoss >= 0 ? '+$' : '-$') + Math.abs(profitLoss).toFixed(2);
+    profitLossEl.textContent = profitLossText;
+    
+    // Color based on profit/loss
+    if (profitLoss >= 0) {
+      profitLossEl.style.color = '#10b981';
+    } else {
+      profitLossEl.style.color = '#ef4444';
+    }
+  }
+  
   // Update total value display
   const totalValueEl = document.getElementById('total-value');
   if (totalValueEl) {
-    const totalValue = portfolio.sharesOwned * currentValue;
     totalValueEl.textContent = '$' + totalValue.toFixed(2);
     
     // Color based on profit/loss
     if (portfolio.sharesOwned > 0) {
-      const profitLoss = totalValue - (portfolio.sharesOwned * portfolio.buyPrice);
       if (profitLoss >= 0) {
         totalValueEl.style.color = '#10b981';
       } else {
