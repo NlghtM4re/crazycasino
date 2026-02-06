@@ -62,6 +62,11 @@
     color: #94a3b8;
     padding: 15px 15px 20px 15px;
     flex-shrink: 0;
+    transition: font-size 0.3s ease;
+}
+
+.game-card:hover span {
+    font-size: 18px;
 }
 
 .games-section > p {

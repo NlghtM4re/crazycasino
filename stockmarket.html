@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Crazy Casino</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9742870781660837" crossorigin="anonymous"></script>
+  <meta name="google-adsense-account" content="ca-pub-9742870781660837">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles/styles.css" />
+  <link rel="stylesheet" href="styles/stockmarket.css" />
+  <script>
+  (function() {
+    if (localStorage.getItem("sidebarCollapsed") === "true") {
+      document.documentElement.classList.add("sidebar-collapsed");
+    }
+  })();
+</script>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+        <nav>
+          <ul>
+            <li style="padding-top: 0;">
+              <a><button class="toggle-sidebar" onclick="toggleSidebar()">☰</button></a>
+            </li>
+            <li><a href="index.html">🛖 <span>Home</span></a></li>
+          </ul>
+          <div class="game-section">
+            <h3 class="game-section-title"><span class="game-title-text">Games</span></h3>
+            <ul class="game-links">
+              <li><a href="slot.html">🍉 <span>Slot</span></a></li>
+              <li><a href="chicken.html">🐔 <span>Chicken Road</span></a></li>
+              <li><a href="mines.html">💣 <span>Mines</span></a></li>
+              <li><a href="crash.html">🚀 <span>Crash</span></a></li>
+              <li><a href="stockmarket.html">〽️ <span>Stock Market</span></a></li>
+            </ul>
+          </div>
+          <ul>
+            <li><a href="bank.html">💳 <span>Bank</span></a></li>
+            <li><a href="help.html">❓ <span>Help</span></a></li>
+            <li><a href="update.html">❕ <span>Update</span></a></li>
+          </ul>
+        </nav>
+      </aside>
+    <header class="top-bar">
+      <div class="logo"><a href="index.html" style="color: white; text-decoration: none;">Crazy Casino</a></div>
+      <div class="money-display">
+        <div class="credit-display">Credits: <span id="credits"></span></div>
+        <div class="dept-display">Debt: <span id="debt">0</span></div>
+      </div>
+    </header>
+
+    <div class="ad-space">
+      <div class="ad-container">
+        <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9742870781660837"
+            crossorigin="anonymous"></script>
+        <!-- verticale -->
+        <ins class="adsbygoogle"
+            style="display:block"
+            data-ad-client="ca-pub-9742870781660837"
+            data-ad-slot="4995831174"
+            data-ad-format="auto"
+            data-full-width-responsive="true"></ins>
+        <script>
+            (adsbygoogle = window.adsbygoogle || []).push({});
+        </script>
+      </div>
+    </div>
+
+    <main class="main-content"> 
+
+      <section id="stockmarket-section" class="stockmarket-section" style="padding: 0;">
+        <div class="market-header">
+          <div class="market-title-section">
+            <h3 style="margin: 0;">〽️ Stock Market Trading</h3>
+            <div class="market-status">
+              <span class="status-indicator"></span>
+              <span class="status-text">Market Open</span>
+            </div>
+          </div>
+          <div class="market-stats">
+            <div class="market-stat-card">
+              <div class="stat-card-label">Current Price</div>
+              <div class="stat-card-value" id="header-price">$0.00</div>
+            </div>
+            <div class="market-stat-card">
+              <div class="stat-card-label">24h Change</div>
+              <div class="stat-card-value" id="header-change">+0.00%</div>
+            </div>
+            <div class="market-stat-card">
+              <div class="stat-card-label">Portfolio Value</div>
+              <div class="stat-card-value" id="header-portfolio">$0.00</div>
+            </div>
+          </div>
+        </div>
+            <div class="game-box stockmarket-container">
+              <div class="stockmarket-graph-container">
+                <div class="graph-header">
+                  <div class="time-filter-buttons">
+                    <button class="time-filter-btn active" onclick="setTimeFilter(10)">10s</button>
+                    <button class="time-filter-btn" onclick="setTimeFilter(60)">1m</button>
+                    <button class="time-filter-btn" onclick="setTimeFilter(600)">10m</button>
+                    <button class="time-filter-btn" onclick="setTimeFilter(3600)">1h</button>
+                    <button class="time-filter-btn" onclick="setTimeFilter(86400)">1d</button>
+                    <button class="time-filter-btn" onclick="setTimeFilter('all')">All</button>
+                  </div>
+                </div>
+                <div class="canvas-wrapper">
+                  <canvas id="stockmarket-canvas"></canvas>
+                </div>
+              </div>
+              <div class="stockmarket-settings">
+                <div class="trading-card">
+                  <h4 class="card-title">💰 Buy Shares</h4>
+                  <div class="setting-row">
+                    <label for="buy-amount">Amount</label>
+                    <input type="number" id="buy-amount" min="0.01" step="0.1" value="1" oninput="updateBuyCost()" />
+                  </div>
+                  <div class="cost-display">
+                    <span class="cost-label">Total Cost</span>
+                    <span id="buy-cost-display" class="cost-value">$0.00</span>
+                  </div>
+                  <button id="buy-btn" onclick="buyStock()" class="buy-button">📈 Buy Now</button>
+                </div>
+
+                <div class="sell-card" id="sell-group" style="display: none;">
+                  <h4 class="card-title">📉 Sell Shares</h4>
+                  <div class="setting-row">
+                    <label for="sell-amount">Amount</label>
+                    <input type="number" id="sell-amount" min="1" value="0" />
+                  </div>
+                  <div class="sell-buttons-row">
+                    <button id="sell-all-btn" onclick="sellAllStock()" class="sell-button">Sell All</button>
+                    <button id="sell-custom-btn" onclick="sellCustomStock()" class="sell-button-secondary">Sell Custom</button>
+                  </div>
+                </div>
+
+                <div class="portfolio-card">
+                  <h4 class="card-title">📊 Your Portfolio</h4>
+                  <div class="portfolio-stats">
+                    <div class="portfolio-row">
+                      <span class="portfolio-label">Shares Owned</span>
+                      <span id="shares-owned" class="portfolio-value">0</span>
+                    </div>
+                    <div class="portfolio-row">
+                      <span class="portfolio-label">Avg Buy Price</span>
+                      <span id="buy-price" class="portfolio-value">$0.00</span>
+                    </div>
+                    <div class="portfolio-row highlight">
+                      <span class="portfolio-label">Current Price</span>
+                      <span id="current-price-value" class="portfolio-value">$0.00</span>
+                    </div>
+                    <div class="portfolio-row total">
+                      <span class="portfolio-label">Total Value</span>
+                      <span id="total-value" class="portfolio-value-large">$0.00</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="settings-card">
+                  <h4 class="card-title">⚙️ Settings</h4>
+                  <div class="setting-row">
+                    <label for="update-interval">Update Speed</label>
+                    <input type="number" id="update-interval" min="50" max="1000" step="50" value="200" onchange="updateIntervalValue()" />
+                    <span class="input-suffix">ms</span>
+                  </div>
+                  <button id="reset-btn" onclick="resetGraph()" class="reset-button">🔄 Reset Graph</button>
+                </div>
+              </div>
+            </div>
+      </section>
+
+      <section id="info-section" class="info-section" style="margin-top: 40px; padding: 20px; background-color: #1a1f3a; border-radius: 12px;">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
+          <div>
+            <h3 style="color: #10b981; margin-top: 0;">How to Play</h3>
+            <ul style="color: #cbd5e1; line-height: 1.8;">
+              <li><strong>Buy Shares:</strong> Enter the number of shares you want to buy and click "Buy". The cost is shown in real-time.</li>
+              <li><strong>Sell Shares:</strong> Once you own shares, you can sell all of them or a custom amount with the buttons below.</li>
+              <li><strong>Track Your Portfolio:</strong> See your average buy price, current value per share, and total portfolio value.</li>
+              <li><strong>Read the Graph:</strong> Watch the blue dashed lines for your buy prices and red dashed lines for your sell prices.</li>
+              <li><strong>Use Time Filters:</strong> Toggle between last 10 seconds, last minute, last hour, or the full graph view.</li>
+            </ul>
+          </div>
+          <div>
+            <h3 style="color: #10b981; margin-top: 0;">How It Works</h3>
+            <ul style="color: #cbd5e1; line-height: 1.8;">
+              <li><strong>Price Momentum:</strong> Prices don't move randomly - they have momentum! There's a 60% chance the price continues in the same direction and 40% chance it reverses, creating realistic trending patterns with consecutive green or red candles.</li>
+              <li><strong>Calculation:</strong> Each tick, the price change uses both the momentum from the previous change (70% of it) and a random component, creating natural market-like behavior with trends and reversals.</li>
+              <li><strong>Your Holdings:</strong> Your portfolio updates automatically as prices change. The current value shows your potential profit or loss in real-time.</li>
+              <li><strong>Buy Markers:</strong> Blue dashed lines on the graph mark all your buy prices, helping you track your entry points and identify patterns.</li>
+              <li><strong>Sell Markers:</strong> Red dashed lines mark your sell prices. Markers persist until you sell all shares and buy again.</li>
+              <li><strong>Goal:</strong> Buy low and sell high, riding the trends to maximize your profits! Good luck!</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <div class="ad-horizontal">
+      <div class="ad-horizontal-container">
+        <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9742870781660837"
+     crossorigin="anonymous"></script>
+<!-- crazycasino horizontal -->
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-9742870781660837"
+     data-ad-slot="1397042108"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+      </div>
+    </div>
+  </div>
+
+  <script src="scripts/main.js"></script>
+  <script src="scripts/stockmarket.js"></script>
+</body>
+</html>

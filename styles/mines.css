@@ -1,12 +1,12 @@
 /* Main container */
 .game-box {
-  border: 3px solid #333;
+  border: 1px solid #3e3e5a;
   border-radius: 16px;
-  background: #181818;
+  background: #29283c;
   padding: 20px;
   margin: 5px;
   max-width: 1200px;
-  box-shadow: 0 4px 32px #000a;
+  box-shadow: 0 4px 32px rgba(0,0,0,0.6);
   display: flex;
   flex-direction: column;
   gap: 20px;
@@ -46,9 +46,9 @@
   text-align: center;
   font-size: 1rem;
   padding: 5px;
-  border: 2px solid #10b981;
+  border: 2px solid #3e3e5a;
   border-radius: 5px;
-  background-color: #0f172a;
+  background-color: #1e1e2f;
   color: #ffffff;
 }
 
@@ -69,12 +69,12 @@
 .mine-controls button:hover,
 #start-game-btn:hover,
 #stop-game-btn:hover {
-  background-color: #38bdf8;
+  background-color: #34d399;
   transform: scale(1.05);
 }
 
 #start-game-btn {
-  background: #4caf50;
+  background: linear-gradient(180deg,#34d399,#10b981);
 }
 
 #stop-game-btn {
@@ -101,12 +101,12 @@
 .game-details {
   flex: 0 0 auto;
   width: 240px;
-  background: #222;
+  background: #1e1e2f;
   border-radius: 10px;
   padding: 14px;
-  color: #94a3b8;
+  color: #cbd5e1;
   font-size: clamp(12px, 2vw, 14px);
-  box-shadow: 0 2px 8px #0003;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.35);
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -138,9 +138,9 @@
   width: 70px;
   height: 70px;
   font-size: 1rem;
-  background: #222;
+  background: #1f2430;
   border-radius: 5px;
-  border: 1px solid #444;
+  border: 1px solid #3e3e5a;
   cursor: pointer;
   font-weight: bold;
   display: flex;
@@ -151,7 +151,7 @@
 }
 
 .tile.revealed {
-  background: #4caf50;
+  background: linear-gradient(180deg,#0ea5e9,#0284c7);
   color: #fff;
 }
 
@@ -171,7 +171,7 @@
   margin-top: 12px;
   font-size: 1.1rem;
   font-weight: 600;
-  color: #ffd600;
+  color: #60a5fa;
   text-align: center;
   min-height: 24px;
 }
