@@ -114,6 +114,9 @@ function initializeStockMarket() {
   resizeCanvas();
   window.addEventListener('resize', resizeCanvas);
 
+  // Load lifetime stats
+  loadLifetimeStats();
+
   // Try to load saved state
   const loaded = loadState();
   
@@ -158,6 +161,11 @@ function updateIntervalValue() {
   const newInterval = parseInt(document.getElementById('update-interval').value);
   if (newInterval > 0) {
     updateInterval = newInterval;
+    
+    // Calculate in-game time per real second
+    const inGamePerSecond = (1000 / newInterval).toFixed(1);
+    document.getElementById('time-conversion').textContent = `1 real-time second = ${inGamePerSecond} in-game seconds`;
+    
     restartAnimation();
   }
 }
@@ -241,6 +249,40 @@ function drawGraph() {
   if (stockData.length > 0) {
     drawDataLine(padding, graphWidth, graphHeight);
   }
+}
+
+// Statistics Modal Functions
+function openStatsModal() {
+  // Calculate derived stats
+  const winRate = lifetimeStats.totalTrades > 0 
+    ? ((lifetimeStats.profitableTrades / lifetimeStats.totalTrades) * 100).toFixed(1) 
+    : 0;
+  const avgProfit = lifetimeStats.totalTrades > 0 
+    ? (lifetimeStats.totalProfit / lifetimeStats.totalTrades).toFixed(2) 
+    : 0;
+  
+  // Update all stat values in modal
+  document.getElementById('stat-total-profit').textContent = lifetimeStats.totalProfit.toFixed(2);
+  document.getElementById('stat-total-profit').style.color = lifetimeStats.totalProfit >= 0 ? '#4ade80' : '#f87171';
+  document.getElementById('stat-total-invested').textContent = lifetimeStats.totalInvested.toFixed(2);
+  document.getElementById('stat-shares-bought').textContent = lifetimeStats.sharesBought.toFixed(2);
+  document.getElementById('stat-shares-sold').textContent = lifetimeStats.sharesSold.toFixed(2);
+  document.getElementById('stat-total-trades').textContent = lifetimeStats.totalTrades;
+  document.getElementById('stat-profitable-trades').textContent = lifetimeStats.profitableTrades;
+  document.getElementById('stat-biggest-win').textContent = lifetimeStats.biggestWin.toFixed(2);
+  document.getElementById('stat-biggest-win').style.color = '#4ade80';
+  document.getElementById('stat-biggest-loss').textContent = lifetimeStats.biggestLoss.toFixed(2);
+  document.getElementById('stat-biggest-loss').style.color = '#f87171';
+  document.getElementById('stat-win-rate').textContent = winRate + '%';
+  document.getElementById('stat-avg-profit').textContent = avgProfit;
+  document.getElementById('stat-avg-profit').style.color = avgProfit >= 0 ? '#4ade80' : '#f87171';
+  
+  // Show modal
+  document.getElementById('stats-modal').style.display = 'flex';
+}
+
+function closeStatsModal() {
+  document.getElementById('stats-modal').style.display = 'none';
 }
 
 // Draw grid lines
@@ -494,16 +536,16 @@ document.addEventListener('DOMContentLoaded', initializeStockMarket);
 // Buy stock function
 function buyStock() {
   const buyAmount = parseFloat(document.getElementById('buy-amount').value);
-  const credits = parseInt(document.getElementById('credits').textContent);
+  const credits = parseFloat(localStorage.getItem('credits')) || 0;
   const costInCredits = buyAmount * currentValue;
   
-  if (buyAmount <= 0) {
+  if (buyAmount <= 0 || isNaN(buyAmount)) {
     alert('Please enter a valid amount');
     return;
   }
   
   if (credits < costInCredits) {
-    alert('Not enough credits');
+    alert('Not enough credits. You need ' + costInCredits.toFixed(2) + ' but only have ' + credits.toFixed(2));
     return;
   }
   
@@ -546,7 +588,7 @@ function sellAllStock() {
   }
   
   const saleValue = portfolio.sharesOwned * currentValue;
-  const credits = parseInt(document.getElementById('credits').textContent);
+  const credits = parseFloat(localStorage.getItem('credits')) || 0;
   const newCredits = credits + saleValue;
   updateCredits(newCredits);
   
@@ -592,7 +634,7 @@ function sellCustomStock() {
   }
   
   const saleValue = sellAmount * currentValue;
-  const credits = parseInt(document.getElementById('credits').textContent);
+  const credits = parseFloat(localStorage.getItem('credits')) || 0;
   const newCredits = credits + saleValue;
   updateCredits(newCredits);
   
@@ -735,6 +777,14 @@ function updateHeaderStats() {
       headerPortfolioElement.style.color = '#10b981';
     }
   }
+}
+
+// Set max buy amount
+function setMaxBuy() {
+  const credits = parseFloat(localStorage.getItem('credits')) || 0;
+  const maxShares = Math.floor((credits / currentValue) * 100) / 100; // Round down to 2 decimals
+  document.getElementById('buy-amount').value = maxShares > 0 ? maxShares : 0;
+  updateBuyCost();
 }
 
 // Update buy cost display
