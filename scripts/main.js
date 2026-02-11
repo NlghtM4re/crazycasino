@@ -67,25 +67,30 @@ document.addEventListener("DOMContentLoaded", () => {
     const html = document.documentElement;
     const isMobile = /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
 
-    if (isMobile ) {
+    // Check if mobile and show blocking overlay
+    if (isMobile) {
+        const overlay = document.getElementById("mobile-block-overlay");
+        if (overlay) {
+            overlay.style.display = "flex";
+            // Prevent scrolling on body
+            document.body.style.overflow = "hidden";
+        }
+        return; // Don't execute rest of the code
+    }
+
+    if (window.innerWidth < 768) {
         html.classList.add("sidebar-collapsed");
         html.classList.remove("sidebar-expanded");
-        document.getElementById("sidebar-mobile").style.display = "block";
-    } else {
-        if (window.innerWidth < 768) {
-            html.classList.add("sidebar-collapsed");
-            html.classList.remove("sidebar-expanded");
-        }
-        
-        const sidebarCollapsed = localStorage.getItem("sidebarCollapsed") === "true";
+    }
+    
+    const sidebarCollapsed = localStorage.getItem("sidebarCollapsed") === "true";
 
-        if (sidebarCollapsed) {
-            html.classList.add("sidebar-collapsed");
-            html.classList.remove("sidebar-expanded");
-        } else {
-            html.classList.add("sidebar-expanded");
-            html.classList.remove("sidebar-collapsed");
-        }
+    if (sidebarCollapsed) {
+        html.classList.add("sidebar-collapsed");
+        html.classList.remove("sidebar-expanded");
+    } else {
+        html.classList.add("sidebar-expanded");
+        html.classList.remove("sidebar-collapsed");
     }
 });
 

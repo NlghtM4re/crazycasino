@@ -19,6 +19,16 @@
 </script>
 </head>
 <body>
+  <!-- Mobile Block Overlay -->
+  <div id="mobile-block-overlay" class="mobile-block-overlay" style="display: none;">
+    <div class="mobile-block-content">
+      <div class="mobile-block-icon">🖥️</div>
+      <h2>Desktop Only</h2>
+      <p>This website is currently unavailable on mobile devices.</p>
+      <p>Please visit us from a computer to access all features.</p>
+    </div>
+  </div>
+  
   <div class="app">
       <aside class="sidebar">
         <nav>
@@ -73,29 +83,38 @@
     <main class="main-content"> 
       <h3 style="margin: 0; display: flex;">Crash</h3>
       <section id="crash-section" class="crash-section">
-        <div id="gameContainer">
-        <canvas id="game" width="400" height="350"></canvas>
-        <p id="currentMultiplier">0.0x</p>
-    </div>
+        <div class="crash-main-container">
+          <div class="crash-game-area">
+            <div id="gameContainer">
+              <canvas id="game" width="400" height="350"></canvas>
+              <p id="currentMultiplier">0.0x</p>
+            </div>
 
-    <div id="infoContainer">
-      <div id="messageBox"></div>
-        <div id="betContainer">
-            
+            <div id="infoContainer">
+              <div id="messageBox"></div>
+              <div id="betContainer">
+                
+              </div>
+            </div>
+
+            <div id="buttonContainer">
+              <button id="submitBet">Start Game</button>
+              <button id="takeProfits">Take Profits</button>
+              <label for="betAmount">Bet Amount:</label>
+              <input type="number" id="betAmount" value="1">
+            </div>
+          </div>
+
+          <div id="lastCrashesContainer">
+            <p>Last Crashes:</p>
+            <div class="crash-table-header">
+              <span>Crash</span>
+              <span>Bet</span>
+              <span>Result</span>
+            </div>
+            <div id="lastCrashes"></div>
+          </div>
         </div>
-    </div>
-
-    <div id="buttonContainer">
-        <button id="submitBet">Start Game</button>
-        <button id="takeProfits">Take Profits</button>
-        <label for="betAmount">Bet Amount:</label>
-        <input type="number" id="betAmount" value="1">
-    </div>
-
-    <div id="lastCrashesContainer">
-        <p>Last Crashes:</p>
-        <div id="lastCrashes"></div>
-    </div>
       </section>
 
       <section id="howToPlay" class="how-to-play" style="margin-top: 30px; padding: 15px; color: white; border-radius: 15px; max-width: 480px;">

@@ -414,7 +414,7 @@ button#play-button:active {
 
 @media (max-width: 530px) {
   html.sidebar-expanded #chicken-section {
-    display: none;
+    /* Removed display: none to allow on small screens */
   }
   html.sidebar-expanded .how-to-play {
     display: none;
@@ -429,7 +429,7 @@ button#play-button:active {
 
 @media (max-width: 380px) {
   html.sidebar-collapsed #chicken-section {
-    display: none;
+    /* Removed display: none to allow on small screens */
   }
   html.sidebar-collapsed .how-to-play {
     display: none;

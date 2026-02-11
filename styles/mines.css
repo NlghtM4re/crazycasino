@@ -371,15 +371,3 @@
     height: 45px;
   }
 }
-
-@media (max-width:550px){
-  html.sidebar-expanded #mines-section{
-    display: none;
-  }
-}
-
-@media (max-width:380px){
-  html.sidebar-collapsed #mines-section{
-    display: none;
-  }
-}

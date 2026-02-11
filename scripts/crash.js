@@ -89,7 +89,7 @@ function updateCurve() {
         ctx.translate(crashPosition.x, crashPosition.y);
         ctx.rotate(crashAngle);
         ctx.font = '30px Arial';
-        ctx.fillText('💥', 0, 0);
+        ctx.fillText( 0, 0);
         ctx.restore();
     }
 }
@@ -116,8 +116,8 @@ function crashCurve() {
     const crashLog = document.createElement("div");
     crashLog.classList.add("crash-entry");
     crashLog.innerHTML = `
-        <span>💥 ${finalMultiplier.toFixed(2)}x</span>
-        <span>🎲 Bet: ${betAmount.toFixed(2)}</span>
+        <span>${finalMultiplier.toFixed(2)}x</span>
+        <span>${betAmount.toFixed(2)}</span>
         <span>${win ? `+${profit.toFixed(2)}` : `-${betAmount.toFixed(2)}`}</span>
     `;
     crashLog.style.color = win ? "lime" : "red";

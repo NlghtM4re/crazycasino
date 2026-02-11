@@ -19,6 +19,16 @@
 </script>
 </head>
 <body>
+  <!-- Mobile Block Overlay -->
+  <div id="mobile-block-overlay" class="mobile-block-overlay" style="display: none;">
+    <div class="mobile-block-content">
+      <div class="mobile-block-icon">🖥️</div>
+      <h2>Desktop Only</h2>
+      <p>This website is currently unavailable on mobile devices.</p>
+      <p>Please visit us from a computer to access all features.</p>
+    </div>
+  </div>
+  
   <div class="app">
     <aside class="sidebar">
         <nav>
@@ -100,6 +110,7 @@
               <div class="stockmarket-graph-container">
                 <div class="graph-header">
                   <div class="time-filter-buttons">
+                    <button class="slow-time-btn" onclick="slowTime()" title="Slow time to 1000ms">⏱️ Slow Down Time</button>
                     <button class="time-filter-btn active" onclick="setTimeFilter(10)">10s</button>
                     <button class="time-filter-btn" onclick="setTimeFilter(60)">1m</button>
                     <button class="time-filter-btn" onclick="setTimeFilter(600)">10m</button>

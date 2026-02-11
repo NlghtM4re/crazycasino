@@ -132,6 +132,27 @@
   justify-content: flex-start;
   align-items: center;
   margin-bottom: 12px;
+  gap: 12px;
+}
+
+/* Slow time button */
+.slow-time-btn {
+  padding: 6px 12px;
+  background-color: #0ea5e9;
+  color: #cbd5e1;
+  border: 1px solid #3e3e5a;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.slow-time-btn:hover {
+  background-color: #0984bc;
+  color: #012;
+  background-color: #0984bc;
 }
 
 .graph-title {

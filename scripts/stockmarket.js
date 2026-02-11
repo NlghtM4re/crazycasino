@@ -170,6 +170,12 @@ function updateIntervalValue() {
   }
 }
 
+// Slow time to 1000ms
+function slowTime() {
+  document.getElementById('update-interval').value = 1000;
+  updateIntervalValue();
+}
+
 // Restart animation with new interval
 function restartAnimation() {
   if (animationId) {

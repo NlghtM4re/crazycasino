@@ -118,12 +118,12 @@
 
 @media (max-width: 500px) {
     html.sidebar-expanded #slot-section {
-        display: none;
+        /* Removed display: none to allow on small screens */
     }
 }
 
 @media (max-width: 340px) {
     html.sidebar-collapsed #slot-section {
-        display: none;
+        /* Removed display: none to allow on small screens */
     }
 }

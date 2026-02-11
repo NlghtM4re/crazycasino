@@ -75,3 +75,59 @@
     font-size: 14px;
     margin-top: 20px;
 }
+
+/* Mobile responsive - 2 columns on mobile */
+@media (max-width: 768px) {
+    .games-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+        height: auto;
+    }
+    
+    .game-card {
+        border: 2px solid #475773;
+    }
+    
+    .game-icon {
+        font-size: 36px;
+        padding: 10px;
+    }
+    
+    .game-card h3 {
+        font-size: 16px;
+        padding: 10px;
+    }
+    
+    .game-card p {
+        font-size: 11px;
+        padding: 8px;
+    }
+    
+    .game-card span {
+        font-size: 12px;
+        padding: 10px;
+    }
+}
+
+@media (max-width: 480px) {
+    .games-section h2 {
+        font-size: 20px;
+        margin: 15px 0;
+    }
+    
+    .games-grid {
+        gap: 10px;
+    }
+    
+    .game-icon {
+        font-size: 32px;
+    }
+    
+    .game-card h3 {
+        font-size: 14px;
+    }
+    
+    .game-card p {
+        font-size: 10px;
+    }
+}
