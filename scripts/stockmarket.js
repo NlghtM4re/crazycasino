@@ -869,6 +869,7 @@ function resetGraph() {
 
 // Update credits (from main.js)
 function updateCredits(amount) {
-  document.getElementById('credits').textContent = Math.floor(amount);
-  localStorage.setItem('credits', Math.floor(amount));
+  const formattedAmount = parseFloat(amount.toFixed(2));
+  document.getElementById('credits').textContent = formattedAmount.toLocaleString("en-US", {minimumFractionDigits: 2, maximumFractionDigits: 2});
+  localStorage.setItem('credits', formattedAmount.toFixed(2));
 }

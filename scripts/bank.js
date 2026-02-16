@@ -16,9 +16,9 @@ function takeLoan() {
     localStorage.setItem("dept", dept);
     localStorage.setItem("credits", credits);
 
-    document.getElementById("credits").textContent = credits.toFixed(2);
-    document.getElementById("debt").textContent = dept.toFixed(2);
-    document.getElementById("maxLoan").textContent = maxLoan().toFixed(2);
+    document.getElementById("credits").textContent = credits.toLocaleString("en-US", {minimumFractionDigits: 2, maximumFractionDigits: 2});
+    document.getElementById("debt").textContent = dept.toLocaleString("en-US", {minimumFractionDigits: 2, maximumFractionDigits: 2});
+    document.getElementById("maxLoan").textContent = maxLoan().toLocaleString("en-US", {minimumFractionDigits: 2, maximumFractionDigits: 2});
 }
 
 function payLoan() {
@@ -44,9 +44,9 @@ function payLoan() {
     localStorage.setItem("dept", dept);
     localStorage.setItem("credits", credits);
 
-    document.getElementById("credits").textContent = credits.toFixed(2);
-    document.getElementById("debt").textContent = dept.toFixed(2);
-    document.getElementById("maxLoan").textContent = maxLoan().toFixed(2);
+    document.getElementById("credits").textContent = credits.toLocaleString("en-US", {minimumFractionDigits: 2, maximumFractionDigits: 2});
+    document.getElementById("debt").textContent = dept.toLocaleString("en-US", {minimumFractionDigits: 2, maximumFractionDigits: 2});
+    document.getElementById("maxLoan").textContent = maxLoan().toLocaleString("en-US", {minimumFractionDigits: 2, maximumFractionDigits: 2});
 
     alert(`You successfully paid $${paymentAmount.toFixed(2)} towards your loan.`);
 }
@@ -54,8 +54,8 @@ function payLoan() {
 function updateBankCredit(amount){
     bankCredits += amount;
     localStorage.setItem("bankCredits", bankCredits);
-    document.getElementById("bankCreditsDisplay").textContent = bankCredits.toFixed(2);
-    document.getElementById("credits").textContent = credits.toFixed(2);
+    document.getElementById("bankCreditsDisplay").textContent = bankCredits.toLocaleString("en-US", {minimumFractionDigits: 2, maximumFractionDigits: 2});
+    document.getElementById("credits").textContent = credits.toLocaleString("en-US", {minimumFractionDigits: 2, maximumFractionDigits: 2});
     
 }
 
@@ -88,11 +88,11 @@ function maxLoan(){
 }
 
 function updateMaxLoanDisplay() {
-    document.getElementById("maxLoan").textContent = maxLoan().toFixed(2);
+    document.getElementById("maxLoan").textContent = maxLoan().toLocaleString("en-US", {minimumFractionDigits: 2, maximumFractionDigits: 2});
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-    document.getElementById("bankCreditsDisplay").textContent = bankCredits.toFixed(2);
+    document.getElementById("bankCreditsDisplay").textContent = bankCredits.toLocaleString("en-US", {minimumFractionDigits: 2, maximumFractionDigits: 2});
     updateMaxLoanDisplay();
 });
 

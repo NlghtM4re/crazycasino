@@ -10,8 +10,8 @@ if (isNaN(dept)) {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-    document.getElementById("credits").textContent = credits.toFixed(2);
-    document.getElementById("debt").textContent = dept.toFixed(2);
+    document.getElementById("credits").textContent = credits.toLocaleString("en-US", {minimumFractionDigits: 2, maximumFractionDigits: 2});
+    document.getElementById("debt").textContent = dept.toLocaleString("en-US", {minimumFractionDigits: 2, maximumFractionDigits: 2});
 });
 
 let _raccoonState = false;
@@ -36,7 +36,7 @@ function payDept(amount) {
     if (amount < dept) {
         dept -= amount;
         localStorage.setItem("dept", dept.toFixed(2));
-        document.getElementById("debt").textContent = dept.toFixed(2);
+        document.getElementById("debt").textContent = dept.toLocaleString("en-US", {minimumFractionDigits: 2, maximumFractionDigits: 2});
     }
 
     return dept;
@@ -51,7 +51,7 @@ function updateCredits(amount) {
     credits += amount;
     credits = parseFloat(credits.toFixed(2)); 
     localStorage.setItem("credits", credits.toFixed(2)); 
-    document.getElementById("credits").textContent = credits.toFixed(2);
+    document.getElementById("credits").textContent = credits.toLocaleString("en-US", {minimumFractionDigits: 2, maximumFractionDigits: 2});
 }
 
 document.addEventListener("DOMContentLoaded", () => {
