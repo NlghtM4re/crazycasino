@@ -111,12 +111,12 @@
                 <div class="graph-header">
                   <div class="time-filter-buttons">
                     <button class="slow-time-btn" onclick="slowTime()" title="Slow time to 1000ms">⏱️ Slow Down Time</button>
-                    <button class="time-filter-btn active" onclick="setTimeFilter(10)">10s</button>
+                    <button class="time-filter-btn" onclick="setTimeFilter(10)">10s</button>
                     <button class="time-filter-btn" onclick="setTimeFilter(60)">1m</button>
                     <button class="time-filter-btn" onclick="setTimeFilter(600)">10m</button>
                     <button class="time-filter-btn" onclick="setTimeFilter(3600)">1h</button>
                     <button class="time-filter-btn" onclick="setTimeFilter(86400)">1d</button>
-                    <button class="time-filter-btn" onclick="setTimeFilter('all')">All</button>
+                    <button class="time-filter-btn active" onclick="setTimeFilter('all')">All</button>
                   </div>
                 </div>
                 <div class="canvas-wrapper">
@@ -130,14 +130,16 @@
                     <label for="buy-amount">Amount</label>
                     <div class="input-with-button">
                       <input type="number" id="buy-amount" min="0.01" step="0.1" value="1" oninput="updateBuyCost()" />
-                      <button class="max-btn" onclick="setMaxBuy()">MAX</button>
                     </div>
                   </div>
                   <div class="cost-display">
                     <span class="cost-label">Total Cost</span>
                     <span id="buy-cost-display" class="cost-value">$0.00</span>
                   </div>
-                  <button id="buy-btn" onclick="buyStock()" class="buy-button">📈 Buy Now</button>
+                  <div class="button-group">
+                    <button id="buy-btn" onclick="buyStock()" class="buy-button">📈 Buy Now</button>
+                    <button onclick="setMaxBuy(); buyStock();" class="buy-button">📈 Buy Max</button>
+                  </div>
                 </div>
 
                 <div class="sell-card" id="sell-group" style="display: none;">

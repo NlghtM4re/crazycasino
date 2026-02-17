@@ -5,7 +5,7 @@ let updateInterval = 200;
 let animationId;
 let currentValue = 0;
 let time = 0;
-let timeFilter = 'all'; // Default to all data
+let timeFilter = 'all'; // Default to all time
 
 // Portfolio tracking
 let portfolio = {
@@ -826,12 +826,18 @@ function getFilteredData() {
 
 // Reset graph function
 function resetGraph() {
+  // Check if user has any shares
+  if (portfolio.sharesOwned > 0) {
+    alert('You cannot reset the graph while you own shares. Please sell all your shares first.');
+    return;
+  }
+
   // Stop current animation
   if (animationId) {
     clearTimeout(animationId);
   }
   
-  // Reset all data
+  // Reset only graph data and portfolio (keep timeFilter and updateInterval)
   stockData = [];
   time = 0;
   portfolio = { sharesOwned: 0, buyPrice: 0, buyMarkers: [] };
@@ -839,13 +845,6 @@ function resetGraph() {
   
   // Hide sell section
   document.getElementById('sell-group').style.display = 'none';
-  
-  // Reset to default time filter (all)
-  timeFilter = 'all';
-  document.querySelectorAll('.time-filter-btn').forEach(btn => {
-    btn.classList.remove('active');
-  });
-  document.querySelectorAll('.time-filter-btn')[5].classList.add('active');
   
   // Reinitialize
   currentValue = 50 + Math.random() * 20;
@@ -857,8 +856,13 @@ function resetGraph() {
   
   time = 2;
   
-  // Clear localStorage
+  // Clear localStorage but preserve time filter and update interval settings
+  const savedTimeFilter = timeFilter;
+  const savedUpdateInterval = updateInterval;
   localStorage.removeItem('stockMarketState');
+  timeFilter = savedTimeFilter;
+  updateInterval = savedUpdateInterval;
+  updateInterval = savedUpdateInterval;
   
   // Update displays
   updatePortfolioDisplay();
