@@ -5,7 +5,7 @@ let updateInterval = 200;
 let animationId;
 let currentValue = 0;
 let time = 0;
-let timeFilter = 10; // Default to last 10 seconds
+let timeFilter = 'all'; // Default to all data
 
 // Portfolio tracking
 let portfolio = {
@@ -71,7 +71,7 @@ function loadState() {
       stockData = state.stockData || [];
       currentValue = state.currentValue || 50;
       time = state.time || 0;
-      timeFilter = state.timeFilter || 10;
+      timeFilter = state.timeFilter || 'all';
       updateInterval = state.updateInterval || 200;
       portfolio = state.portfolio || { sharesOwned: 0, buyPrice: 0, buyMarkers: [] };
       sellMarkers = state.sellMarkers || [];
@@ -840,12 +840,12 @@ function resetGraph() {
   // Hide sell section
   document.getElementById('sell-group').style.display = 'none';
   
-  // Reset to default time filter
-  timeFilter = 10;
+  // Reset to default time filter (all)
+  timeFilter = 'all';
   document.querySelectorAll('.time-filter-btn').forEach(btn => {
     btn.classList.remove('active');
   });
-  document.querySelectorAll('.time-filter-btn')[0].classList.add('active');
+  document.querySelectorAll('.time-filter-btn')[5].classList.add('active');
   
   // Reinitialize
   currentValue = 50 + Math.random() * 20;
