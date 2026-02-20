@@ -129,7 +129,7 @@
                   <div class="setting-row">
                     <label for="buy-amount">Amount</label>
                     <div class="input-with-button">
-                      <input type="number" id="buy-amount" min="0.01" step="0.1" value="1" oninput="updateBuyCost()" />
+                      <input type="number" id="buy-amount" min="0.0001" step="0.0001" value="1.0000" oninput="updateBuyCost()" />
                     </div>
                   </div>
                   <div class="cost-display">
@@ -137,52 +137,22 @@
                     <span id="buy-cost-display" class="cost-value">$0.00</span>
                   </div>
                   <div class="button-group">
-                    <button id="buy-btn" onclick="buyStock()" class="buy-button">📈 Buy Now</button>
-                    <button onclick="setMaxBuy(); buyStock();" class="buy-button">📈 Buy Max</button>
+                    <button id="buy-btn" onclick="buyStock()" class="buy-button">Buy Now</button>
+                    <button onclick="setMaxBuy(); buyStock();" class="buy-button">Buy Max</button>
                   </div>
                 </div>
 
-                <div class="sell-card" id="sell-group" style="display: none;">
+                <div class="sell-card" id="sell-group">
                   <h4 class="card-title">📉 Sell Shares</h4>
-                  <div class="sell-percentage-buttons">
-                    <button onclick="setSellPercentage(25)" class="percentage-btn">25%</button>
-                    <button onclick="setSellPercentage(50)" class="percentage-btn">50%</button>
-                    <button onclick="setSellPercentage(75)" class="percentage-btn">75%</button>
-                    <button onclick="setSellPercentage(100)" class="percentage-btn">100%</button>
-                  </div>
                   <div class="setting-row">
                     <label for="sell-amount">Amount</label>
-                    <input type="number" id="sell-amount" min="0.01" step="0.01" value="0" />
+                    <div class="input-with-button">
+                      <input type="number" id="sell-amount" min="0.0001" step="0.0001" value="0.0000" />
+                    </div>
                   </div>
-                  <div class="sell-buttons-row">
-                    <button id="sell-all-btn" onclick="sellAllStock()" class="sell-button">Sell All</button>
-                    <button id="sell-custom-btn" onclick="sellCustomStock()" class="sell-button-secondary">Sell Custom</button>
-                  </div>
-                </div>
-
-                <div class="portfolio-card">
-                  <h4 class="card-title">📊 Your Portfolio</h4>
-                  <div class="portfolio-stats">
-                    <div class="portfolio-row">
-                      <span class="portfolio-label">Shares Owned</span>
-                      <span id="shares-owned" class="portfolio-value">0</span>
-                    </div>
-                    <div class="portfolio-row">
-                      <span class="portfolio-label">Avg Buy Price</span>
-                      <span id="buy-price" class="portfolio-value">$0.00</span>
-                    </div>
-                    <div class="portfolio-row highlight">
-                      <span class="portfolio-label">Current Price</span>
-                      <span id="current-price-value" class="portfolio-value">$0.00</span>
-                    </div>
-                    <div class="portfolio-row profit-loss">
-                      <span class="portfolio-label">Profit/Loss</span>
-                      <span id="profit-loss" class="portfolio-value">$0.00</span>
-                    </div>
-                    <div class="portfolio-row total">
-                      <span class="portfolio-label">Total Value</span>
-                      <span id="total-value" class="portfolio-value-large">$0.00</span>
-                    </div>
+                  <div class="button-group">
+                    <button onclick="sellCustomStock()" class="sell-button">Sell Now</button>
+                    <button onclick="setSellMax(); sellCustomStock();" class="sell-button">Sell Max</button>
                   </div>
                 </div>
 

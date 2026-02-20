@@ -6,6 +6,7 @@ let animationId;
 let currentValue = 0;
 let time = 0;
 let timeFilter = 'all'; // Default to all time
+let resizeTimeout; // Debounce timer for resize events
 
 // Portfolio tracking
 let portfolio = {
@@ -112,7 +113,11 @@ function initializeStockMarket() {
 
   // Set canvas size
   resizeCanvas();
-  window.addEventListener('resize', resizeCanvas);
+  window.addEventListener('resize', () => {
+    // Debounce resize events to prevent excessive redraws
+    clearTimeout(resizeTimeout);
+    resizeTimeout = setTimeout(resizeCanvas, 150);
+  });
 
   // Load lifetime stats
   loadLifetimeStats();
@@ -138,7 +143,7 @@ function initializeStockMarket() {
   
   // Show/hide sell section based on shares
   if (portfolio.sharesOwned > 0) {
-    document.getElementById('sell-group').style.display = 'block';
+    // Sell section always visible now
   }
 
   // Start the graph animation immediately
@@ -151,29 +156,43 @@ function initializeStockMarket() {
 // Resize canvas to fill container
 function resizeCanvas() {
   const container = canvas.parentElement;
+  if (!container) return;
+  
   canvas.width = container.clientWidth;
   canvas.height = container.clientHeight;
+  
+  // Redraw after resize
   drawGraph();
 }
 
 // Update interval instantly
 function updateIntervalValue() {
-  const newInterval = parseInt(document.getElementById('update-interval').value);
-  if (newInterval > 0) {
-    updateInterval = newInterval;
-    
-    // Calculate in-game time per real second
-    const inGamePerSecond = (1000 / newInterval).toFixed(1);
-    document.getElementById('time-conversion').textContent = `1 real-time second = ${inGamePerSecond} in-game seconds`;
-    
-    restartAnimation();
+  const updateIntervalEl = document.getElementById('update-interval');
+  const timeConversionEl = document.getElementById('time-conversion');
+  
+  if (updateIntervalEl) {
+    const newInterval = parseInt(updateIntervalEl.value);
+    if (newInterval > 0) {
+      updateInterval = newInterval;
+      
+      // Calculate in-game time per real second
+      const inGamePerSecond = (1000 / newInterval).toFixed(1);
+      if (timeConversionEl) {
+        timeConversionEl.textContent = `1 real-time second = ${inGamePerSecond} in-game seconds`;
+      }
+      
+      restartAnimation();
+    }
   }
 }
 
 // Slow time to 1000ms
 function slowTime() {
-  document.getElementById('update-interval').value = 1000;
-  updateIntervalValue();
+  const updateIntervalEl = document.getElementById('update-interval');
+  if (updateIntervalEl) {
+    updateIntervalEl.value = 1000;
+    updateIntervalValue();
+  }
 }
 
 // Restart animation with new interval
@@ -225,6 +244,7 @@ function startGraphUpdate() {
     });
 
     time++;
+    
     drawGraph();
     animationId = setTimeout(update, updateInterval);
   };
@@ -264,20 +284,20 @@ function openStatsModal() {
     ? ((lifetimeStats.profitableTrades / lifetimeStats.totalTrades) * 100).toFixed(1) 
     : 0;
   const avgProfit = lifetimeStats.totalTrades > 0 
-    ? (lifetimeStats.totalProfit / lifetimeStats.totalTrades).toFixed(2) 
+    ? (lifetimeStats.totalProfit / lifetimeStats.totalTrades).toFixed(4) 
     : 0;
   
   // Update all stat values in modal
-  document.getElementById('stat-total-profit').textContent = lifetimeStats.totalProfit.toFixed(2);
+  document.getElementById('stat-total-profit').textContent = lifetimeStats.totalProfit.toFixed(4);
   document.getElementById('stat-total-profit').style.color = lifetimeStats.totalProfit >= 0 ? '#4ade80' : '#f87171';
-  document.getElementById('stat-total-invested').textContent = lifetimeStats.totalInvested.toFixed(2);
-  document.getElementById('stat-shares-bought').textContent = lifetimeStats.sharesBought.toFixed(2);
-  document.getElementById('stat-shares-sold').textContent = lifetimeStats.sharesSold.toFixed(2);
+  document.getElementById('stat-total-invested').textContent = lifetimeStats.totalInvested.toFixed(4);
+  document.getElementById('stat-shares-bought').textContent = lifetimeStats.sharesBought.toFixed(4);
+  document.getElementById('stat-shares-sold').textContent = lifetimeStats.sharesSold.toFixed(4);
   document.getElementById('stat-total-trades').textContent = lifetimeStats.totalTrades;
   document.getElementById('stat-profitable-trades').textContent = lifetimeStats.profitableTrades;
-  document.getElementById('stat-biggest-win').textContent = lifetimeStats.biggestWin.toFixed(2);
+  document.getElementById('stat-biggest-win').textContent = lifetimeStats.biggestWin.toFixed(4);
   document.getElementById('stat-biggest-win').style.color = '#4ade80';
-  document.getElementById('stat-biggest-loss').textContent = lifetimeStats.biggestLoss.toFixed(2);
+  document.getElementById('stat-biggest-loss').textContent = lifetimeStats.biggestLoss.toFixed(4);
   document.getElementById('stat-biggest-loss').style.color = '#f87171';
   document.getElementById('stat-win-rate').textContent = winRate + '%';
   document.getElementById('stat-avg-profit').textContent = avgProfit;
@@ -478,7 +498,11 @@ function drawDataLine(padding, graphWidth, graphHeight) {
     }
     
     const valueLabel = lastPoint.value < 0.01 ? lastPoint.value.toExponential(1) : lastPoint.value.toFixed(decimals);
-    ctx.fillText(`${valueLabel}¢`, x, y - 18);
+    
+    // Position label above or below based on available space
+    const labelOffset = 25;
+    const textY = y < padding + 40 ? y + labelOffset : y - labelOffset;
+    ctx.fillText(`${valueLabel}¢`, x, textY);
   }
 
   // Draw buy markers
@@ -533,7 +557,9 @@ function drawDataLine(padding, graphWidth, graphHeight) {
     ctx.fillText(`SELL: ${priceLabel}¢`, padding + 5, markerY + 12);
   }
 
+  // Clear line dash
   ctx.setLineDash([]);
+
 }
 
 // Initialize when page loads
@@ -551,7 +577,7 @@ function buyStock() {
   }
   
   if (credits < costInCredits) {
-    alert('Not enough credits. You need ' + costInCredits.toFixed(2) + ' but only have ' + credits.toFixed(2));
+    alert('Not enough credits. You need ' + costInCredits.toFixed(4) + ' but only have ' + credits.toFixed(4));
     return;
   }
   
@@ -582,8 +608,7 @@ function buyStock() {
   
   // Update UI
   updatePortfolioDisplay();
-  document.getElementById('sell-group').style.display = 'block';
-  document.getElementById('buy-amount').value = 1;
+  document.getElementById('buy-amount').value = 1.00;
 }
 
 // Sell all stock function
@@ -667,30 +692,40 @@ function sellCustomStock() {
   // Hide sell group if all sold, but keep markers
   if (portfolio.sharesOwned < 0.01) { // Account for floating point precision
     portfolio.sharesOwned = 0;
-    document.getElementById('sell-group').style.display = 'none';
+    // Sell section now always visible
   }
   // Keep both buy and sell markers until next buy
   
   // Update UI
   updatePortfolioDisplay();
-  document.getElementById('sell-amount').value = 0;
+  document.getElementById('sell-amount').value = 0.00;
 }
 
 // Set sell amount by percentage
 function setSellPercentage(percentage) {
-  const amount = (portfolio.sharesOwned * percentage / 100).toFixed(2);
+  const amount = (portfolio.sharesOwned * percentage / 100).toFixed(4);
   document.getElementById('sell-amount').value = amount;
+}
+
+// Set sell max amount
+function setSellMax() {
+  const sellAmountEl = document.getElementById('sell-amount');
+  if (sellAmountEl) {
+    sellAmountEl.value = portfolio.sharesOwned.toFixed(4);
+  }
 }
 
 // Update portfolio display
 function updatePortfolioDisplay() {
-  document.getElementById('shares-owned').textContent = portfolio.sharesOwned.toFixed(2);
-  document.getElementById('buy-price').textContent = '$' + portfolio.buyPrice.toFixed(2);
+  const sharesEl = document.getElementById('shares-owned');
+  const buyPriceEl = document.getElementById('buy-price');
+  if (sharesEl) sharesEl.textContent = portfolio.sharesOwned.toFixed(4);
+  if (buyPriceEl) buyPriceEl.textContent = '$' + portfolio.buyPrice.toFixed(4);
   
   // Update current price display
   const currentPriceEl = document.getElementById('current-price-value');
   if (currentPriceEl) {
-    currentPriceEl.textContent = '$' + currentValue.toFixed(2);
+    currentPriceEl.textContent = '$' + currentValue.toFixed(4);
   }
   
   // Calculate profit/loss
@@ -701,7 +736,7 @@ function updatePortfolioDisplay() {
   // Update profit/loss display
   const profitLossEl = document.getElementById('profit-loss');
   if (profitLossEl) {
-    const profitLossText = (profitLoss >= 0 ? '+$' : '-$') + Math.abs(profitLoss).toFixed(2);
+    const profitLossText = (profitLoss >= 0 ? '+$' : '-$') + Math.abs(profitLoss).toFixed(4);
     profitLossEl.textContent = profitLossText;
     
     // Color based on profit/loss
@@ -715,7 +750,7 @@ function updatePortfolioDisplay() {
   // Update total value display
   const totalValueEl = document.getElementById('total-value');
   if (totalValueEl) {
-    totalValueEl.textContent = '$' + totalValue.toFixed(2);
+    totalValueEl.textContent = '$' + totalValue.toFixed(4);
     
     // Color based on profit/loss
     if (portfolio.sharesOwned > 0) {
@@ -729,11 +764,14 @@ function updatePortfolioDisplay() {
     }
   }
   
-  // Update buy amount cost display
+  // Update buy cost display
   const buyAmountInput = document.getElementById('buy-amount');
-  const buyAmount = parseFloat(buyAmountInput.value) || 0;
-  const costInCredits = buyAmount * currentValue;
-  document.getElementById('buy-cost-display').textContent = '$' + costInCredits.toFixed(2);
+  const buyCostDisplay = document.getElementById('buy-cost-display');
+  if (buyAmountInput && buyCostDisplay) {
+    const buyAmount = parseFloat(buyAmountInput.value) || 0;
+    const costInCredits = buyAmount * currentValue;
+    buyCostDisplay.textContent = '$' + costInCredits.toFixed(2);
+  }
   
   // Update header stats
   updateHeaderStats();
@@ -744,7 +782,7 @@ function updateHeaderStats() {
   // Update current stock price in header
   const headerPriceElement = document.getElementById('header-price');
   if (headerPriceElement) {
-    headerPriceElement.textContent = '$' + currentValue.toFixed(2);
+    headerPriceElement.textContent = '$' + currentValue.toFixed(4);
   }
   
   // Calculate change since start
@@ -752,7 +790,7 @@ function updateHeaderStats() {
   if (headerChangeElement && stockData.length > 0) {
     const firstValue = stockData[0].value;
     const changePercent = ((currentValue - firstValue) / firstValue) * 100;
-    const changeText = (changePercent >= 0 ? '+' : '') + changePercent.toFixed(2) + '%';
+    const changeText = (changePercent >= 0 ? '+' : '') + changePercent.toFixed(4) + '%';
     headerChangeElement.textContent = changeText;
     
     // Update color based on positive/negative
@@ -769,7 +807,7 @@ function updateHeaderStats() {
   const headerPortfolioElement = document.getElementById('header-portfolio');
   if (headerPortfolioElement) {
     const totalValue = portfolio.sharesOwned * currentValue;
-    headerPortfolioElement.textContent = '$' + totalValue.toFixed(2);
+    headerPortfolioElement.textContent = '$' + totalValue.toFixed(4);
     
     // Color based on profit/loss
     if (portfolio.sharesOwned > 0) {
@@ -788,16 +826,23 @@ function updateHeaderStats() {
 // Set max buy amount
 function setMaxBuy() {
   const credits = parseFloat(localStorage.getItem('credits')) || 0;
-  const maxShares = Math.floor((credits / currentValue) * 100) / 100; // Round down to 2 decimals
-  document.getElementById('buy-amount').value = maxShares > 0 ? maxShares : 0;
+  const maxShares = Math.floor((credits / currentValue) * 10000) / 10000; // Round down to 4 decimals
+  const buyAmountEl = document.getElementById('buy-amount');
+  if (buyAmountEl) {
+    buyAmountEl.value = (maxShares > 0 ? maxShares : 0).toFixed(4);
+  }
   updateBuyCost();
 }
 
 // Update buy cost display
 function updateBuyCost() {
-  const buyAmount = parseFloat(document.getElementById('buy-amount').value) || 0;
-  const costInCredits = buyAmount * currentValue;
-  document.getElementById('buy-cost-display').textContent = costInCredits.toFixed(2) + '¢';
+  const buyAmountEl = document.getElementById('buy-amount');
+  const buyCostEl = document.getElementById('buy-cost-display');
+  if (buyAmountEl && buyCostEl) {
+    const buyAmount = parseFloat(buyAmountEl.value) || 0;
+    const costInCredits = buyAmount * currentValue;
+    buyCostEl.textContent = costInCredits.toFixed(4) + '¢';
+  }
 }
 
 // Set time filter for graph
@@ -844,7 +889,7 @@ function resetGraph() {
   sellMarkers = [];
   
   // Hide sell section
-  document.getElementById('sell-group').style.display = 'none';
+  // Sell section now always visible
   
   // Reinitialize
   currentValue = 50 + Math.random() * 20;
@@ -873,7 +918,7 @@ function resetGraph() {
 
 // Update credits (from main.js)
 function updateCredits(amount) {
-  const formattedAmount = parseFloat(amount.toFixed(2));
-  document.getElementById('credits').textContent = formattedAmount.toLocaleString("en-US", {minimumFractionDigits: 2, maximumFractionDigits: 2});
-  localStorage.setItem('credits', formattedAmount.toFixed(2));
+  const formattedAmount = parseFloat(amount.toFixed(4));
+  document.getElementById('credits').textContent = formattedAmount.toLocaleString("en-US", {minimumFractionDigits: 4, maximumFractionDigits: 4});
+  localStorage.setItem('credits', formattedAmount.toFixed(4));
 }
