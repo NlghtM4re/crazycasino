@@ -1,6 +1,6 @@
 const canvas = document.getElementById('game');
 const ctx = canvas.getContext('2d');
-ctx.strokeStyle = 'blue';
+ctx.strokeStyle = '#facc15';
 ctx.lineWidth = 2;
 
 let speed = 0.1;
@@ -13,11 +13,46 @@ let profitsTaken = false;
 let profitMultiplier = 0;
 let gameInProgress = false;
 let rocketPosition = { x: 0, y: 0 };
+let renderWidth = 0;
+let renderHeight = 0;
 
 const betAmountInput = document.getElementById('betAmount');
 const submitBetBtn = document.getElementById('submitBet');
 const takeProfitsBtn = document.getElementById('takeProfits');
 const messageBox = document.getElementById('messageBox'); 
+
+function resizeCanvas() {
+    const container = document.getElementById('gameContainer');
+    if (!container) return;
+
+    const { width, height } = container.getBoundingClientRect();
+    if (!width || !height) return;
+
+    const prevWidth = renderWidth || width;
+    const prevHeight = renderHeight || height;
+    renderWidth = width;
+    renderHeight = height;
+
+    const ratio = window.devicePixelRatio || 1;
+    canvas.width = Math.round(width * ratio);
+    canvas.height = Math.round(height * ratio);
+    canvas.style.width = `${width}px`;
+    canvas.style.height = `${height}px`;
+    ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+
+    if (curvePoints.length > 0 && (prevWidth !== width || prevHeight !== height)) {
+        const scaleX = width / prevWidth;
+        const scaleY = height / prevHeight;
+        curvePoints = curvePoints.map(point => ({
+            x: point.x * scaleX,
+            y: point.y * scaleY
+        }));
+        rocketPosition = {
+            x: rocketPosition.x * scaleX,
+            y: rocketPosition.y * scaleY
+        };
+    }
+}
 
 function updateCurvePoints() {
     elapsedTime += 16;
@@ -30,7 +65,7 @@ function updateCurvePoints() {
 
     const lastPoint = curvePoints[curvePoints.length - 1];
     const newX = lastPoint.x + currentSpeed;
-    const newY = canvas.height - (Math.pow(newX, 1.75) / 100);
+    const newY = renderHeight - (Math.pow(newX, 1.75) / 100);
     curvePoints.push({ x: newX, y: newY });
 
     const multiplier = newX / 100;
@@ -54,12 +89,22 @@ function updateCurvePoints() {
 
 
 function updateCurve() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.clearRect(0, 0, renderWidth, renderHeight);
     ctx.beginPath();
+
+    ctx.strokeStyle = '#facc15';
+    ctx.lineWidth = 2;
+
+    const lineOffsetX = 6;
+    const lineOffsetY = -6;
+
+    if (curvePoints.length > 0) {
+        ctx.moveTo(curvePoints[0].x + lineOffsetX, curvePoints[0].y + lineOffsetY);
+    }
 
     for (let i = 0; i < curvePoints.length; i++) {
         const { x, y } = curvePoints[i];
-        ctx.lineTo(x, y);
+        ctx.lineTo(x + lineOffsetX, y + lineOffsetY);
     }
 
     ctx.stroke();
@@ -73,13 +118,16 @@ function updateCurve() {
             const angle = Math.atan2(deltaY, deltaX) + Math.PI / 4;
 
             ctx.save();
-            ctx.translate(lastPoint.x, lastPoint.y);
+            ctx.translate(lastPoint.x + lineOffsetX, lastPoint.y + lineOffsetY);
             ctx.rotate(angle);
             ctx.font = '30px Arial';
             ctx.fillText('🚀', 0, -10);
             ctx.restore();
 
-            rocketPosition = { x: lastPoint.x, y: lastPoint.y };
+            rocketPosition = {
+                x: lastPoint.x + lineOffsetX,
+                y: lastPoint.y + lineOffsetY - 6
+            };
         }
     } else {
         const crashPosition = { x: rocketPosition.x, y: rocketPosition.y - 10 };
@@ -89,7 +137,7 @@ function updateCurve() {
         ctx.translate(crashPosition.x, crashPosition.y);
         ctx.rotate(crashAngle);
         ctx.font = '30px Arial';
-        ctx.fillText( 0, 0);
+        ctx.fillText('💥', 0, 0);
         ctx.restore();
     }
 }
@@ -178,6 +226,8 @@ function setMaxBet() {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
     submitBetBtn.disabled = false;
     takeProfitsBtn.disabled = true;
 });

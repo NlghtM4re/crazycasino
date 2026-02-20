@@ -104,6 +104,10 @@
               <div class="stat-card-label">Portfolio Value</div>
               <div class="stat-card-value" id="header-portfolio">$0.00</div>
             </div>
+            <div class="market-stat-card">
+              <div class="stat-card-label">Shares Owned</div>
+              <div class="stat-card-value" id="header-shares">0.0000</div>
+            </div>
           </div>
         </div>
             <div class="game-box stockmarket-container">
@@ -115,6 +119,8 @@
                     <button class="time-filter-btn" onclick="setTimeFilter(60)">1m</button>
                     <button class="time-filter-btn" onclick="setTimeFilter(600)">10m</button>
                     <button class="time-filter-btn" onclick="setTimeFilter(3600)">1h</button>
+                    <button class="time-filter-btn" onclick="setTimeFilter(21600)">6h</button>
+                    <button class="time-filter-btn" onclick="setTimeFilter(43200)">12h</button>
                     <button class="time-filter-btn" onclick="setTimeFilter(86400)">1d</button>
                     <button class="time-filter-btn active" onclick="setTimeFilter('all')">All</button>
                   </div>

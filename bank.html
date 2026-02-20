@@ -80,8 +80,8 @@
       </div>
     </div>
 
-    <main class="main-content" style="text-align: left; align-items: center;">
-
+    <main class="main-content" style="text-align: left; align-items: left;">
+      <h3 style="margin: 0; display: flex;">Bank</h3>
       <section id="loan-section">
         <!--<div class="bank">
           <h2>Bank</h2>
@@ -102,6 +102,62 @@
           <label for="payment-amount">Payment Amount</label>
           <input type="number" id="payment-amount" min="0" />
           <button onclick="payLoan()">Pay Loan</button>
+        </div>
+      </section>
+
+      <section id="loan-info-section" class="info-section" style="padding: 20px; background-color: #1a1f3a; border-radius: 12px;">
+        <h3 style="color: #10b981; margin-top: 0;">How the Loan System Works</h3>
+        
+        <div style="display: grid; grid-template-columns: 1fr; gap: 20px; color: #cbd5e1; line-height: 1.8;">
+          <div>
+            <h4 style="color: #60a5fa;">Requirements for Taking a Loan</h4>
+            <ul style="margin: 10px 0; padding-left: 20px;">
+              <li>You can <strong>only take a loan</strong> when your total credits (in pocket + in bank) is <strong>less than 100</strong></li>
+              <li>When you take a loan, the full amount is added to both your <strong>credits</strong> and your <strong>debt</strong></li>
+              <li>You keep the loan balance as spending credits immediately</li>
+            </ul>
+          </div>
+
+          <div>
+            <h4 style="color: #60a5fa;">How the Max Loan is Calculated</h4>
+            <p style="margin: 10px 0; padding: 10px; background-color: rgba(96, 165, 250, 0.1); border-left: 3px solid #60a5fa; border-radius: 4px;">
+              <strong>Formula:</strong> Maximum Loan = 1000 ÷ 2<sup>(Debt ÷ 1000)</sup>
+            </p>
+            <ul style="margin: 10px 0; padding-left: 20px;">
+              <li><strong>Starting with 0 debt:</strong> You can borrow up to <strong>$1000</strong></li>
+              <li><strong>As debt increases:</strong> The maximum loan amount <strong>decreases exponentially</strong></li>
+              <li><strong>Example progression:</strong>
+                <ul style="margin: 5px 0; padding-left: 20px;">
+                  <li>$0 debt → Max loan: $1000</li>
+                  <li>$1000 debt → Max loan: $500</li>
+                  <li>$2000 debt → Max loan: $250</li>
+                  <li>$3000 debt → Max loan: $125</li>
+                </ul>
+              </li>
+              <li>This forces you to <strong>pay back debt gradually</strong> to access new loans</li>
+            </ul>
+          </div>
+
+          <div>
+            <h4 style="color: #60a5fa;">How Payment Works</h4>
+            <ul style="margin: 10px 0; padding-left: 20px;">
+              <li>To pay back your loan, use the <strong>Payment Amount</strong> input</li>
+              <li>Enter any amount and click <strong>Pay Loan</strong></li>
+              <li>Your credits are deducted and debt is reduced by the same amount (1:1 ratio)</li>
+              <li>You can pay any amount up to your current credit balance and remaining debt</li>
+              <li><strong>No interest charges</strong> – you only pay back what you borrowed</li>
+            </ul>
+          </div>
+
+          <div>
+            <h4 style="color: #60a5fa;">Strategy Tips</h4>
+            <ul style="margin: 10px 0; padding-left: 20px;">
+              <li><strong>Early stage:</strong> Borrow the full $1000 to bootstrap your games quickly</li>
+              <li><strong>Compound effect:</strong> Win games → Get more credits → Pay debt gradually → Take more loans</li>
+              <li><strong>High debt = Low loans:</strong> Paying back debt early is essential for accessing future borrowing</li>
+              <li><strong>Risk management:</strong> Only borrow if you have a plan to repay (e.g., profitable game strategy)</li>
+            </ul>
+          </div>
         </div>
       </section>
     

@@ -352,11 +352,12 @@ function drawAxes(padding, graphWidth, graphHeight) {
   ctx.lineTo(padding + graphWidth, padding + graphHeight);
   ctx.stroke();
 
-  // Calculate dynamic min/max from data
+  // Calculate dynamic min/max from filtered data (not all data)
   let minValue = 0;
   let maxValue = 100;
-  if (stockData.length > 0) {
-    const allValues = stockData.map(d => d.value);
+  const filteredData = getFilteredData();
+  if (filteredData.length > 0) {
+    const allValues = filteredData.map(d => d.value);
     const dataMin = Math.min(...allValues);
     const dataMax = Math.max(...allValues);
     
@@ -778,48 +779,80 @@ function updatePortfolioDisplay() {
 }
 
 // Update header statistics
+// Get time filter label for display
+function getTimeFilterLabel() {
+  if (timeFilter === 'all') return 'All';
+  if (timeFilter === 10) return '10s';
+  if (timeFilter === 60) return '1m';
+  if (timeFilter === 600) return '10m';
+  if (timeFilter === 3600) return '1h';
+  if (timeFilter === 21600) return '6h';
+  if (timeFilter === 43200) return '12h';
+  if (timeFilter === 86400) return '1d';
+  return '24h';
+}
+
 function updateHeaderStats() {
-  // Update current stock price in header
-  const headerPriceElement = document.getElementById('header-price');
-  if (headerPriceElement) {
-    headerPriceElement.textContent = '$' + currentValue.toFixed(4);
-  }
-  
-  // Calculate change since start
-  const headerChangeElement = document.getElementById('header-change');
-  if (headerChangeElement && stockData.length > 0) {
-    const firstValue = stockData[0].value;
-    const changePercent = ((currentValue - firstValue) / firstValue) * 100;
-    const changeText = (changePercent >= 0 ? '+' : '') + changePercent.toFixed(4) + '%';
-    headerChangeElement.textContent = changeText;
-    
-    // Update color based on positive/negative
-    if (changePercent >= 0) {
-      headerChangeElement.classList.remove('negative');
-      headerChangeElement.style.color = '#10b981';
-    } else {
-      headerChangeElement.classList.add('negative');
-      headerChangeElement.style.color = '#ef4444';
+  try {
+    // Update current stock price in header
+    const headerPriceElement = document.getElementById('header-price');
+    if (headerPriceElement) {
+      headerPriceElement.textContent = '$' + currentValue.toFixed(4);
     }
-  }
-  
-  // Update portfolio value in header
-  const headerPortfolioElement = document.getElementById('header-portfolio');
-  if (headerPortfolioElement) {
-    const totalValue = portfolio.sharesOwned * currentValue;
-    headerPortfolioElement.textContent = '$' + totalValue.toFixed(4);
     
-    // Color based on profit/loss
-    if (portfolio.sharesOwned > 0) {
-      const profitLoss = totalValue - (portfolio.sharesOwned * portfolio.buyPrice);
-      if (profitLoss >= 0) {
-        headerPortfolioElement.style.color = '#10b981';
-      } else {
-        headerPortfolioElement.style.color = '#ef4444';
+    // Calculate change based on current time filter
+    const headerChangeElement = document.getElementById('header-change');
+    if (headerChangeElement) {
+      const filteredData = getFilteredData();
+      if (filteredData && filteredData.length > 0) {
+        const firstValue = filteredData[0].value;
+        const changePercent = ((currentValue - firstValue) / firstValue) * 100;
+        const changeText = (changePercent >= 0 ? '+' : '') + changePercent.toFixed(4) + '%';
+        headerChangeElement.textContent = changeText;
+        
+        // Update label based on time filter
+        const labelElement = headerChangeElement.parentElement.querySelector('.stat-card-label');
+        if (labelElement) {
+          labelElement.textContent = getTimeFilterLabel() + ' Change';
+        }
+        
+        // Update color based on positive/negative
+        if (changePercent >= 0) {
+          headerChangeElement.classList.remove('negative');
+          headerChangeElement.style.color = '#10b981';
+        } else {
+          headerChangeElement.classList.add('negative');
+          headerChangeElement.style.color = '#ef4444';
+        }
       }
-    } else {
-      headerPortfolioElement.style.color = '#10b981';
     }
+    
+    // Update portfolio value in header - ALWAYS UPDATE
+    const headerPortfolioElement = document.getElementById('header-portfolio');
+    if (headerPortfolioElement) {
+      const totalValue = portfolio.sharesOwned * currentValue;
+      headerPortfolioElement.textContent = '$' + totalValue.toFixed(4);
+      
+      // Color based on profit/loss
+      if (portfolio.sharesOwned > 0) {
+        const profitLoss = totalValue - (portfolio.sharesOwned * portfolio.buyPrice);
+        if (profitLoss >= 0) {
+          headerPortfolioElement.style.color = '#10b981';
+        } else {
+          headerPortfolioElement.style.color = '#ef4444';
+        }
+      } else {
+        headerPortfolioElement.style.color = '#10b981';
+      }
+    }
+    
+    // Update shares owned in header
+    const headerSharesElement = document.getElementById('header-shares');
+    if (headerSharesElement) {
+      headerSharesElement.textContent = portfolio.sharesOwned.toFixed(4);
+    }
+  } catch (error) {
+    console.error('Error in updateHeaderStats:', error);
   }
 }
 

@@ -9,6 +9,9 @@
 #loan-section .loan {
   flex: 1;
   min-width: 280px;
+  background-color: #1a1f3a;
+  border-radius: 12px;
+  padding: 20px;
 }
 
 #loan-section h2,

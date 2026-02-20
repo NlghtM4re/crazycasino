@@ -1,8 +1,13 @@
 .slot-game {
     text-align: center;
-    background-color: #0f172a;
-    margin: auto;
-    max-width: 800px;
+    background-color: #1a1f3a;
+    margin: 5px auto;
+    max-width: 900px;
+    padding: 20px 24px 24px;
+    border-radius: 16px;
+    box-shadow: 0 4px 32px rgba(0, 0, 0, 0.6);
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .slot-game h2 {
