@@ -6,7 +6,7 @@ if (isNaN(bankCredits)) {
 
 function takeLoan() {
     if (credits + bankCredits > 99) {
-        alert("You can only take a loan when you have less than 100 credits!");
+        showPopup("You can only take a loan when you have less than 100 credits!");
         return;
     }
 
@@ -24,17 +24,17 @@ function takeLoan() {
 function payLoan() {
     const paymentAmount = parseFloat(document.getElementById("payment-amount").value);
     if (isNaN(paymentAmount) || paymentAmount <= 0) {
-        alert("Invalid payment amount!");
+        showPopup("Invalid payment amount!");
         return;
     }
 
     if (paymentAmount > credits) {
-        alert("You don't have enough credits to make this payment!");
+        showPopup("You don't have enough credits to make this payment!");
         return;
     }
 
     if (paymentAmount > dept) {
-        alert("You are trying to pay more than your debt!");
+        showPopup("You are trying to pay more than your debt!");
         return;
     }
 
@@ -48,7 +48,7 @@ function payLoan() {
     document.getElementById("debt").textContent = dept.toLocaleString("en-US", {minimumFractionDigits: 2, maximumFractionDigits: 2});
     document.getElementById("maxLoan").textContent = maxLoan().toLocaleString("en-US", {minimumFractionDigits: 2, maximumFractionDigits: 2});
 
-    alert(`You successfully paid $${paymentAmount.toFixed(2)} towards your loan.`);
+    showPopup(`You successfully paid $${paymentAmount.toFixed(2)} towards your loan.`);
 }
 
 function updateBankCredit(amount){
@@ -66,7 +66,7 @@ function depositeBank() {
         updateBankCredit(amount);
         updateCredits(-amount)
     } else {
-        alert("Invalid amount.");
+        showPopup("Invalid amount.");
     }
 }
 
@@ -78,7 +78,7 @@ function takeBank(){
         updateBankCredit(-amount);
         updateCredits(amount)
     } else {
-        alert("Invalid amount.");
+        showPopup("Invalid amount.");
     }
 }
 

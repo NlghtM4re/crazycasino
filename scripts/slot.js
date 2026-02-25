@@ -19,7 +19,7 @@ function startSpin() {
     if (isSpinning) return;
     const betAmount = parseInt(document.getElementById("bet").value, 10);
     if (betAmount > credits || betAmount <= 0) {
-        alert("Invalid bet amount!");
+        showPopup("Invalid bet amount!");
         return;
     }
 

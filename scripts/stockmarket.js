@@ -573,12 +573,12 @@ function buyStock() {
   const costInCredits = buyAmount * currentValue;
   
   if (buyAmount <= 0 || isNaN(buyAmount)) {
-    alert('Please enter a valid amount');
+    showPopup('Please enter a valid amount');
     return;
   }
   
   if (credits < costInCredits) {
-    alert('Not enough credits. You need ' + costInCredits.toFixed(4) + ' but only have ' + credits.toFixed(4));
+    showPopup('Not enough credits. You need ' + costInCredits.toFixed(4) + ' but only have ' + credits.toFixed(4));
     return;
   }
   
@@ -615,7 +615,7 @@ function buyStock() {
 // Sell all stock function
 function sellAllStock() {
   if (portfolio.sharesOwned === 0) {
-    alert('You don\'t own any shares');
+    showPopup('You don\'t own any shares');
     return;
   }
   
@@ -656,12 +656,12 @@ function sellCustomStock() {
   const sellAmount = parseFloat(document.getElementById('sell-amount').value);
   
   if (sellAmount <= 0 || isNaN(sellAmount)) {
-    alert('Please enter a valid amount');
+    showPopup('Please enter a valid amount');
     return;
   }
   
   if (sellAmount > portfolio.sharesOwned) {
-    alert('You don\'t have that many shares');
+    showPopup('You don\'t have that many shares');
     return;
   }
   
@@ -906,7 +906,7 @@ function getFilteredData() {
 function resetGraph() {
   // Check if user has any shares
   if (portfolio.sharesOwned > 0) {
-    alert('You cannot reset the graph while you own shares. Please sell all your shares first.');
+    showPopup('You cannot reset the graph while you own shares. Please sell all your shares first.');
     return;
   }
 

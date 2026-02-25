@@ -180,7 +180,7 @@ function showWouldHaveDiedStep() {
 function startGame() {
     bet = parseFloat(betInput.value);
     if (isNaN(bet) || bet <= 0 || bet > credits) {
-        alert("Invalid bet amount or insufficient credits!");
+        showPopup("Invalid bet amount or insufficient credits!");
         return;
     }
 
