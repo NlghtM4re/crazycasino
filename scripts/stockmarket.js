@@ -9,6 +9,32 @@ let time = 0;
 let timeFilter = 'all'; // Default to all time
 let resizeTimeout; // Debounce timer for resize events
 
+const MIN_UPDATE_INTERVAL = 50;
+const MAX_UPDATE_INTERVAL = 1000;
+const MAX_STOCK_VALUE = 1500;
+
+function clampUpdateInterval(interval) {
+  const parsed = parseInt(interval, 10);
+  if (!Number.isFinite(parsed)) return 200;
+  return Math.max(MIN_UPDATE_INTERVAL, Math.min(MAX_UPDATE_INTERVAL, parsed));
+}
+
+function sanitizePrice(value) {
+  const numeric = Number(value);
+  if (!Number.isFinite(numeric)) return 50;
+  return Math.max(0.000001, Math.min(MAX_STOCK_VALUE, numeric));
+}
+
+function sanitizeStockData(data) {
+  if (!Array.isArray(data)) return [];
+  return data
+    .filter(point => point && Number.isFinite(Number(point.value)) && Number.isFinite(Number(point.time)))
+    .map(point => ({
+      time: Number(point.time),
+      value: sanitizePrice(point.value)
+    }));
+}
+
 // Portfolio tracking
 let portfolio = {
   sharesOwned: 0,
@@ -70,13 +96,18 @@ function loadState() {
   if (saved) {
     try {
       const state = JSON.parse(saved);
-      stockData = state.stockData || [];
-      currentValue = state.currentValue || 50;
-      time = state.time || 0;
+      stockData = sanitizeStockData(state.stockData || []);
+      currentValue = sanitizePrice(state.currentValue || 50);
+      time = Number.isFinite(Number(state.time)) ? Number(state.time) : 0;
       timeFilter = state.timeFilter || 'all';
-      updateInterval = state.updateInterval || 200;
+      updateInterval = clampUpdateInterval(state.updateInterval || 200);
       portfolio = state.portfolio || { sharesOwned: 0, buyPrice: 0, buyMarkers: [] };
       sellMarkers = state.sellMarkers || [];
+
+      if (stockData.length > 0) {
+        currentValue = sanitizePrice(stockData[stockData.length - 1].value);
+        time = Math.max(time, stockData[stockData.length - 1].time + 1);
+      }
       
       // Restore input values
       if (document.getElementById('buy-amount')) {
@@ -86,7 +117,7 @@ function loadState() {
         document.getElementById('sell-amount').value = state.sellAmount || 0;
       }
       if (document.getElementById('update-interval')) {
-        document.getElementById('update-interval').value = state.updateInterval || 200;
+        document.getElementById('update-interval').value = updateInterval;
       }
       
       // Update active time filter button
@@ -153,7 +184,8 @@ function initializeStockMarket() {
     stockData.push({ time: 0, value: currentValue });
     
     // Add a second point so we can draw a line immediately
-    const change = (Math.random() - 0.5) * 3;
+    const rawChange = (Math.random() - 0.5) * 2 * getRiskMultiplier();
+    const change = limitPriceStep(rawChange, currentValue);
     currentValue = currentValue + change;
     stockData.push({ time: 1, value: currentValue });
     
@@ -193,18 +225,17 @@ function updateIntervalValue() {
   const timeConversionEl = document.getElementById('time-conversion');
   
   if (updateIntervalEl) {
-    const newInterval = parseInt(updateIntervalEl.value);
-    if (newInterval > 0) {
-      updateInterval = newInterval;
+    const newInterval = clampUpdateInterval(updateIntervalEl.value);
+    updateInterval = newInterval;
+    updateIntervalEl.value = String(newInterval);
       
-      // Calculate in-game time per real second
-      const inGamePerSecond = (1000 / newInterval).toFixed(1);
-      if (timeConversionEl) {
-        timeConversionEl.textContent = `1 real-time second = ${inGamePerSecond} in-game seconds`;
-      }
-      
-      restartAnimation();
+    // Calculate in-game time per real second
+    const inGamePerSecond = (1000 / newInterval).toFixed(1);
+    if (timeConversionEl) {
+      timeConversionEl.textContent = `1 real-time second = ${inGamePerSecond} in-game seconds`;
     }
+
+    restartAnimation();
   }
 }
 
@@ -250,8 +281,9 @@ function getRiskMultiplier() {
     // Exponential scaling for penny stocks ($0.01 - $20)
     priceMultiplier = Math.pow(currentValue / 20, 1.8) * 0.25;
   } else if (currentValue > 100) {
-    // Exponential scaling for high-priced stocks (above $100)
-    priceMultiplier = Math.pow(currentValue / 100, 1.6) * 1.2;
+    // Softer exponential scaling for high-priced stocks (above $100)
+    // Keeps high-value shares stable enough to remain above $100
+    priceMultiplier = Math.pow(currentValue / 100, 1.15) * 0.55;
   } else {
     // Normal range ($20-$100): reduced volatility to prevent big peaks
     // Softly scale based on distance from $50
@@ -277,6 +309,23 @@ function initializeRiskLevel() {
   setRiskLevel(savedLevel);
 }
 
+function limitPriceStep(change, price) {
+  const intervalFactor = clampUpdateInterval(updateInterval) / 200;
+  const maxStepRatio = Math.max(0.01, Math.min(0.1, 0.08 * intervalFactor));
+
+  let minStepFloor = 0.02;
+  if (price < 0.01) {
+    minStepFloor = 0.00005;
+  } else if (price < 1) {
+    minStepFloor = 0.0005;
+  }
+
+  const maxStep = Math.max(minStepFloor, Math.abs(price) * maxStepRatio);
+  if (change > maxStep) return maxStep;
+  if (change < -maxStep) return -maxStep;
+  return change;
+}
+
 // Start updating the graph
 function startGraphUpdate() {
   if (animationId) {
@@ -299,17 +348,18 @@ function startGraphUpdate() {
     
     // Add random component with momentum bias
     const randomComponent = (Math.random() - 0.5) * 2 * riskAdjustedMultiplier;
-    const change = (momentum * riskAdjustedMultiplier) + randomComponent;
+    const rawChange = (momentum * riskAdjustedMultiplier) + randomComponent;
+    const change = limitPriceStep(rawChange, currentValue);
     currentValue = currentValue + change;
     
-    // Keep value positive, minimum 0.01
-    if (currentValue < 0.01) {
-      currentValue = 0.01 + Math.random() * 0.1;
+    // Keep value positive with a tiny floor (no forced jump spikes)
+    if (currentValue < 0.000001) {
+      currentValue = 0.000001;
     }
     
-    // Cap at 100 to keep it reasonable
-    if (currentValue > 100) {
-      currentValue = 100 - Math.random() * 5;
+    // Hard clamp at very high values to avoid extreme startup spikes
+    if (currentValue > MAX_STOCK_VALUE) {
+      currentValue = MAX_STOCK_VALUE;
     }
     
     // Update portfolio display in real-time
@@ -1013,7 +1063,8 @@ function resetGraph() {
   currentValue = getRandomStartPrice();
   stockData.push({ time: 0, value: currentValue });
   
-  const change = (Math.random() - 0.5) * 3;
+  const rawChange = (Math.random() - 0.5) * 2 * getRiskMultiplier();
+  const change = limitPriceStep(rawChange, currentValue);
   currentValue = currentValue + change;
   stockData.push({ time: 1, value: currentValue });
   
