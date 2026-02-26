@@ -2,6 +2,7 @@
 let stockData = [];
 let canvas, ctx;
 let updateInterval = 200;
+let currentRiskLevel = 'normal'; // 'low', 'normal', 'high'
 let animationId;
 let currentValue = 0;
 let time = 0;
@@ -106,6 +107,24 @@ function loadState() {
   return false;
 }
 
+// Generate random starting price (can be very low or very high)
+function getRandomStartPrice() {
+  const rand = Math.random();
+  if (rand < 0.25) {
+    // Very low: $0.001 - $0.05
+    return Math.random() * 0.049 + 0.001;
+  } else if (rand < 0.5) {
+    // Low-mid: $0.05 - $20
+    return Math.random() * 19.95 + 0.05;
+  } else if (rand < 0.75) {
+    // Normal: $20 - $100
+    return Math.random() * 80 + 20;
+  } else {
+    // Very high: $100 - $500
+    return Math.random() * 400 + 100;
+  }
+}
+
 // Initialize the stock market graph
 function initializeStockMarket() {
   canvas = document.getElementById('stockmarket-canvas');
@@ -121,13 +140,16 @@ function initializeStockMarket() {
 
   // Load lifetime stats
   loadLifetimeStats();
+  
+  // Initialize risk level from localStorage
+  initializeRiskLevel();
 
   // Try to load saved state
   const loaded = loadState();
   
   if (!loaded || stockData.length === 0) {
     // Add initial data points to have a line to display
-    currentValue = 50 + Math.random() * 20;
+    currentValue = getRandomStartPrice();
     stockData.push({ time: 0, value: currentValue });
     
     // Add a second point so we can draw a line immediately
@@ -203,6 +225,58 @@ function restartAnimation() {
   startGraphUpdate();
 }
 
+// Set risk level and update UI
+function setRiskLevel(level) {
+  if (!['low', 'normal', 'high'].includes(level)) return;
+  
+  currentRiskLevel = level;
+  localStorage.setItem('stockmarket-risk-level', level);
+  
+  // Update button highlighting
+  document.getElementById('risk-low').classList.remove('active');
+  document.getElementById('risk-normal').classList.remove('active');
+  document.getElementById('risk-high').classList.remove('active');
+  document.getElementById('risk-' + level).classList.add('active');
+}
+
+// Get risk multiplier (how much price swings) with exponential scaling for extremes
+function getRiskMultiplier() {
+  let priceMultiplier;
+  
+  if (currentValue < 0.01) {
+    // Exponential decay for extremely tiny prices (under 1 cent)
+    priceMultiplier = Math.pow(currentValue / 0.01, 2.5) * 0.03;
+  } else if (currentValue < 20) {
+    // Exponential scaling for penny stocks ($0.01 - $20)
+    priceMultiplier = Math.pow(currentValue / 20, 1.8) * 0.25;
+  } else if (currentValue > 100) {
+    // Exponential scaling for high-priced stocks (above $100)
+    priceMultiplier = Math.pow(currentValue / 100, 1.6) * 1.2;
+  } else {
+    // Normal range ($20-$100): reduced volatility to prevent big peaks
+    // Softly scale based on distance from $50
+    const distance = Math.abs(currentValue - 50) / 50; // 0 at $50, 1 at extremes
+    priceMultiplier = 0.4 + distance * 0.2; // 0.4 at $50, up to 0.6 at boundaries
+  }
+  
+  // Apply risk level multiplier
+  switch(currentRiskLevel) {
+    case 'low':
+      return priceMultiplier * 0.3;
+    case 'high':
+      return priceMultiplier * 2.5;
+    case 'normal':
+    default:
+      return priceMultiplier;
+  }
+}
+
+// Initialize risk level from localStorage
+function initializeRiskLevel() {
+  const savedLevel = localStorage.getItem('stockmarket-risk-level') || 'normal';
+  setRiskLevel(savedLevel);
+}
+
 // Start updating the graph
 function startGraphUpdate() {
   if (animationId) {
@@ -219,9 +293,13 @@ function startGraphUpdate() {
       momentum = previousChange * (Math.random() < 0.6 ? 0.7 : -0.3);
     }
     
+    // Dynamic interval based on price level and risk level
+    // Risk multiplier already accounts for both price level and risk setting
+    const riskAdjustedMultiplier = getRiskMultiplier();
+    
     // Add random component with momentum bias
-    const randomComponent = (Math.random() - 0.5) * 2;
-    const change = momentum + randomComponent;
+    const randomComponent = (Math.random() - 0.5) * 2 * riskAdjustedMultiplier;
+    const change = (momentum * riskAdjustedMultiplier) + randomComponent;
     currentValue = currentValue + change;
     
     // Keep value positive, minimum 0.01
@@ -792,12 +870,18 @@ function getTimeFilterLabel() {
   return '24h';
 }
 
+// Helper: Format number with commas
+function formatNumber(num) {
+  return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+}
+
 function updateHeaderStats() {
   try {
     // Update current stock price in header
     const headerPriceElement = document.getElementById('header-price');
     if (headerPriceElement) {
-      headerPriceElement.textContent = '$' + currentValue.toFixed(4);
+      const priceStr = currentValue.toFixed(2);
+      headerPriceElement.textContent = '$' + formatNumber(priceStr);
     }
     
     // Calculate change based on current time filter
@@ -831,7 +915,8 @@ function updateHeaderStats() {
     const headerPortfolioElement = document.getElementById('header-portfolio');
     if (headerPortfolioElement) {
       const totalValue = portfolio.sharesOwned * currentValue;
-      headerPortfolioElement.textContent = '$' + totalValue.toFixed(4);
+      const portfolioStr = totalValue.toFixed(2);
+      headerPortfolioElement.textContent = '$' + formatNumber(portfolioStr);
       
       // Color based on profit/loss
       if (portfolio.sharesOwned > 0) {
@@ -925,7 +1010,7 @@ function resetGraph() {
   // Sell section now always visible
   
   // Reinitialize
-  currentValue = 50 + Math.random() * 20;
+  currentValue = getRandomStartPrice();
   stockData.push({ time: 0, value: currentValue });
   
   const change = (Math.random() - 0.5) * 3;

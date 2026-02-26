@@ -111,7 +111,17 @@
             </div>
           </div>
         </div>
-            <div class="game-box stockmarket-container">
+        
+        <!-- Risk Level Selector -->
+        <div class="risk-selector-panel">
+          <div class="risk-buttons">
+            <button class="risk-btn" id="risk-low" onclick="setRiskLevel('low')">🛡️ Low Risk<br><span class="risk-desc">Low Volatility</span></button>
+            <button class="risk-btn" id="risk-normal" onclick="setRiskLevel('normal')" data-default>⚖️ Normal Risk<br><span class="risk-desc">Medium Volatility</span></button>
+            <button class="risk-btn" id="risk-high" onclick="setRiskLevel('high')">🚀 High Risk<br><span class="risk-desc">High Volatility</span></button>
+          </div>
+        </div>
+        
+        <div class="game-box stockmarket-container">
               <div class="stockmarket-graph-container">
                 <div class="graph-header">
                   <div class="time-filter-buttons">
