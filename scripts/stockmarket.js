@@ -6,7 +6,7 @@ let currentRiskLevel = 'normal'; // 'low', 'normal', 'high'
 let animationId;
 let currentValue = 0;
 let time = 0;
-let timeFilter = 'all'; // Default to all time
+let timeFilter = 3600; // Default to 1h on first open
 let resizeTimeout; // Debounce timer for resize events
 
 const MIN_UPDATE_INTERVAL = 50;
@@ -99,7 +99,7 @@ function loadState() {
       stockData = sanitizeStockData(state.stockData || []);
       currentValue = sanitizePrice(state.currentValue || 50);
       time = Number.isFinite(Number(state.time)) ? Number(state.time) : 0;
-      timeFilter = state.timeFilter || 'all';
+      timeFilter = state.timeFilter || 3600;
       updateInterval = clampUpdateInterval(state.updateInterval || 200);
       portfolio = state.portfolio || { sharesOwned: 0, buyPrice: 0, buyMarkers: [] };
       sellMarkers = state.sellMarkers || [];
@@ -123,7 +123,7 @@ function loadState() {
       // Update active time filter button
       document.querySelectorAll('.time-filter-btn').forEach((btn, index) => {
         btn.classList.remove('active');
-        const filterValues = [10, 60, 600, 3600, 86400, 'all'];
+        const filterValues = [10, 60, 600, 3600, 21600, 43200, 86400, 'all'];
         if (filterValues[index] === timeFilter) {
           btn.classList.add('active');
         }
@@ -156,6 +156,33 @@ function getRandomStartPrice() {
   }
 }
 
+function seedInitialHistory(durationSeconds = 3600, stepSeconds = 10) {
+  stockData = [];
+  currentValue = getRandomStartPrice();
+  stockData.push({ time: 0, value: currentValue });
+
+  const steps = Math.max(2, Math.floor(durationSeconds / stepSeconds));
+  const seedInterval = 200;
+
+  for (let index = 1; index <= steps; index++) {
+    let momentum = 0;
+    if (stockData.length > 1) {
+      const previousChange = stockData[stockData.length - 1].value - stockData[stockData.length - 2].value;
+      momentum = previousChange * (Math.random() < 0.6 ? 0.7 : -0.3);
+    }
+
+    const riskAdjustedMultiplier = getRiskMultiplier();
+    const randomComponent = (Math.random() - 0.5) * 2 * riskAdjustedMultiplier;
+    const rawChange = (momentum * riskAdjustedMultiplier) + randomComponent;
+    const change = limitPriceStep(rawChange, currentValue, seedInterval);
+
+    currentValue = sanitizePrice(currentValue + change);
+    stockData.push({ time: index * stepSeconds, value: currentValue });
+  }
+
+  time = stockData[stockData.length - 1].time + 1;
+}
+
 // Initialize the stock market graph
 function initializeStockMarket() {
   canvas = document.getElementById('stockmarket-canvas');
@@ -179,17 +206,8 @@ function initializeStockMarket() {
   const loaded = loadState();
   
   if (!loaded || stockData.length === 0) {
-    // Add initial data points to have a line to display
-    currentValue = getRandomStartPrice();
-    stockData.push({ time: 0, value: currentValue });
-    
-    // Add a second point so we can draw a line immediately
-    const rawChange = (Math.random() - 0.5) * 2 * getRiskMultiplier();
-    const change = limitPriceStep(rawChange, currentValue);
-    currentValue = currentValue + change;
-    stockData.push({ time: 1, value: currentValue });
-    
-    time = 2;
+    // Seed with 1 hour of existing market history
+    seedInitialHistory(3600, 10);
   }
   
   // Update portfolio display
@@ -309,8 +327,9 @@ function initializeRiskLevel() {
   setRiskLevel(savedLevel);
 }
 
-function limitPriceStep(change, price) {
-  const intervalFactor = clampUpdateInterval(updateInterval) / 200;
+function limitPriceStep(change, price, intervalOverride) {
+  const effectiveInterval = intervalOverride ?? updateInterval;
+  const intervalFactor = clampUpdateInterval(effectiveInterval) / 200;
   const maxStepRatio = Math.max(0.01, Math.min(0.1, 0.08 * intervalFactor));
 
   let minStepFloor = 0.02;
@@ -1060,15 +1079,7 @@ function resetGraph() {
   // Sell section now always visible
   
   // Reinitialize
-  currentValue = getRandomStartPrice();
-  stockData.push({ time: 0, value: currentValue });
-  
-  const rawChange = (Math.random() - 0.5) * 2 * getRiskMultiplier();
-  const change = limitPriceStep(rawChange, currentValue);
-  currentValue = currentValue + change;
-  stockData.push({ time: 1, value: currentValue });
-  
-  time = 2;
+  seedInitialHistory(3600, 10);
   
   // Clear localStorage but preserve time filter and update interval settings
   const savedTimeFilter = timeFilter;
