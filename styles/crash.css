@@ -2,7 +2,6 @@
   background-color: #29283c;
   padding: 25px;
   border-radius: 16px;
-  max-width: 1200px;
   margin: 0 auto;
   box-shadow: 0 0 20px rgba(0,0,0,0.5);
   border: 1px solid #3e3e5a;
@@ -53,6 +52,20 @@
   padding: 10px 0;
   border-bottom: 1px solid #3e3e5a;
   margin-bottom: 15px;
+  gap: 12px;
+}
+
+#messageBox {
+  color: #d1d5db;
+  font-weight: 600;
+}
+
+#roundState {
+  color: #22d3ee;
+  font-weight: 700;
+  font-size: 14px;
+  min-width: 120px;
+  text-align: right;
 }
 
 #balance {
@@ -87,11 +100,12 @@
   gap: 10px;
   flex-wrap: wrap;
   margin-bottom: 15px;
+  align-items: center;
 }
 
 #submitBet,
 #takeProfits {
-  flex-grow: 1;
+  flex: 1 1 180px;
   padding: 12px 16px;
   font-size: 16px;
   font-weight: bold;
@@ -106,6 +120,96 @@
 #submitBet:hover,
 #takeProfits:hover {
   background-color: #00b248;
+}
+
+#buttonContainer label {
+  color: #cbd5e1;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+#buttonContainer input[type="number"] {
+  min-width: 110px;
+}
+
+.quick-bet-row {
+  display: flex;
+  gap: 8px;
+  width: 100%;
+}
+
+.quick-bet-btn {
+  flex: 1;
+  padding: 8px 10px;
+  border: 1px solid #475569;
+  border-radius: 8px;
+  background: #243043;
+  color: #e2e8f0;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.quick-bet-btn:hover {
+  background: #334155;
+}
+
+.auto-controls {
+  width: 100%;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+  padding: 8px 10px;
+  border-radius: 10px;
+  background: rgba(15, 23, 42, 0.6);
+  border: 1px solid #334155;
+}
+
+.auto-controls label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+}
+
+#autoCashoutValue {
+  width: 100px;
+  padding: 6px 8px;
+  border-radius: 6px;
+  border: 1px solid #475569;
+  background: #1e293b;
+  color: #fff;
+}
+
+#fairnessPanel {
+  margin-top: 10px;
+  border: 1px solid #334155;
+  border-radius: 10px;
+  background: rgba(15, 23, 42, 0.55);
+  padding: 10px;
+  display: grid;
+  gap: 6px;
+}
+
+.fair-row {
+  display: grid;
+  grid-template-columns: 90px 1fr;
+  align-items: center;
+  gap: 8px;
+}
+
+.fair-row span {
+  color: #94a3b8;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.fair-row code {
+  color: #e2e8f0;
+  font-size: 12px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 #lastCrashesContainer {
@@ -191,13 +295,27 @@
   color: white;
   border-radius: 16px;
   padding: 25px;
+  width: 100%;
   max-width: 1200px;
+  box-sizing: border-box;
   margin: 20px auto 0 auto;
   box-shadow: 0 0 20px rgba(0,0,0,0.5);
   border: 1px solid #3e3e5a;
 }
+
 .how-to-play h2 {
-  margin-bottom: 10px;
+  margin: 0 0 10px 0;
   font-weight: 700;
   font-size: 18px;
+  color: white;
+}
+
+.how-to-play p {
+  margin: 0;
+  color: white;
+}
+
+.how-to-play strong {
+  color: #fbbf24;
+  font-weight: 700;
 }

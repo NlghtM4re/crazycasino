@@ -92,17 +92,34 @@
             </div>
 
             <div id="infoContainer">
-              <div id="messageBox"></div>
-              <div id="betContainer">
-                
-              </div>
+              <div id="messageBox">Ready for next round.</div>
+              <div id="roundState">Waiting</div>
             </div>
 
             <div id="buttonContainer">
-              <button id="submitBet">Start Game</button>
+              <button id="submitBet">Start Round</button>
               <button id="takeProfits">Take Profits</button>
-              <label for="betAmount">Bet Amount:</label>
-              <input type="number" id="betAmount" value="1">
+              <label for="betAmount">Bet Amount</label>
+              <input type="number" id="betAmount" value="1" min="0.01" step="0.01">
+              <div class="quick-bet-row">
+                <button type="button" class="quick-bet-btn" data-bet-add="1">+1</button>
+                <button type="button" class="quick-bet-btn" data-bet-add="10">+10</button>
+                <button type="button" class="quick-bet-btn" data-bet-mult="2">x2</button>
+                <button type="button" class="quick-bet-btn" id="maxBetBtn">Max</button>
+              </div>
+              <div class="auto-controls">
+                <label><input type="checkbox" id="autoBetToggle"> Auto Bet</label>
+                <label><input type="checkbox" id="autoCashoutToggle"> Auto Cashout</label>
+                <input type="number" id="autoCashoutValue" value="2.00" min="1.01" step="0.01">
+              </div>
+            </div>
+
+            <div id="fairnessPanel">
+              <div class="fair-row"><span>Round</span><code id="fairRound">-</code></div>
+              <div class="fair-row"><span>Commit</span><code id="fairCommit">-</code></div>
+              <div class="fair-row"><span>Seed</span><code id="fairSeed">-</code></div>
+              <div class="fair-row"><span>Hash</span><code id="fairHash">-</code></div>
+              <div class="fair-row"><span>Crash Point</span><code id="fairCrash">-</code></div>
             </div>
           </div>
 
@@ -121,12 +138,14 @@
       <section id="howToPlay" class="how-to-play" style="margin-top: 30px; padding: 15px; color: white; border-radius: 15px;">
         <h2>How to Play</h2>
         <p>
-          1. Enter your bet amount in the input field.<br>
-          2. Click <strong>Start Game</strong> to begin the round.<br>
-          3. Watch the multiplier increase — it starts low and rises over time.<br>
-          4. At any moment before the crash, click <strong>Take Profits</strong> to cash out your bet multiplied by the current multiplier.<br>
-          5. If the game crashes before you take profits, you lose your bet.<br>
-          6. The longer you wait, the higher the multiplier but also the higher the risk of crashing.<br>
+          1. Enter your bet and click <strong>Start Round</strong>. Your bet is locked immediately.<br>
+          2. A short countdown starts, then the multiplier begins at <strong>1.00x</strong> and rises continuously.<br>
+          3. Click <strong>Take Profits</strong> before crash to cash out: <strong>payout = bet × current multiplier</strong>.<br>
+          4. If the round crashes before you cash out, you lose your bet for that round.<br>
+          5. Use quick bet buttons (<strong>+1</strong>, <strong>+10</strong>, <strong>x2</strong>, <strong>Max</strong>) to adjust faster.<br>
+          6. Optional automation: enable <strong>Auto Bet</strong> and/or <strong>Auto Cashout</strong> with a target multiplier.<br>
+          7. The <strong>Provably Fair</strong> panel shows commit/reveal data (Seed, Hash, Crash Point) after each round.<br>
+          8. Round history on the right shows recent crash multipliers, your bet, and win/loss result.<br>
         </p>
       </section>
 

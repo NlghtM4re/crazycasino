@@ -867,7 +867,7 @@ function setSellMax() {
 function updatePortfolioDisplay() {
   const sharesEl = document.getElementById('shares-owned');
   const buyPriceEl = document.getElementById('buy-price');
-  if (sharesEl) sharesEl.textContent = portfolio.sharesOwned.toFixed(4);
+  if (sharesEl) sharesEl.textContent = formatShares(portfolio.sharesOwned);
   if (buyPriceEl) buyPriceEl.textContent = '$' + portfolio.buyPrice.toFixed(4);
   
   // Update current price display
@@ -944,6 +944,11 @@ function formatNumber(num) {
   return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 }
 
+function formatShares(value) {
+  const numeric = Number(value) || 0;
+  return numeric.toLocaleString("en-US", { minimumFractionDigits: 4, maximumFractionDigits: 4 });
+}
+
 function updateHeaderStats() {
   try {
     // Update current stock price in header
@@ -1003,7 +1008,7 @@ function updateHeaderStats() {
     // Update shares owned in header
     const headerSharesElement = document.getElementById('header-shares');
     if (headerSharesElement) {
-      headerSharesElement.textContent = portfolio.sharesOwned.toFixed(4);
+      headerSharesElement.textContent = formatShares(portfolio.sharesOwned);
     }
   } catch (error) {
     console.error('Error in updateHeaderStats:', error);
