@@ -1,0 +1,248 @@
+.plinko-section {
+  margin-top: 10px;
+}
+
+.plinko-card,
+.plinko-how {
+  background-color: #29283c;
+  border: 1px solid #3e3e5a;
+  border-radius: 14px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.45);
+}
+
+.plinko-card {
+  padding: 14px;
+}
+
+.plinko-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 250px;
+  gap: 12px;
+  align-items: start;
+}
+
+.plinko-board-column {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.plinko-board-wrap {
+  border: 1px solid #3e3e5a;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #171627;
+}
+
+#plinko-canvas {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.plinko-insights {
+  background: rgba(15, 23, 42, 0.55);
+  border: 1px solid #334155;
+  border-radius: 10px;
+  padding: 10px;
+}
+
+.plinko-insights h5 {
+  margin: 0 0 8px 0;
+  color: #e2e8f0;
+  font-size: 13px;
+}
+
+.plinko-insights-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.plinko-insights-grid div {
+  background: rgba(30, 41, 59, 0.75);
+  border: 1px solid #334155;
+  border-radius: 8px;
+  padding: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.plinko-insights-grid span {
+  color: #94a3b8;
+  font-size: 11px;
+}
+
+.plinko-insights-grid strong {
+  color: #e2e8f0;
+  font-size: 13px;
+}
+
+.plinko-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  background: rgba(15, 23, 42, 0.45);
+  border: 1px solid #334155;
+  border-radius: 10px;
+  padding: 10px;
+}
+
+.plinko-controls h4 {
+  margin: 0 0 2px 0;
+  color: #e2e8f0;
+  font-size: 15px;
+}
+
+.plinko-controls label {
+  color: #cbd5e1;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+#plinko-bet,
+#plinko-difficulty {
+  border: 1px solid #475569;
+  background: #1e293b;
+  color: #fff;
+  border-radius: 7px;
+  padding: 8px;
+  font-size: 14px;
+}
+
+.plinko-quick-bets {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+}
+
+.plinko-quick-bets button,
+#plinko-drop {
+  border: none;
+  border-radius: 7px;
+  padding: 8px;
+  font-weight: 700;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.plinko-quick-bets button {
+  background: #334155;
+  color: #e2e8f0;
+}
+
+.plinko-quick-bets button:hover {
+  background: #475569;
+}
+
+#plinko-drop {
+  background: #10b981;
+  color: #fff;
+  font-size: 13px;
+}
+
+#plinko-drop:hover {
+  background: #0ea46f;
+}
+
+#plinko-drop:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+#plinko-status {
+  color: #93c5fd;
+  font-weight: 600;
+  font-size: 12px;
+  min-height: 18px;
+}
+
+.plinko-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+}
+
+.plinko-stats div {
+  background: rgba(30, 41, 59, 0.75);
+  border: 1px solid #334155;
+  border-radius: 8px;
+  padding: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.plinko-stats span {
+  color: #94a3b8;
+  font-size: 11px;
+}
+
+.plinko-stats strong {
+  color: #e2e8f0;
+  font-size: 13px;
+}
+
+.plinko-last {
+  margin-top: 4px;
+  background: rgba(15, 23, 42, 0.55);
+  border: 1px solid #334155;
+  border-radius: 8px;
+  padding: 8px;
+}
+
+.plinko-last h5 {
+  margin: 0 0 6px 0;
+  color: #e2e8f0;
+  font-size: 13px;
+}
+
+#plinko-history {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  max-height: 275px;
+  min-height: 275px;
+  overflow-y: auto;
+  font-size: 12px;
+  color: #cbd5e1;
+}
+
+#plinko-history .win-entry {
+  border-radius: 6px;
+  padding: 5px 6px;
+  background: rgba(51, 65, 85, 0.6);
+}
+
+.plinko-how {
+  margin-top: 14px;
+  padding: 16px;
+}
+
+.plinko-how h2 {
+  margin: 0 0 8px 0;
+  color: #fff;
+  font-size: 17px;
+}
+
+.plinko-how p {
+  margin: 0;
+  color: #e5e7eb;
+  line-height: 1.55;
+  font-size: 13px;
+}
+
+.plinko-how strong {
+  color: #fbbf24;
+}
+
+@media (max-width: 1050px) {
+  .plinko-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .plinko-insights-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
