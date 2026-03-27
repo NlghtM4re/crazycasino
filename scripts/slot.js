@@ -323,6 +323,24 @@ function playWinningLinesSequentially(lines, gridData, betAmount) {
     const appliedLines = [];
     const patternCount = Math.max(lines.length, 1);
 
+    function animateMultiplier(fromValue, toValue, duration = 400) {
+        const startTime = performance.now();
+        const winEl = document.getElementById('win');
+        
+        function update(currentTime) {
+            const elapsed = currentTime - startTime;
+            const progress = Math.min(elapsed / duration, 1);
+            const currentVal = fromValue + (toValue - fromValue) * progress;
+            winEl.textContent = `Total Multiplier: x${currentVal.toFixed(2)}`;
+            
+            if (progress < 1) {
+                requestAnimationFrame(update);
+            }
+        }
+        
+        requestAnimationFrame(update);
+    }
+
     function applyLine(index) {
         if (index >= lines.length) {
             document.getElementById('win').textContent = `Total Multiplier: x${currentMultiplier.toFixed(2)}`;
@@ -332,6 +350,7 @@ function playWinningLinesSequentially(lines, gridData, betAmount) {
 
         const line = lines[index];
         const scaledLineMultiplier = line.multiplier * patternCount;
+        const prevMultiplier = currentMultiplier;
         currentMultiplier += scaledLineMultiplier;
         appliedLines.push(line);
 
@@ -342,10 +361,20 @@ function playWinningLinesSequentially(lines, gridData, betAmount) {
         updateCredits(lineWinnings);
         document.getElementById('win').textContent = `Processing pattern ${index + 1}...`;
 
+        const winEl = document.getElementById('win');
+        
         setTimeout(() => {
+            // Trigger pulse animation and animate multiplier
+            winEl.classList.remove('multiplier-pulse');
+            void winEl.offsetWidth; // force reflow
+            winEl.classList.add('multiplier-pulse');
+            
+            // Animate the multiplier counter smoothly
+            animateMultiplier(prevMultiplier, currentMultiplier, 400);
             renderGrid(gridData, appliedLines); // keep win state after flash
+            
             setTimeout(() => applyLine(index + 1), 150);
-        }, 500);
+        }, 100);
     }
 
     applyLine(0);
