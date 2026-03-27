@@ -1,4 +1,4 @@
-const symbols = ["🍒", "🍇", "🔔", "🍉", "💎", "7️⃣"];
+const symbols = ["🍒", "🔔", "🍉", "💎", "7️⃣"];
 const ROWS = 3;
 const COLS = 5;
 let isSpinning = false;
@@ -75,8 +75,8 @@ function renderHybridGrid(finalGrid, stoppedColumns = new Set()) {
 function updateSymbolValues() {
     const betInput = parseFloat(document.getElementById('bet').value);
     const betAmount = Number.isFinite(betInput) ? betInput : 0;
-    const basePercent = { '🍒': 0.15, '🍇': 0.15, '🍉': 0.15, '🔔': 0.50, '💎': 0.50, '7️⃣': 1.00 };
-    const symbols_list = ['🍒', '🍇', '🍉', '🔔', '💎', '7️⃣'];
+    const basePercent = { '🍒': 0.15, '🍉': 0.15, '🔔': 0.50, '💎': 0.50, '7️⃣': 1.00 };
+    const symbols_list = ['🍒', '🍉', '🔔', '💎', '7️⃣'];
     
     const spans = document.querySelectorAll('#symbolValues .symbol-credit');
     spans.forEach((span, idx) => {
@@ -149,7 +149,7 @@ function renderSpinningReels(durationSeconds = 0.9) {
 
 function calculateWinningLines(gridData) {
     const lineResults = [];
-    const basePercent = { '🍒': 0.15, '🍇': 0.15, '🍉': 0.15, '🔔': 0.50, '💎': 0.50, '7️⃣': 1.00 };
+    const basePercent = { '🍒': 0.15, '🍉': 0.15, '🔔': 0.50, '💎': 0.50, '7️⃣': 1.00 };
     const specialDiagonalMasks = [];
 
     function getPatternMultiplier(length) {
