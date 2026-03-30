@@ -31,7 +31,7 @@
     grid-template-columns: minmax(230px, 250px) minmax(0, 1fr) minmax(230px, 250px);
     grid-template-areas: "left center right";
     gap: 16px;
-    align-items: start;
+    align-items: stretch;
     margin-bottom: 24px;
 }
 
@@ -40,7 +40,7 @@
     display: flex;
     flex-direction: column;
     gap: 12px;
-    align-self: start;
+    align-self: stretch;
 }
 
 .slot-center-col {
@@ -53,7 +53,7 @@
     display: flex;
     flex-direction: column;
     gap: 12px;
-    align-self: start;
+    align-self: stretch;
 }
 
 .slot-how-to-play-panel {
@@ -108,8 +108,8 @@
 .slot-left-col .slot-panel,
 .slot-right-col .slot-panel {
     min-height: auto;
-    height: auto;
-    flex: 0 0 auto;
+    height: 100%;
+    flex: 1 1 auto;
 }
 
 #symbolPanel,
