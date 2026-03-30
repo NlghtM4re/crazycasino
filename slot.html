@@ -86,36 +86,37 @@
       <section id="slot-section" class="slot-game">
         <h2>Slot Machine</h2>
         <div class="slot-game-outer">
-          <aside class="slot-panel" id="symbolPanel">
-            <h4>Symbol Credits</h4>
-            <ul id="symbolValues">
-              <li>🍒 = <span class="symbol-credit">0</span> credits</li>
-              <li>🍉 = <span class="symbol-credit">0</span> credits</li>
-              <li>🔔 = <span class="symbol-credit">0</span> credits</li>
-              <li>💎 = <span class="symbol-credit">0</span> credits</li>
-              <li>7️⃣ = <span class="symbol-credit">0</span> credits</li>
-            </ul>
-          </aside>
+          <div class="slot-left-col">
+            <aside class="slot-panel" id="symbolPanel">
+              <h4>Symbol Credits</h4>
+              <ul id="symbolValues">
+                <li>🍒 = <span class="symbol-credit">0</span> credits</li>
+                <li>🍉 = <span class="symbol-credit">0</span> credits</li>
+                <li>🔔 = <span class="symbol-credit">0</span> credits</li>
+                <li>💎 = <span class="symbol-credit">0</span> credits</li>
+                <li>7️⃣ = <span class="symbol-credit">0</span> credits</li>
+              </ul>
+            </aside>
+            <aside class="slot-panel" id="breakdownPanel">
+              <h4>Last Spin Breakdown</h4>
+              <div id="win-breakdown-rows"><p class="bd-empty">Spin to see breakdown.</p></div>
+            </aside>
+          </div>
 
           <div>
             <div class="slot-grid" id="slotGrid">
               <!-- 5x3 slot matrix rendered by JavaScript -->
             </div>
-            <div id="win"></div>
+            <div id="win-status">
+              <div id="win-status-placeholder" class="win-status-placeholder">Place your bet and spin! 🎰</div>
+              <div id="win-status-result" style="display:none">
+                <div id="win"></div>
+                <div id="win-credits"></div>
+              </div>
+            </div>
             <input type="number" id="bet" value="1" min="0.01" class="bet-amount" />
             <button id="slot-button" onclick="startSpin()">Spin</button>
             <button id="slot-allin" onclick="document.getElementById('bet').value = credits;">All in</button>
-            <div style="margin-top: 20px; text-align: left; max-width: 480px; margin-left: auto; margin-right: auto;">
-          <h4>How to Play:</h4>
-          <p>Set your bet, then press "Spin". The 5 columns spin and stop from left to right.</p>
-          <p>Each spin costs your bet amount. Symbol values on the left update live when you change your bet.</p>
-          <p>When patterns hit, winnings are calculated per pattern, and multiple patterns stack.</p>
-          <h4>How to Win:</h4>
-          <ul>
-            <li>Match 3 or more identical symbols horizontally, vertically, or diagonally.</li>
-            <li>Multiple winning patterns stack together.</li>
-          </ul>
-            </div>
           </div>
 
           <aside class="slot-panel" id="patternPanel">
@@ -130,6 +131,18 @@
             </ul>
             <p>Applies to horizontal, vertical, and diagonal patterns.</p>
           </aside>
+
+          <div class="slot-how-to-play">
+            <h4>How to Play:</h4>
+            <p>Set your bet, then press "Spin". The 5 columns spin and stop from left to right.</p>
+            <p>Each spin costs your bet amount. Symbol values on the left update live when you change your bet.</p>
+            <p>When patterns hit, winnings are calculated per pattern, and multiple patterns stack.</p>
+            <h4>How to Win:</h4>
+            <ul>
+              <li>Match 3 or more identical symbols horizontally, vertically, or diagonally.</li>
+              <li>Multiple winning patterns stack together.</li>
+            </ul>
+          </div>
         </div>
       </section >
     </main>

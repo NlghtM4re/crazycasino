@@ -183,7 +183,7 @@ function calculateWinningLines(gridData) {
         const length = cells.length;
         const patternMultiplier = (lineType === 'v-shape' || lineType === 'x-shape') ? 20 : getPatternMultiplier(length);
         const multiplier = basePercent[sym] * length * patternMultiplier;
-        lineResults.push({ symbol: sym, length, lineType, cells, multiplier });
+        lineResults.push({ symbol: sym, length, lineType, cells, multiplier, baseValue: basePercent[sym], patternMult: patternMultiplier });
         if (lineType === 'v-shape' || lineType === 'x-shape') {
             specialDiagonalMasks.push(new Set(cells.map(c => `${c.row}_${c.col}`)));
         }
@@ -205,7 +205,7 @@ function calculateWinningLines(gridData) {
                 }
                 const patternMultiplier = getPatternMultiplier(length);
                 const multiplier = basePercent[runSymbol] * length * patternMultiplier;
-                lineResults.push({ symbol: runSymbol, length, lineType, cells: runCells, multiplier });
+                lineResults.push({ symbol: runSymbol, length, lineType, cells: runCells, multiplier, baseValue: basePercent[runSymbol], patternMult: patternMultiplier });
             }
         }
 
@@ -310,7 +310,9 @@ function calculateWinningLines(gridData) {
             length: ROWS * COLS,
             lineType: 'jackpot',
             cells: jackpotCells,
-            multiplier: 1000
+            multiplier: 1000,
+            baseValue: null,
+            patternMult: 1000
         });
     }
 
@@ -320,6 +322,7 @@ function calculateWinningLines(gridData) {
 
 function playWinningLinesSequentially(lines, gridData, betAmount) {
     let currentMultiplier = 0;
+    let totalCreditsGained = 0;
     const appliedLines = [];
     const patternCount = Math.max(lines.length, 1);
 
@@ -341,9 +344,30 @@ function playWinningLinesSequentially(lines, gridData, betAmount) {
         requestAnimationFrame(update);
     }
 
+    function animateCredits(fromValue, toValue, duration = 400) {
+        const startTime = performance.now();
+        const credEl = document.getElementById('win-credits');
+
+        function update(currentTime) {
+            const elapsed = currentTime - startTime;
+            const progress = Math.min(elapsed / duration, 1);
+            const currentVal = fromValue + (toValue - fromValue) * progress;
+            credEl.textContent = `+${currentVal.toFixed(2)} credits`;
+            if (progress < 1) requestAnimationFrame(update);
+        }
+
+        requestAnimationFrame(update);
+    }
+
     function applyLine(index) {
+        const credEl = document.getElementById('win-credits');
+
         if (index >= lines.length) {
             document.getElementById('win').textContent = `Total Multiplier: x${currentMultiplier.toFixed(2)}`;
+            if (totalCreditsGained === 0) {
+                credEl.textContent = '0 credits';
+                credEl.className = 'zero';
+            }
             isSpinning = false;
             return;
         }
@@ -351,31 +375,65 @@ function playWinningLinesSequentially(lines, gridData, betAmount) {
         const line = lines[index];
         const scaledLineMultiplier = line.multiplier * patternCount;
         const prevMultiplier = currentMultiplier;
+        const prevCredits = totalCreditsGained;
         currentMultiplier += scaledLineMultiplier;
+        const lineWinnings = betAmount * scaledLineMultiplier;
+        totalCreditsGained += lineWinnings;
         appliedLines.push(line);
 
         const flashPositions = line.cells.map(v => ({ row: v.row, col: v.col }));
         renderGrid(gridData, appliedLines, flashPositions);
 
-        const lineWinnings = betAmount * scaledLineMultiplier;
         updateCredits(lineWinnings);
         document.getElementById('win').textContent = `Processing pattern ${index + 1}...`;
 
         const winEl = document.getElementById('win');
         
         setTimeout(() => {
-            // Trigger pulse animation and animate multiplier
+            // Pulse win multiplier
             winEl.classList.remove('multiplier-pulse');
-            void winEl.offsetWidth; // force reflow
+            void winEl.offsetWidth;
             winEl.classList.add('multiplier-pulse');
-            
-            // Animate the multiplier counter smoothly
+
+            // Pop credit display
+            credEl.className = 'credit-pop';
+            void credEl.offsetWidth;
+            credEl.classList.add('credit-pop');
+
+            // Animate both counters simultaneously
             animateMultiplier(prevMultiplier, currentMultiplier, 400);
-            renderGrid(gridData, appliedLines); // keep win state after flash
+            animateCredits(prevCredits, totalCreditsGained, 400);
+
+            // Add breakdown row
+            const bdRows = document.getElementById('win-breakdown-rows');
+            const row = document.createElement('div');
+            row.className = 'win-breakdown-row';
+            const typeLabel = line.lineType.replace(/-/g, ' ');
+            let formulaParts;
+            if (line.lineType === 'jackpot') {
+                formulaParts = `<span class="bd-formula"><span class="bd-f-special">×1000 jackpot</span></span>`;
+            } else {
+                formulaParts = `<span class="bd-formula">`
+                    + `<span class="bd-f-cells">${line.length} cells</span>`
+                    + ` <span class="bd-f-op">×</span> <span class="bd-f-sym">${line.baseValue} sym</span>`
+                    + ` <span class="bd-f-op">×</span> <span class="bd-f-line">×${line.patternMult} line</span>`
+                    + (patternCount > 1 ? ` <span class="bd-f-op">×</span> <span class="bd-f-stack">×${patternCount} stack</span>` : '')
+                    + `</span>`;
+            }
+            row.innerHTML = `<span class="bd-symbol">${line.symbol}</span><span class="bd-type">${typeLabel}</span>${formulaParts}<span class="bd-eq">= x${scaledLineMultiplier.toFixed(2)}</span><span class="bd-credits">+${lineWinnings.toFixed(2)}</span>`;
+            bdRows.appendChild(row);
+
+            renderGrid(gridData, appliedLines);
             
             setTimeout(() => applyLine(index + 1), 150);
         }, 100);
     }
+
+    // Show 0 immediately before any patterns
+    const credEl = document.getElementById('win-credits');
+    credEl.textContent = '0 credits';
+    credEl.className = 'zero';
+    document.getElementById('win-breakdown-rows').innerHTML = '<p class="bd-empty">Calculating patterns...</p>';
 
     applyLine(0);
 }
@@ -397,7 +455,11 @@ function startSpin() {
 
     isSpinning = true;
     updateCredits(-betAmount);
-    // not updating pattern panel dynamically; this panel is static value description
+    document.getElementById('win-status-placeholder').style.display = 'none';
+    document.getElementById('win-status-result').style.display = 'block';
+    document.getElementById('win').textContent = 'Spinning...';
+    document.getElementById('win-credits').textContent = '';
+    document.getElementById('win-breakdown-rows').innerHTML = '<p class="bd-empty">Spinning...</p>';
 
     renderSpinningReels(0.22);
 
@@ -418,6 +480,10 @@ function startSpin() {
                     const result = calculateWinningLines(finalGrid);
                     if (result.lines.length === 0) {
                         document.getElementById('win').textContent = 'No win, try again!';
+                        const credEl = document.getElementById('win-credits');
+                        credEl.textContent = '0 credits';
+                        credEl.className = 'zero';
+                        document.getElementById('win-breakdown-rows').innerHTML = '<p class="bd-empty">No winning patterns this spin.</p>';
                         isSpinning = false;
                     } else {
                         document.getElementById('win').textContent = `Found ${result.lines.length} winning line(s)`;
