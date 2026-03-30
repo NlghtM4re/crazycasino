@@ -500,6 +500,19 @@ function startSpin() {
 window.addEventListener('DOMContentLoaded', () => {
     renderSpinningReels(1.2);
     updateSymbolValues();
+
+    const breakdownEl = document.getElementById('win-breakdown-rows');
+    if (breakdownEl && breakdownEl.children.length === 0) {
+        breakdownEl.innerHTML = '<p class="bd-empty">Spin to see breakdown.</p>';
+    }
+
+    const statusPlaceholder = document.getElementById('win-status-placeholder');
+    const statusResult = document.getElementById('win-status-result');
+    if (statusPlaceholder && statusResult) {
+        statusPlaceholder.style.display = 'block';
+        statusResult.style.display = 'none';
+    }
+
     document.getElementById('bet').addEventListener('change', updateSymbolValues);
     document.getElementById('bet').addEventListener('input', updateSymbolValues);
 });
