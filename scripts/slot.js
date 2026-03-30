@@ -1,7 +1,29 @@
 const symbols = ["🍒", "🔔", "🍉", "💎", "7️⃣"];
+// Lower payout symbols are more common; higher payout symbols are rarer.
+const symbolWeights = {
+    '🍒': 29,
+    '🍉': 29,
+    '🔔': 17,
+    '💎': 17,
+    '7️⃣': 8
+};
+const totalSymbolWeight = symbols.reduce((sum, sym) => sum + (symbolWeights[sym] || 0), 0);
 const ROWS = 3;
 const COLS = 5;
 let isSpinning = false;
+
+function getWeightedRandomSymbol() {
+    const roll = Math.random() * totalSymbolWeight;
+    let cumulative = 0;
+
+    for (const sym of symbols) {
+        cumulative += symbolWeights[sym] || 0;
+        if (roll < cumulative) return sym;
+    }
+
+    // Fallback for edge cases caused by floating point precision.
+    return symbols[symbols.length - 1];
+}
 
 function createSeamlessSpinStrip(durationSeconds) {
     const strip = document.createElement('div');
@@ -12,7 +34,7 @@ function createSeamlessSpinStrip(durationSeconds) {
     const baseCount = 10;
     const baseSymbols = [];
     for (let i = 0; i < baseCount; i++) {
-        baseSymbols.push(symbols[Math.floor(Math.random() * symbols.length)]);
+        baseSymbols.push(getWeightedRandomSymbol());
     }
     const fullSymbols = baseSymbols.concat(baseSymbols);
     strip.style.setProperty('--spin-distance', `${baseCount * 70}px`);
@@ -34,7 +56,7 @@ function initGrid() {
         for (let c = 0; c < COLS; c++) {
             const cell = document.createElement('div');
             cell.className = 'slot-cell';
-            cell.textContent = symbols[Math.floor(Math.random() * symbols.length)];
+            cell.textContent = getWeightedRandomSymbol();
             grid.appendChild(cell);
         }
     }
@@ -82,6 +104,17 @@ function updateSymbolValues() {
     spans.forEach((span, idx) => {
         const credit = betAmount * basePercent[symbols_list[idx]];
         span.textContent = credit.toFixed(2);
+    });
+}
+
+function updateSpawnChances() {
+    const symbolsList = ['🍒', '🍉', '🔔', '💎', '7️⃣'];
+    const spans = document.querySelectorAll('#chanceValues .symbol-chance');
+
+    spans.forEach((span, idx) => {
+        const sym = symbolsList[idx];
+        const chance = ((symbolWeights[sym] || 0) / totalSymbolWeight) * 100;
+        span.textContent = `${chance.toFixed(1)}%`;
     });
 }
 
@@ -150,7 +183,7 @@ function renderSpinningReels(durationSeconds = 0.9) {
 function calculateWinningLines(gridData) {
     const lineResults = [];
     const basePercent = { '🍒': 0.15, '🍉': 0.15, '🔔': 0.50, '💎': 0.50, '7️⃣': 1.00 };
-    const specialDiagonalMasks = [];
+    const specialLineMasks = [];
 
     function getPatternMultiplier(length) {
         if (length === 3) return 2;
@@ -181,12 +214,10 @@ function calculateWinningLines(gridData) {
         const sym = allSameSymbol(cells);
         if (!sym) return;
         const length = cells.length;
-        const patternMultiplier = (lineType === 'v-shape' || lineType === 'x-shape') ? 20 : getPatternMultiplier(length);
+        const patternMultiplier = (lineType === 'v-shape' || lineType === 'x-shape' || lineType === 'plus-shape') ? 20 : getPatternMultiplier(length);
         const multiplier = basePercent[sym] * length * patternMultiplier;
         lineResults.push({ symbol: sym, length, lineType, cells, multiplier, baseValue: basePercent[sym], patternMult: patternMultiplier });
-        if (lineType === 'v-shape' || lineType === 'x-shape') {
-            specialDiagonalMasks.push(new Set(cells.map(c => `${c.row}_${c.col}`)));
-        }
+        specialLineMasks.push(new Set(cells.map(c => `${c.row}_${c.col}`)));
     }
 
     function checkLine(cells, lineType) {
@@ -197,12 +228,10 @@ function calculateWinningLines(gridData) {
             const length = runEndIdx - runStartIdx + 1;
             if (length >= 3) {
                 const runCells = cells.slice(runStartIdx, runEndIdx + 1);
-                if (lineType === 'diagonal') {
-                    const fullyInsideSpecial = specialDiagonalMasks.some(mask =>
-                        runCells.every(cell => mask.has(`${cell.row}_${cell.col}`))
-                    );
-                    if (fullyInsideSpecial) return;
-                }
+                const fullyInsideSpecial = specialLineMasks.some(mask =>
+                    runCells.every(cell => mask.has(`${cell.row}_${cell.col}`))
+                );
+                if (fullyInsideSpecial) return;
                 const patternMultiplier = getPatternMultiplier(length);
                 const multiplier = basePercent[runSymbol] * length * patternMultiplier;
                 lineResults.push({ symbol: runSymbol, length, lineType, cells: runCells, multiplier, baseValue: basePercent[runSymbol], patternMult: patternMultiplier });
@@ -264,6 +293,17 @@ function calculateWinningLines(gridData) {
             { symbol: gridData[0][startCol + 2], row: 0, col: startCol + 2 },
             { symbol: gridData[2][startCol], row: 2, col: startCol }
         ], 'x-shape');
+    }
+
+    // Plus pattern can be anywhere in each 3-column window (priority over horizontal/vertical lines)
+    for (let startCol = 0; startCol <= COLS - 3; startCol++) {
+        pushSpecialPattern([
+            { symbol: gridData[0][startCol + 1], row: 0, col: startCol + 1 },
+            { symbol: gridData[1][startCol], row: 1, col: startCol },
+            { symbol: gridData[1][startCol + 1], row: 1, col: startCol + 1 },
+            { symbol: gridData[1][startCol + 2], row: 1, col: startCol + 2 },
+            { symbol: gridData[2][startCol + 1], row: 2, col: startCol + 1 }
+        ], 'plus-shape');
     }
 
     // Diagonals (down-right)
@@ -459,11 +499,14 @@ function startSpin() {
     document.getElementById('win-status-result').style.display = 'block';
     document.getElementById('win').textContent = 'Spinning...';
     document.getElementById('win-credits').textContent = '';
-    document.getElementById('win-breakdown-rows').innerHTML = '<p class="bd-empty">Spinning...</p>';
+    document.getElementById('win-breakdown-rows').innerHTML = '<p class="bd-empty">Waiting for result...</p>';
 
     renderSpinningReels(0.22);
 
-    const finalGrid = Array.from({ length: ROWS }, () => Array.from({ length: COLS }, () => symbols[Math.floor(Math.random() * symbols.length)]));
+    const finalGrid = Array.from(
+        { length: ROWS },
+        () => Array.from({ length: COLS }, () => getWeightedRandomSymbol())
+    );
 
     const baseDelay = 900;
     const perColDelay = 450;
@@ -483,7 +526,7 @@ function startSpin() {
                         const credEl = document.getElementById('win-credits');
                         credEl.textContent = '0 credits';
                         credEl.className = 'zero';
-                        document.getElementById('win-breakdown-rows').innerHTML = '<p class="bd-empty">No winning patterns this spin.</p>';
+                        document.getElementById('win-breakdown-rows').innerHTML = '<p class="bd-empty">No winning patterns this round.</p>';
                         isSpinning = false;
                     } else {
                         document.getElementById('win').textContent = `Found ${result.lines.length} winning line(s)`;
@@ -500,6 +543,7 @@ function startSpin() {
 window.addEventListener('DOMContentLoaded', () => {
     renderSpinningReels(1.2);
     updateSymbolValues();
+    updateSpawnChances();
 
     const breakdownEl = document.getElementById('win-breakdown-rows');
     if (breakdownEl && breakdownEl.children.length === 0) {

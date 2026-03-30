@@ -8,29 +8,39 @@
     text-align: center;
     background-color: rgba(26, 31, 58, 0.92);
     margin: 5px auto;
-    max-width: 1200px;
-    padding: 20px;
+    padding: 16px;
     border-radius: 16px;
     box-shadow: 0 4px 32px rgba(0, 0, 0, 0.45);
     width: 100%;
     box-sizing: border-box;
 }
 
+.panel-subtitle {
+    margin: 2px 0 6px;
+    color: #94a3b8;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    width: 100%;
+    box-sizing: border-box;
+}
+
 .slot-game-outer {
     display: grid;
-    grid-template-columns: minmax(220px, 260px) minmax(0, 1fr) minmax(220px, 260px);
-    grid-template-areas:
-        "left center right"
-        "left how how";
-    gap: 20px;
+    grid-template-columns: minmax(230px, 250px) minmax(0, 1fr) minmax(230px, 250px);
+    grid-template-areas: "left center right";
+    gap: 16px;
     align-items: start;
+    margin-bottom: 24px;
 }
 
 .slot-left-col {
     grid-area: left;
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 12px;
+    align-self: start;
 }
 
 .slot-center-col {
@@ -38,20 +48,42 @@
     min-width: 0;
 }
 
-#patternPanel {
+.slot-right-col {
     grid-area: right;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    align-self: start;
+}
+
+.slot-how-to-play-panel {
+    width: 100%;
+    max-width: 1320px;
+    margin: 12px auto 0;
+    padding: 20px;
+    box-sizing: border-box;
+    background: #1a1f3a;
+    border: 1px solid #334155;
+    border-radius: 16px;
+    box-shadow: 0 4px 32px rgba(0, 0, 0, 0.45);
+}
+
+.slot-how-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 16px;
+    align-items: stretch;
 }
 
 .slot-how-to-play {
-    grid-area: how;
     text-align: left;
     color: #94a3b8;
-    padding: 0 4px;
+    padding: 0;
 }
 
 .slot-how-to-play h4 {
-    color: #38bdf8;
-    margin: 0 0 8px;
+    color: #10b981;
+    margin: 0 0 12px;
 }
 
 .slot-how-to-play p {
@@ -67,28 +99,89 @@
     background: #111827;
     border: 2px solid #10b981;
     border-radius: 12px;
-    padding: 12px;
+    padding: 10px 12px;
     color: #e2e8f0;
     font-size: 14px;
     text-align: left;
 }
 
+.slot-left-col .slot-panel,
+.slot-right-col .slot-panel {
+    min-height: auto;
+    height: auto;
+    flex: 0 0 auto;
+}
+
+#symbolPanel,
+#patternPanel,
 #breakdownPanel {
-    flex: 0 0 320px;
-    min-height: 320px;
-    max-height: 320px;
+    display: flex;
+    flex-direction: column;
+}
+
+#breakdownPanel {
     overflow-y: auto;
     overflow-x: hidden;
     scrollbar-gutter: stable;
 }
 
-#win-breakdown-rows {
+#breakdownPanel {
+    min-height: 0;
+}
+
+.slot-breakdown-inline {
+    background: #111827;
+    border: 1px solid #334155;
+    border-radius: 10px;
+    padding: 10px 12px;
+    max-height: none;
+    height: 100%;
     display: flex;
     flex-direction: column;
 }
 
+#win-breakdown-rows {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding-bottom: 14px;
+    box-sizing: border-box;
+}
+
+#symbolValues li,
+#chanceValues li {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 2px 0;
+}
+
+#symbolValues .symbol-credit,
+#chanceValues .symbol-chance {
+    color: #e2e8f0;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.symbol-item-label {
+    min-width: 34px;
+    font-size: 18px;
+    line-height: 1;
+}
+
+.symbol-item-value {
+    color: #e2e8f0;
+    font-variant-numeric: tabular-nums;
+    text-align: right;
+    white-space: nowrap;
+}
+
 .slot-panel h4 {
-    margin: 0 0 10px;
+    margin: 0 0 8px;
     color: #38bdf8;
 }
 
@@ -98,22 +191,31 @@
 }
 
 .slot-panel ul li {
-    margin: 4px 0;
+    margin: 3px 0;
+}
+
+.pattern-plus {
+    display: inline-block;
+    font-size: 19px;
+    font-weight: 700;
+    line-height: 1;
+    vertical-align: middle;
+    margin-right: 2px;
 }
 
 .slot-game h2 {
     font-size: 32px;
     color: #10b981;
-    margin-bottom: 20px;
+    margin-bottom: 14px;
     margin-top: 0;
 }
 
 .slot-grid {
     display: grid;
     grid-template-columns: repeat(5, 70px);
-    gap: 10px;
+    gap: 8px;
     justify-content: center;
-    margin: 20px auto;
+    margin: 10px auto 14px;
 }
 
 .reel-column {
@@ -214,7 +316,7 @@
     background-color: #1e293b;
     color: #ffffff;
     text-align: center;
-    margin: 10px 5px;
+    margin: 8px 4px;
 }
 
 .bet-amount:focus {
@@ -260,7 +362,7 @@
     align-items: center;
     justify-content: center;
     flex-direction: column;
-    margin-top: 12px;
+    margin-top: 8px;
 }
 
 .win-status-placeholder {
@@ -388,40 +490,71 @@
 
 /* Old symbols animation removed for 5x3 grid cell rendering */
 
-@media (max-width: 1150px) {
+@media (max-width: 1280px) {
     .slot-game-outer {
-        grid-template-columns: minmax(220px, 260px) minmax(0, 1fr);
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
         grid-template-areas:
-            "left center"
-            "left right"
-            "left how";
+            "center center"
+            "left right";
+        align-items: start;
     }
+
+    .slot-left-col,
+    .slot-right-col {
+        min-width: 0;
+    }
+
 }
 
-@media (max-width: 860px) {
+@media (max-width: 920px) {
     .slot-game-outer {
         grid-template-columns: 1fr;
         grid-template-areas:
             "center"
             "left"
-            "right"
-            "how";
+            "right";
+        min-height: auto;
     }
 
-    #breakdownPanel {
-        min-height: 260px;
-        max-height: 260px;
+    .slot-left-col .slot-panel,
+    .slot-right-col .slot-panel {
+        height: auto;
+        flex: 0 0 auto;
+    }
+
+    .slot-game {
+        padding: 14px;
+    }
+
+    .slot-how-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .slot-breakdown-inline {
+        height: auto;
+        max-height: 320px;
     }
 }
 
-@media (max-width: 500px) {
-    html.sidebar-expanded #slot-section {
-        /* Removed display: none to allow on small screens */
+@media (max-width: 560px) {
+    .slot-game {
+        padding: 12px;
+    }
+
+    .slot-grid {
+        transform: scale(0.9);
+        transform-origin: top center;
+        margin: 0 auto 4px;
+    }
+
+    #win-status {
+        margin-top: -6px;
     }
 }
 
-@media (max-width: 340px) {
-    html.sidebar-collapsed #slot-section {
-        /* Removed display: none to allow on small screens */
+@media (max-width: 460px) {
+    .slot-grid {
+        transform: scale(0.8);
+        margin: -10px auto -6px;
     }
 }

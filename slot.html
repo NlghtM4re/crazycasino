@@ -88,24 +88,27 @@
         <div class="slot-game-outer">
           <div class="slot-left-col">
             <aside class="slot-panel" id="symbolPanel">
-              <h4>Symbol Credits</h4>
+              <h4>Symbol</h4>
+              <p class="panel-subtitle">Value</p>
               <ul id="symbolValues">
-                <li>🍒 = <span class="symbol-credit">0</span> credits</li>
-                <li>🍉 = <span class="symbol-credit">0</span> credits</li>
-                <li>🔔 = <span class="symbol-credit">0</span> credits</li>
-                <li>💎 = <span class="symbol-credit">0</span> credits</li>
-                <li>7️⃣ = <span class="symbol-credit">0</span> credits</li>
+                <li><span class="symbol-item-label">🍒</span><span class="symbol-item-value"><span class="symbol-credit">0</span> credits</span></li>
+                <li><span class="symbol-item-label">🍉</span><span class="symbol-item-value"><span class="symbol-credit">0</span> credits</span></li>
+                <li><span class="symbol-item-label">🔔</span><span class="symbol-item-value"><span class="symbol-credit">0</span> credits</span></li>
+                <li><span class="symbol-item-label">💎</span><span class="symbol-item-value"><span class="symbol-credit">0</span> credits</span></li>
+                <li><span class="symbol-item-label">7️⃣</span><span class="symbol-item-value"><span class="symbol-credit">0</span> credits</span></li>
               </ul>
-            </aside>
-            <aside class="slot-panel" id="breakdownPanel">
-              <h4>Last Spin Breakdown</h4>
-              <div id="win-breakdown-rows"><p class="bd-empty">Spin to see breakdown.</p></div>
+              <p class="panel-subtitle">Spawn Chance</p>
+              <ul id="chanceValues">
+                <li><span class="symbol-item-label">🍒</span><span class="symbol-item-value symbol-chance">0%</span></li>
+                <li><span class="symbol-item-label">🍉</span><span class="symbol-item-value symbol-chance">0%</span></li>
+                <li><span class="symbol-item-label">🔔</span><span class="symbol-item-value symbol-chance">0%</span></li>
+                <li><span class="symbol-item-label">💎</span><span class="symbol-item-value symbol-chance">0%</span></li>
+                <li><span class="symbol-item-label">7️⃣</span><span class="symbol-item-value symbol-chance">0%</span></li>
+              </ul>
             </aside>
           </div>
 
-          <div class="slot-center-col">
-            <div class="slot-grid" id="slotGrid">
-              <!-- 5x3 slot matrix rendered by JavaScript -->
+          <div class="slot-center-col"><div class="slot-grid" id="slotGrid">
             </div>
             <div id="win-status">
               <div id="win-status-placeholder" class="win-status-placeholder">Place your bet and spin! 🎰</div>
@@ -119,32 +122,44 @@
             <button id="slot-allin" onclick="document.getElementById('bet').value = credits;">All in</button>
           </div>
 
-          <aside class="slot-panel" id="patternPanel">
-            <h4>Pattern Multiplier</h4>
-            <ul>
-              <li>3-symbol line: x2</li>
-              <li>4-symbol line: x5</li>
-              <li>5-symbol line: x10</li>
-              <li>V shape: x20</li>
-              <li>X shape: x20</li>
-              <li>Jackpot: x1000</li>
-            </ul>
-            <p>Applies to horizontal, vertical, and diagonal patterns.</p>
-          </aside>
+          <div class="slot-right-col" id="rightPanelCol">
+            <aside class="slot-panel" id="patternPanel">
+              <h4>Pattern</h4>
+              <ul>
+                <li>3-symbol line: x2</li>
+                <li>4-symbol line: x5</li>
+                <li>5-symbol line: x10</li>
+                <li>V shape: x20</li>
+                <li>X shape: x20</li>
+                <li><span class="pattern-plus">+</span> shape: x20</li>
+                <li>Jackpot: x1000</li>
+              </ul>
+            </aside>
+          </div>
 
+        </div>
+      </section >
+
+      <aside class="slot-how-to-play-panel">
+        <div class="slot-how-layout">
           <div class="slot-how-to-play">
-            <h4>How to Play:</h4>
+            <h4>How to Play</h4>
             <p>Set your bet, then press "Spin". The 5 columns spin and stop from left to right.</p>
             <p>Each spin costs your bet amount. Symbol values on the left update live when you change your bet.</p>
             <p>When patterns hit, winnings are calculated per pattern, and multiple patterns stack.</p>
-            <h4>How to Win:</h4>
+            <h4>How to Win</h4>
             <ul>
               <li>Match 3 or more identical symbols horizontally, vertically, or diagonally.</li>
               <li>Multiple winning patterns stack together.</li>
             </ul>
           </div>
+
+          <aside class="slot-breakdown-inline" id="breakdownPanel">
+            <h4>Last Spin Breakdown</h4>
+            <div id="win-breakdown-rows"><p class="bd-empty">Spin to see breakdown.</p></div>
+          </aside>
         </div>
-      </section >
+      </aside>
     </main>
   </div>
 
