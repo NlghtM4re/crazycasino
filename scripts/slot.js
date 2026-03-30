@@ -118,7 +118,7 @@ function updateSpawnChances() {
     });
 }
 
-function renderGrid(gridData, highlightedLines = [], flashCells = []) {
+function renderGrid(gridData, highlightedLines = [], flashCells = [], flashLevel = 1) {
     const grid = document.getElementById('slotGrid');
     grid.innerHTML = '';
 
@@ -152,7 +152,10 @@ function renderGrid(gridData, highlightedLines = [], flashCells = []) {
                 if (level >= 3) cell.classList.add('level3');
                 if (level >= 4) cell.classList.add('level4');
             }
-            if (flashMap.has(key)) cell.classList.add('flash');
+            if (flashMap.has(key)) {
+                cell.classList.add('flash');
+                cell.classList.add(`flash-level${Math.min(Math.max(flashLevel, 1), 4)}`);
+            }
             
             cell.textContent = gridData[r][c];
             page.appendChild(cell);
@@ -183,7 +186,6 @@ function renderSpinningReels(durationSeconds = 0.9) {
 function calculateWinningLines(gridData) {
     const lineResults = [];
     const basePercent = { '🍒': 0.15, '🍉': 0.15, '🔔': 0.50, '💎': 0.50, '7️⃣': 1.00 };
-    const specialLineMasks = [];
 
     function getPatternMultiplier(length) {
         if (length === 3) return 2;
@@ -217,7 +219,6 @@ function calculateWinningLines(gridData) {
         const patternMultiplier = (lineType === 'v-shape' || lineType === 'x-shape' || lineType === 'plus-shape') ? 20 : getPatternMultiplier(length);
         const multiplier = basePercent[sym] * length * patternMultiplier;
         lineResults.push({ symbol: sym, length, lineType, cells, multiplier, baseValue: basePercent[sym], patternMult: patternMultiplier });
-        specialLineMasks.push(new Set(cells.map(c => `${c.row}_${c.col}`)));
     }
 
     function checkLine(cells, lineType) {
@@ -228,10 +229,6 @@ function calculateWinningLines(gridData) {
             const length = runEndIdx - runStartIdx + 1;
             if (length >= 3) {
                 const runCells = cells.slice(runStartIdx, runEndIdx + 1);
-                const fullyInsideSpecial = specialLineMasks.some(mask =>
-                    runCells.every(cell => mask.has(`${cell.row}_${cell.col}`))
-                );
-                if (fullyInsideSpecial) return;
                 const patternMultiplier = getPatternMultiplier(length);
                 const multiplier = basePercent[runSymbol] * length * patternMultiplier;
                 lineResults.push({ symbol: runSymbol, length, lineType, cells: runCells, multiplier, baseValue: basePercent[runSymbol], patternMult: patternMultiplier });
@@ -267,45 +264,6 @@ function calculateWinningLines(gridData) {
         checkLine(cells, 'vertical');
     }
 
-    // Special V patterns (priority over diagonals)
-    pushSpecialPattern([
-        { symbol: gridData[0][0], row: 0, col: 0 },
-        { symbol: gridData[1][1], row: 1, col: 1 },
-        { symbol: gridData[2][2], row: 2, col: 2 },
-        { symbol: gridData[1][3], row: 1, col: 3 },
-        { symbol: gridData[0][4], row: 0, col: 4 }
-    ], 'v-shape');
-
-    pushSpecialPattern([
-        { symbol: gridData[2][0], row: 2, col: 0 },
-        { symbol: gridData[1][1], row: 1, col: 1 },
-        { symbol: gridData[0][2], row: 0, col: 2 },
-        { symbol: gridData[1][3], row: 1, col: 3 },
-        { symbol: gridData[2][4], row: 2, col: 4 }
-    ], 'v-shape');
-
-    // X pattern can be anywhere in each 3-column window (priority over diagonals)
-    for (let startCol = 0; startCol <= COLS - 3; startCol++) {
-        pushSpecialPattern([
-            { symbol: gridData[0][startCol], row: 0, col: startCol },
-            { symbol: gridData[1][startCol + 1], row: 1, col: startCol + 1 },
-            { symbol: gridData[2][startCol + 2], row: 2, col: startCol + 2 },
-            { symbol: gridData[0][startCol + 2], row: 0, col: startCol + 2 },
-            { symbol: gridData[2][startCol], row: 2, col: startCol }
-        ], 'x-shape');
-    }
-
-    // Plus pattern can be anywhere in each 3-column window (priority over horizontal/vertical lines)
-    for (let startCol = 0; startCol <= COLS - 3; startCol++) {
-        pushSpecialPattern([
-            { symbol: gridData[0][startCol + 1], row: 0, col: startCol + 1 },
-            { symbol: gridData[1][startCol], row: 1, col: startCol },
-            { symbol: gridData[1][startCol + 1], row: 1, col: startCol + 1 },
-            { symbol: gridData[1][startCol + 2], row: 1, col: startCol + 2 },
-            { symbol: gridData[2][startCol + 1], row: 2, col: startCol + 1 }
-        ], 'plus-shape');
-    }
-
     // Diagonals (down-right)
     const diagStartsDR = [];
     for (let c = 0; c <= COLS - 3; c++) diagStartsDR.push([0, c]);
@@ -336,6 +294,45 @@ function calculateWinningLines(gridData) {
         if (cells.length >= 3) checkLine(cells, 'diagonal');
     });
 
+    // Special V patterns (stack on top of base diagonals)
+    pushSpecialPattern([
+        { symbol: gridData[0][0], row: 0, col: 0 },
+        { symbol: gridData[1][1], row: 1, col: 1 },
+        { symbol: gridData[2][2], row: 2, col: 2 },
+        { symbol: gridData[1][3], row: 1, col: 3 },
+        { symbol: gridData[0][4], row: 0, col: 4 }
+    ], 'v-shape');
+
+    pushSpecialPattern([
+        { symbol: gridData[2][0], row: 2, col: 0 },
+        { symbol: gridData[1][1], row: 1, col: 1 },
+        { symbol: gridData[0][2], row: 0, col: 2 },
+        { symbol: gridData[1][3], row: 1, col: 3 },
+        { symbol: gridData[2][4], row: 2, col: 4 }
+    ], 'v-shape');
+
+    // X pattern can be anywhere in each 3-column window (stack on top of base diagonals)
+    for (let startCol = 0; startCol <= COLS - 3; startCol++) {
+        pushSpecialPattern([
+            { symbol: gridData[0][startCol], row: 0, col: startCol },
+            { symbol: gridData[1][startCol + 1], row: 1, col: startCol + 1 },
+            { symbol: gridData[2][startCol + 2], row: 2, col: startCol + 2 },
+            { symbol: gridData[0][startCol + 2], row: 0, col: startCol + 2 },
+            { symbol: gridData[2][startCol], row: 2, col: startCol }
+        ], 'x-shape');
+    }
+
+    // Plus pattern can be anywhere in each 3-column window (stack on top of base lines)
+    for (let startCol = 0; startCol <= COLS - 3; startCol++) {
+        pushSpecialPattern([
+            { symbol: gridData[0][startCol + 1], row: 0, col: startCol + 1 },
+            { symbol: gridData[1][startCol], row: 1, col: startCol },
+            { symbol: gridData[1][startCol + 1], row: 1, col: startCol + 1 },
+            { symbol: gridData[1][startCol + 2], row: 1, col: startCol + 2 },
+            { symbol: gridData[2][startCol + 1], row: 2, col: startCol + 1 }
+        ], 'plus-shape');
+    }
+
     // Jackpot: every cell on the board is the same symbol.
     const jackpotSymbol = isAllBoardSame();
     if (jackpotSymbol) {
@@ -350,9 +347,9 @@ function calculateWinningLines(gridData) {
             length: ROWS * COLS,
             lineType: 'jackpot',
             cells: jackpotCells,
-            multiplier: 1000,
+            multiplier: 100,
             baseValue: null,
-            patternMult: 1000
+            patternMult: 100
         });
     }
 
@@ -365,6 +362,29 @@ function playWinningLinesSequentially(lines, gridData, betAmount) {
     let totalCreditsGained = 0;
     const appliedLines = [];
     const patternCount = Math.max(lines.length, 1);
+    const baseFlashDurationMs = 420;
+    const flashDurationStepMs = 45;
+    const minFlashDurationMs = 260;
+    const baseBetweenPatternDelayMs = 260;
+    const betweenPatternDelayStepMs = 45;
+    const minBetweenPatternDelayMs = 110;
+    const counterAnimDurationMs = 520;
+
+    function applyPatternLevelFx(index) {
+        const level = Math.min(index + 1, 4);
+        const winEl = document.getElementById('win');
+        const credEl = document.getElementById('win-credits');
+        const levelClasses = ['pattern-level1', 'pattern-level2', 'pattern-level3', 'pattern-level4'];
+
+        winEl.classList.remove('multiplier-pulse', ...levelClasses);
+        credEl.classList.remove('credit-pop', ...levelClasses);
+
+        void winEl.offsetWidth;
+        winEl.classList.add('multiplier-pulse', `pattern-level${level}`);
+
+        void credEl.offsetWidth;
+        credEl.classList.add('credit-pop', `pattern-level${level}`);
+    }
 
     function animateMultiplier(fromValue, toValue, duration = 400) {
         const startTime = performance.now();
@@ -401,6 +421,8 @@ function playWinningLinesSequentially(lines, gridData, betAmount) {
 
     function applyLine(index) {
         const credEl = document.getElementById('win-credits');
+        const flashDurationMs = Math.max(minFlashDurationMs, baseFlashDurationMs - (index * flashDurationStepMs));
+        const betweenPatternDelayMs = Math.max(minBetweenPatternDelayMs, baseBetweenPatternDelayMs - (index * betweenPatternDelayStepMs));
 
         if (index >= lines.length) {
             document.getElementById('win').textContent = `Total Multiplier: x${currentMultiplier.toFixed(2)}`;
@@ -422,27 +444,17 @@ function playWinningLinesSequentially(lines, gridData, betAmount) {
         appliedLines.push(line);
 
         const flashPositions = line.cells.map(v => ({ row: v.row, col: v.col }));
-        renderGrid(gridData, appliedLines, flashPositions);
+        renderGrid(gridData, appliedLines, flashPositions, index + 1);
 
         updateCredits(lineWinnings);
         document.getElementById('win').textContent = `Processing pattern ${index + 1}...`;
 
-        const winEl = document.getElementById('win');
-        
         setTimeout(() => {
-            // Pulse win multiplier
-            winEl.classList.remove('multiplier-pulse');
-            void winEl.offsetWidth;
-            winEl.classList.add('multiplier-pulse');
-
-            // Pop credit display
-            credEl.className = 'credit-pop';
-            void credEl.offsetWidth;
-            credEl.classList.add('credit-pop');
+            applyPatternLevelFx(index);
 
             // Animate both counters simultaneously
-            animateMultiplier(prevMultiplier, currentMultiplier, 400);
-            animateCredits(prevCredits, totalCreditsGained, 400);
+            animateMultiplier(prevMultiplier, currentMultiplier, counterAnimDurationMs);
+            animateCredits(prevCredits, totalCreditsGained, counterAnimDurationMs);
 
             // Add breakdown row
             const bdRows = document.getElementById('win-breakdown-rows');
@@ -451,7 +463,7 @@ function playWinningLinesSequentially(lines, gridData, betAmount) {
             const typeLabel = line.lineType.replace(/-/g, ' ');
             let formulaParts;
             if (line.lineType === 'jackpot') {
-                formulaParts = `<span class="bd-formula"><span class="bd-f-special">×1000 jackpot</span></span>`;
+                formulaParts = `<span class="bd-formula"><span class="bd-f-special">×100 jackpot</span></span>`;
             } else {
                 formulaParts = `<span class="bd-formula">`
                     + `<span class="bd-f-cells">${line.length} cells</span>`
@@ -465,8 +477,8 @@ function playWinningLinesSequentially(lines, gridData, betAmount) {
 
             renderGrid(gridData, appliedLines);
             
-            setTimeout(() => applyLine(index + 1), 150);
-        }, 100);
+            setTimeout(() => applyLine(index + 1), betweenPatternDelayMs);
+        }, flashDurationMs);
     }
 
     // Show 0 immediately before any patterns
