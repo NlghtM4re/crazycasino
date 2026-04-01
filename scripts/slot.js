@@ -124,7 +124,7 @@ function renderGrid(gridData, highlightedLines = [], flashCells = [], flashLevel
 
     const levelMap = new Map();
     highlightedLines.forEach((line, idx) => {
-        const level = Math.min(idx + 1, 4);
+        const level = Math.min(idx + 1, 23);
         line.cells.forEach((p) => {
             const key = `${p.row}_${p.col}`;
             const prev = levelMap.get(key) || 0;
@@ -151,10 +151,27 @@ function renderGrid(gridData, highlightedLines = [], flashCells = [], flashLevel
                 if (level >= 2) cell.classList.add('level2');
                 if (level >= 3) cell.classList.add('level3');
                 if (level >= 4) cell.classList.add('level4');
+                if (level >= 5) cell.classList.add('level5plus');
+                if (level >= 9) cell.classList.add('level9plus');
+                if (level >= 14) cell.classList.add('level14plus');
+                if (level >= 19) cell.classList.add('level19plus');
+                if (level >= 23) cell.classList.add('level23plus');
+                cell.style.setProperty('--win-level', String(level));
             }
             if (flashMap.has(key)) {
                 cell.classList.add('flash');
-                cell.classList.add(`flash-level${Math.min(Math.max(flashLevel, 1), 4)}`);
+                const effectiveFlashLevel = Math.min(Math.max(flashLevel, 1), 23);
+                const flashPower = Math.min(4.8, Math.pow(1.11, Math.max(0, effectiveFlashLevel - 1)));
+                let flashTier = 1;
+                if (effectiveFlashLevel >= 19) flashTier = 19;
+                if (effectiveFlashLevel >= 23) flashTier = 23;
+                else if (effectiveFlashLevel >= 14) flashTier = 14;
+                else if (effectiveFlashLevel >= 9) flashTier = 9;
+                else if (effectiveFlashLevel >= 5) flashTier = 5;
+                else if (effectiveFlashLevel >= 4) flashTier = 4;
+
+                cell.classList.add(`flash-level${flashTier}`);
+                cell.style.setProperty('--flash-power', flashPower.toFixed(3));
             }
             
             cell.textContent = gridData[r][c];
@@ -342,14 +359,17 @@ function calculateWinningLines(gridData) {
                 jackpotCells.push({ symbol: jackpotSymbol, row: r, col: c });
             }
         }
+        const jackpotLength = ROWS * COLS;
+        const jackpotPatternMult = 100;
+        const jackpotBaseValue = basePercent[jackpotSymbol];
         lineResults.push({
             symbol: jackpotSymbol,
-            length: ROWS * COLS,
+            length: jackpotLength,
             lineType: 'jackpot',
             cells: jackpotCells,
-            multiplier: 100,
-            baseValue: null,
-            patternMult: 100
+            multiplier: jackpotBaseValue * jackpotLength * jackpotPatternMult,
+            baseValue: jackpotBaseValue,
+            patternMult: jackpotPatternMult
         });
     }
 
@@ -362,12 +382,15 @@ function playWinningLinesSequentially(lines, gridData, betAmount) {
     let totalCreditsGained = 0;
     const appliedLines = [];
     const patternCount = Math.max(lines.length, 1);
+    const stackMultiplierFactor = patternCount >= 23
+        ? Number(Math.pow(patternCount, 1.28).toFixed(2))
+        : patternCount;
     const baseFlashDurationMs = 420;
-    const flashDurationStepMs = 45;
-    const minFlashDurationMs = 260;
+    const flashDecayRate = 0.9;
+    const minFlashDurationMs = 90;
     const baseBetweenPatternDelayMs = 260;
-    const betweenPatternDelayStepMs = 45;
-    const minBetweenPatternDelayMs = 110;
+    const betweenPatternDecayRate = 0.82;
+    const minBetweenPatternDelayMs = 25;
     const counterAnimDurationMs = 520;
 
     function applyPatternLevelFx(index) {
@@ -421,8 +444,14 @@ function playWinningLinesSequentially(lines, gridData, betAmount) {
 
     function applyLine(index) {
         const credEl = document.getElementById('win-credits');
-        const flashDurationMs = Math.max(minFlashDurationMs, baseFlashDurationMs - (index * flashDurationStepMs));
-        const betweenPatternDelayMs = Math.max(minBetweenPatternDelayMs, baseBetweenPatternDelayMs - (index * betweenPatternDelayStepMs));
+        const flashDurationMs = Math.max(
+            minFlashDurationMs,
+            Math.round(baseFlashDurationMs * (flashDecayRate ** index))
+        );
+        const betweenPatternDelayMs = Math.max(
+            minBetweenPatternDelayMs,
+            Math.round(baseBetweenPatternDelayMs * (betweenPatternDecayRate ** index))
+        );
 
         if (index >= lines.length) {
             document.getElementById('win').textContent = `Total Multiplier: x${currentMultiplier.toFixed(2)}`;
@@ -435,7 +464,7 @@ function playWinningLinesSequentially(lines, gridData, betAmount) {
         }
 
         const line = lines[index];
-        const scaledLineMultiplier = line.multiplier * patternCount;
+        const scaledLineMultiplier = line.multiplier * stackMultiplierFactor;
         const prevMultiplier = currentMultiplier;
         const prevCredits = totalCreditsGained;
         currentMultiplier += scaledLineMultiplier;
@@ -461,17 +490,14 @@ function playWinningLinesSequentially(lines, gridData, betAmount) {
             const row = document.createElement('div');
             row.className = 'win-breakdown-row';
             const typeLabel = line.lineType.replace(/-/g, ' ');
-            let formulaParts;
-            if (line.lineType === 'jackpot') {
-                formulaParts = `<span class="bd-formula"><span class="bd-f-special">×100 jackpot</span></span>`;
-            } else {
-                formulaParts = `<span class="bd-formula">`
-                    + `<span class="bd-f-cells">${line.length} cells</span>`
-                    + ` <span class="bd-f-op">×</span> <span class="bd-f-sym">${line.baseValue} sym</span>`
-                    + ` <span class="bd-f-op">×</span> <span class="bd-f-line">×${line.patternMult} line</span>`
-                    + (patternCount > 1 ? ` <span class="bd-f-op">×</span> <span class="bd-f-stack">×${patternCount} stack</span>` : '')
-                    + `</span>`;
-            }
+            const formulaParts = `<span class="bd-formula">`
+                + `<span class="bd-f-cells">${line.length} cells</span>`
+                + ` <span class="bd-f-op">×</span> <span class="bd-f-sym">${line.baseValue} sym</span>`
+                + ` <span class="bd-f-op">×</span> <span class="bd-f-line">×${line.patternMult} line</span>`
+                + (patternCount > 1
+                    ? ` <span class="bd-f-op">×</span> <span class="bd-f-stack${patternCount >= 23 ? ' bd-f-stack-exp' : ''}">×${stackMultiplierFactor.toFixed(2)} stack</span>`
+                    : '')
+                + `</span>`;
             row.innerHTML = `<span class="bd-symbol">${line.symbol}</span><span class="bd-type">${typeLabel}</span>${formulaParts}<span class="bd-eq">= x${scaledLineMultiplier.toFixed(2)}</span><span class="bd-credits">+${lineWinnings.toFixed(2)}</span>`;
             bdRows.appendChild(row);
 
@@ -495,30 +521,16 @@ function updatePatternPanel(text) {
     if (el) el.textContent = text;
 }
 
-function startSpin() {
-    if (isSpinning) return;
-
-    const betInput = parseFloat(document.getElementById('bet').value);
-    const betAmount = Number.isFinite(betInput) ? betInput : 0;
-    if (betAmount <= 0 || betAmount > credits) {
-        showPopup('Invalid bet amount!');
-        return;
-    }
-
+function runSpinWithGrid(betAmount, finalGrid, spinningText = 'Spinning...') {
     isSpinning = true;
     updateCredits(-betAmount);
     document.getElementById('win-status-placeholder').style.display = 'none';
     document.getElementById('win-status-result').style.display = 'block';
-    document.getElementById('win').textContent = 'Spinning...';
+    document.getElementById('win').textContent = spinningText;
     document.getElementById('win-credits').textContent = '';
     document.getElementById('win-breakdown-rows').innerHTML = '<p class="bd-empty">Waiting for result...</p>';
 
     renderSpinningReels(0.22);
-
-    const finalGrid = Array.from(
-        { length: ROWS },
-        () => Array.from({ length: COLS }, () => getWeightedRandomSymbol())
-    );
 
     const baseDelay = 900;
     const perColDelay = 450;
@@ -548,6 +560,24 @@ function startSpin() {
             }
         }, baseDelay + c * perColDelay);
     }
+}
+
+function startSpin() {
+    if (isSpinning) return;
+
+    const betInput = parseFloat(document.getElementById('bet').value);
+    const betAmount = Number.isFinite(betInput) ? betInput : 0;
+    if (betAmount <= 0 || betAmount > credits) {
+        showPopup('Invalid bet amount!');
+        return;
+    }
+
+    const finalGrid = Array.from(
+        { length: ROWS },
+        () => Array.from({ length: COLS }, () => getWeightedRandomSymbol())
+    );
+
+    runSpinWithGrid(betAmount, finalGrid, 'Spinning...');
 }
 
 

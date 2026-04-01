@@ -10,8 +10,14 @@ function takeLoan() {
         return;
     }
 
-    dept += maxLoan();
-    credits += maxLoan();
+    const loanAmount = maxLoan();
+    if (loanAmount <= 0) {
+        showPopup("No loan amount available right now.");
+        return;
+    }
+
+    dept += loanAmount;
+    credits += loanAmount;
 
     localStorage.setItem("dept", dept);
     localStorage.setItem("credits", credits);
@@ -19,6 +25,8 @@ function takeLoan() {
     document.getElementById("credits").textContent = credits.toLocaleString("en-US", {minimumFractionDigits: 2, maximumFractionDigits: 2});
     document.getElementById("debt").textContent = dept.toLocaleString("en-US", {minimumFractionDigits: 2, maximumFractionDigits: 2});
     document.getElementById("maxLoan").textContent = maxLoan().toLocaleString("en-US", {minimumFractionDigits: 2, maximumFractionDigits: 2});
+
+    showPopup(`You took a $${loanAmount.toFixed(2)} loan.`);
 }
 
 function payLoan() {

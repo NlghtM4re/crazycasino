@@ -24,28 +24,117 @@ const ROWS = 14;
 const WIDEST_ROW_PEGS = 16;
 const HISTORY_LIMIT = 18;
 const PLINKO_DIFFICULTY_KEY = 'plinkoDifficulty';
+const PLINKO_DECISIONS = ROWS;
 
 const PEG_BOUNCE = 0.62;
 const WALL_BOUNCE = 0.45;
 const GRAVITY = 860;
 const AIR_DRAG = 0.992;
+const PEG_RECOIL_STIFFNESS = 120;
+const PEG_RECOIL_DAMPING = 18;
+const PEG_RECOIL_MAX_OFFSET = 2.2;
+const PEG_RECOIL_MAX_VELOCITY = 32;
+
+const SLOT_COUNT = WIDEST_ROW_PEGS + 1;
+const DEFAULT_PLINKO_RTP = 0.95;
+
+function buildActualLandingProbabilities(slotCount, decisionCount) {
+  const probabilities = Array.from({ length: slotCount }, () => 0);
+  const outcomes = decisionCount + 1;
+  const offset = Math.floor((slotCount - outcomes) / 2);
+  const n = Math.max(1, decisionCount);
+
+  let coefficient = 1;
+  for (let k = 0; k <= n; k += 1) {
+    if (k > 0) {
+      coefficient = (coefficient * (n - (k - 1))) / k;
+    }
+    const index = offset + k;
+    if (index >= 0 && index < slotCount) {
+      probabilities[index] = coefficient / (2 ** n);
+    }
+  }
+
+  return probabilities;
+}
+
+function createRtpCalibratedMultipliers(minMultiplier, maxMultiplier, targetRtp = DEFAULT_PLINKO_RTP) {
+  const probabilities = buildActualLandingProbabilities(SLOT_COUNT, PLINKO_DECISIONS);
+  const clampedMin = Math.max(0.01, minMultiplier);
+  const clampedMax = Math.max(clampedMin + 0.01, maxMultiplier);
+  const center = (SLOT_COUNT - 1) / 2;
+  const EXP_CURVE_STRENGTH = 3.6;
+
+  function expNormalized(t) {
+    const safeT = Math.max(0, Math.min(1, t));
+    const numerator = Math.exp(EXP_CURVE_STRENGTH * safeT) - 1;
+    const denominator = Math.exp(EXP_CURVE_STRENGTH) - 1;
+    return denominator > 0 ? (numerator / denominator) : safeT;
+  }
+
+  function buildForGamma(gamma) {
+    return Array.from({ length: SLOT_COUNT }, (_, index) => {
+      const distance = Math.abs(index - center) / Math.max(1, center);
+      const shaped = Math.pow(expNormalized(distance), gamma);
+      return clampedMin + ((clampedMax - clampedMin) * shaped);
+    });
+  }
+
+  function expectedFor(values) {
+    return values.reduce((sum, multiplier, index) => sum + (multiplier * probabilities[index]), 0);
+  }
+
+  let lowGamma = 0.2;
+  let highGamma = 4.5;
+  let candidate = buildForGamma(1);
+
+  for (let step = 0; step < 48; step += 1) {
+    const midGamma = (lowGamma + highGamma) / 2;
+    candidate = buildForGamma(midGamma);
+    const expected = expectedFor(candidate);
+
+    if (expected > targetRtp) {
+      lowGamma = midGamma;
+    } else {
+      highGamma = midGamma;
+    }
+  }
+
+  const strict = candidate.map(value => Number(value.toFixed(2)));
+  const centerIndex = Math.floor(center);
+  strict[centerIndex] = Number(clampedMin.toFixed(2));
+
+  for (let step = 1; step <= centerIndex; step += 1) {
+    const minDelta = Number((0.01 * Math.pow(1.24, step - 1)).toFixed(3));
+    const leftIndex = centerIndex - step;
+    const rightIndex = centerIndex + step;
+
+    strict[leftIndex] = Math.max(strict[leftIndex], Number((strict[leftIndex + 1] + minDelta).toFixed(2)));
+    strict[rightIndex] = Math.max(strict[rightIndex], Number((strict[rightIndex - 1] + minDelta).toFixed(2)));
+  }
+
+  strict[0] = Number(clampedMax.toFixed(0));
+  strict[SLOT_COUNT - 1] = Number(clampedMax.toFixed(0));
+
+  return strict;
+}
 
 const DIFFICULTY_CONFIG = {
   low: {
     label: 'Low Risk',
-    multipliers: [2.2, 1.8, 1.45, 1.25, 1.12, 1.02, 0.9, 0.58, 0.58, 0.9, 1.02, 1.12, 1.25, 1.45, 1.8, 2.2],
+    multipliers: createRtpCalibratedMultipliers(0.58, 120, 0.99),
     spread: 8,
     pegKick: 1.3,
   },
   normal: {
     label: 'Normal',
-    multipliers: [5.5, 3.6, 2.5, 1.7, 1.25, 1.05, 0.82, 0.24, 0.24, 0.82, 1.05, 1.25, 1.7, 2.5, 3.6, 5.5],
+    multipliers: createRtpCalibratedMultipliers(0.34, 320, 0.95),
     spread: 7,
     pegKick: 1,
   },
   high: {
     label: 'High Risk',
-    multipliers: [30, 12, 5, 2.4, 1.35, 1.05, 0.62, 0.05, 0.05, 0.62, 1.05, 1.35, 2.4, 5, 12, 30],
+    multipliers: createRtpCalibratedMultipliers(0.2, 900, 0.9),
     spread: 6,
     pegKick: 0.8,
   },
@@ -74,6 +163,221 @@ let sessionDrops = 0;
 let sessionWagered = 0;
 let sessionPaid = 0;
 let sessionWins = 0;
+
+function easeInOutQuad(t) {
+  if (t < 0.5) {
+    return 2 * t * t;
+  }
+  return 1 - ((-2 * t + 2) ** 2) / 2;
+}
+
+function easeInCubic(t) {
+  return t * t * t;
+}
+
+function easeInQuart(t) {
+  return t * t * t * t;
+}
+
+function easeOutCubic(t) {
+  return 1 - ((1 - t) ** 3);
+}
+
+function easeInOutSine(t) {
+  return -(Math.cos(Math.PI * t) - 1) / 2;
+}
+
+function getBinCenterX(index) {
+  const bin = bins[index];
+  if (!bin) {
+    return (board.left + board.right) / 2;
+  }
+  return bin.x + bin.w / 2;
+}
+
+function getPegRows() {
+  const rows = [];
+
+  for (const peg of pegs) {
+    if (!rows[peg.row]) {
+      rows[peg.row] = [];
+    }
+    rows[peg.row].push(peg);
+  }
+
+  rows.forEach(row => row.sort((left, right) => left.x - right.x));
+  return rows.filter(Boolean);
+}
+
+function getNearestPeg(rowPegs, x) {
+  if (!rowPegs || rowPegs.length === 0) {
+    return null;
+  }
+
+  let nearest = rowPegs[0];
+  let nearestDistance = Math.abs(rowPegs[0].x - x);
+
+  for (let index = 1; index < rowPegs.length; index += 1) {
+    const distance = Math.abs(rowPegs[index].x - x);
+    if (distance < nearestDistance) {
+      nearest = rowPegs[index];
+      nearestDistance = distance;
+    }
+  }
+
+  return nearest;
+}
+
+function getPegIndexInRow(rowPegs, peg) {
+  return rowPegs.indexOf(peg);
+}
+
+function pointOnPeg(peg, angle, radius) {
+  return {
+    x: peg.x + (Math.cos(angle) * radius),
+    y: peg.y + (Math.sin(angle) * radius),
+  };
+}
+
+function createBallisticSegment(from, to, duration, gravity, hitPeg = null, impactStrength = 0) {
+  const safeGravity = Math.max(1, gravity);
+  const dy = to.y - from.y;
+  const requestedDuration = Math.max(0.01, duration);
+
+  // Keep post-contact motion physically downward: never launch upward from a peg.
+  let safeDuration = requestedDuration;
+  if (dy > 0) {
+    const maxNoLiftDuration = Math.sqrt((2 * dy) / safeGravity) * 0.98;
+    if (Number.isFinite(maxNoLiftDuration) && maxNoLiftDuration > 0.01) {
+      safeDuration = Math.min(safeDuration, maxNoLiftDuration);
+    }
+  }
+
+  const computedVy = (dy - (0.5 * safeGravity * safeDuration * safeDuration)) / safeDuration;
+
+  return {
+    type: 'fall',
+    from,
+    to,
+    duration: safeDuration,
+    gravity: safeGravity,
+    vx: (to.x - from.x) / safeDuration,
+    vy: Math.max(0, computedVy),
+    hitPeg,
+    impactStrength,
+  };
+}
+
+function triggerPegRecoil(peg, impactStrength = 1) {
+  if (!peg) return;
+
+  const clampedStrength = Math.max(0.2, Math.min(1.2, impactStrength));
+  const nextVelocity = (peg.recoilVelocity || 0) + (10 * clampedStrength);
+  peg.recoilVelocity = Math.min(PEG_RECOIL_MAX_VELOCITY, nextVelocity);
+}
+
+function updatePegRecoils(dt) {
+  for (const peg of pegs) {
+    const offset = peg.recoilOffset || 0;
+    const velocity = peg.recoilVelocity || 0;
+    const acceleration = (-PEG_RECOIL_STIFFNESS * offset) - (PEG_RECOIL_DAMPING * velocity);
+    const nextVelocity = velocity + (acceleration * dt);
+    const nextOffset = offset + (nextVelocity * dt);
+
+    peg.recoilVelocity = nextVelocity;
+    peg.recoilOffset = Math.max(-0.35, Math.min(PEG_RECOIL_MAX_OFFSET, nextOffset));
+
+    if (Math.abs(peg.recoilOffset) < 0.01 && Math.abs(peg.recoilVelocity) < 0.05) {
+      peg.recoilOffset = 0;
+      peg.recoilVelocity = 0;
+    }
+  }
+}
+
+function buildGuidedPath() {
+  const pegRows = getPegRows();
+  const contactRadius = PEG_RADIUS + BALL_RADIUS + PEG_COLLISION_MARGIN + 0.35;
+  const segments = [];
+  const topRow = pegRows[0] ?? [];
+  const centerPeg = topRow[Math.floor(topRow.length / 2)] ?? null;
+
+  if (!centerPeg || bins.length === 0) {
+    return {
+      segments: [],
+      targetBinIndex: Math.floor(bins.length / 2),
+    };
+  }
+
+  let currentPeg = centerPeg;
+  let currentPoint = {
+    x: currentPeg.x,
+    y: board.top - Math.max(12, board.rowGap * 0.95),
+  };
+
+  const firstContact = {
+    x: currentPeg.x,
+    y: currentPeg.y - contactRadius,
+  };
+
+  segments.push(createBallisticSegment(currentPoint, firstContact, 0.38, 1080, currentPeg, 0.75));
+  currentPoint = firstContact;
+
+  for (let row = 0; row < pegRows.length; row += 1) {
+    const currentRow = pegRows[row] ?? [];
+    const currentIndex = getPegIndexInRow(currentRow, currentPeg);
+    if (currentIndex < 0) {
+      break;
+    }
+
+    const goesRight = Math.random() < 0.5;
+    const direction = goesRight ? 1 : -1;
+    const pushOffsetX = direction * Math.max(6, board.colGap * 0.14);
+    const pushDropY = Math.max(6, board.rowGap * 0.16);
+    const releasePoint = {
+      x: currentPeg.x + pushOffsetX,
+      y: currentPeg.y - contactRadius + pushDropY,
+    };
+
+    segments.push(createBallisticSegment(currentPoint, releasePoint, 0.12, 820));
+    currentPoint = releasePoint;
+
+    if (row === pegRows.length - 1) {
+      const targetBinIndex = Math.max(0, Math.min(bins.length - 1, currentIndex + (goesRight ? 1 : 0)));
+      const finalPoint = {
+        x: getBinCenterX(targetBinIndex),
+        y: bins[targetBinIndex].y + Math.max(8, board.slotHeight * 0.48),
+      };
+
+      segments.push(createBallisticSegment(currentPoint, finalPoint, 0.34, 1160));
+
+      return {
+        segments,
+        targetBinIndex,
+      };
+    }
+
+    const nextRow = pegRows[row + 1] ?? [];
+    const nextIndex = Math.max(0, Math.min(nextRow.length - 1, currentIndex + (goesRight ? 1 : 0)));
+    const nextPeg = nextRow[nextIndex];
+    const nextContact = {
+      x: nextPeg.x,
+      y: nextPeg.y - contactRadius,
+    };
+    const verticalDistance = Math.max(12, nextContact.y - currentPoint.y);
+    const duration = 0.28 + Math.min(0.08, verticalDistance / 180) + (row * 0.004);
+    const gravity = 1120 + (row * 18);
+
+    segments.push(createBallisticSegment(currentPoint, nextContact, duration, gravity, nextPeg, 0.58));
+
+    currentPeg = nextPeg;
+    currentPoint = nextContact;
+  }
+
+  return {
+    segments,
+    targetBinIndex: Math.floor(bins.length / 2),
+  };
+}
 
 function toCurrency(value) {
   return Number(value).toLocaleString('en-US', {
@@ -156,7 +460,7 @@ function buildBinomialProbabilities(slotCount) {
 function getDifficultyStats(config) {
   const slotCount = WIDEST_ROW_PEGS + 1;
   const multipliers = getScaledMultipliers(config.multipliers ?? [], slotCount);
-  const probabilities = buildBinomialProbabilities(slotCount);
+  const probabilities = buildActualLandingProbabilities(slotCount, PLINKO_DECISIONS);
 
   let expectedReturn = 0;
   let profitChance = 0;
@@ -214,24 +518,41 @@ function resizeCanvas() {
 function buildTriangle() {
   pegs = [];
   bins = [];
+  const pegsByRow = [];
 
   for (let row = 0; row < ROWS; row += 1) {
     const count = Math.min(WIDEST_ROW_PEGS, 3 + row);
     const y = board.top + (row + 1) * board.rowGap;
     const startX = (board.left + board.right) / 2 - ((count - 1) * board.colGap) / 2;
+    const rowPegs = [];
 
     for (let index = 0; index < count; index += 1) {
-      pegs.push({
+      const peg = {
         row,
         x: startX + index * board.colGap,
         y,
         r: PEG_RADIUS,
-      });
+        recoilOffset: 0,
+        recoilVelocity: 0,
+      };
+      pegs.push(peg);
+      rowPegs.push(peg);
     }
+
+    pegsByRow.push(rowPegs);
   }
 
   const slots = WIDEST_ROW_PEGS + 1;
-  const slotW = (board.right - board.left) / slots;
+  const bottomRowPegs = pegsByRow[pegsByRow.length - 1] ?? [];
+  const fallbackLeft = board.left;
+  const fallbackRight = board.right;
+  const slotLeft = bottomRowPegs.length >= 2
+    ? bottomRowPegs[0].x - board.colGap / 2
+    : fallbackLeft;
+  const slotRight = bottomRowPegs.length >= 2
+    ? bottomRowPegs[bottomRowPegs.length - 1].x + board.colGap / 2
+    : fallbackRight;
+  const slotW = (slotRight - slotLeft) / slots;
   const by = board.bottom - board.slotHeight;
   const config = getDifficultyConfig();
   const multipliers = getScaledMultipliers(config.multipliers ?? [], slots);
@@ -239,7 +560,7 @@ function buildTriangle() {
   for (let index = 0; index < slots; index += 1) {
     bins.push({
       index,
-      x: board.left + index * slotW,
+      x: slotLeft + index * slotW,
       y: by,
       w: slotW,
       h: board.slotHeight,
@@ -296,7 +617,7 @@ function drawPegs() {
   ctx.fillStyle = '#94a3b8';
   for (const peg of pegs) {
     ctx.beginPath();
-    ctx.arc(peg.x, peg.y, peg.r, 0, Math.PI * 2);
+    ctx.arc(peg.x, peg.y + (peg.recoilOffset || 0), peg.r, 0, Math.PI * 2);
     ctx.fill();
   }
 }
@@ -324,24 +645,31 @@ function draw() {
 
 function randomSpawnX() {
   const topRow = pegs.filter(peg => peg.row === 0);
-  if (topRow.length >= 3) {
-    const left = topRow[0].x;
-    const right = topRow[2].x;
-    return left + Math.random() * (right - left);
+  if (topRow.length > 0) {
+    const centerPeg = topRow[Math.floor(topRow.length / 2)];
+    return centerPeg.x;
   }
 
-  const center = (board.left + board.right) / 2;
-  return center + (Math.random() - 0.5) * getDifficultyConfig().spread;
+  return (board.left + board.right) / 2;
 }
 
 function spawnBall(bet) {
+  const guided = buildGuidedPath();
+  const start = guided.segments[0]?.from ?? { x: randomSpawnX(), y: board.top - 10 };
+
   balls.push({
-    x: randomSpawnX(),
-    y: board.top - 6,
-    vx: (Math.random() - 0.5) * 35,
+    x: start.x,
+    y: start.y,
+    vx: 0,
     vy: 0,
     r: BALL_RADIUS,
     bet,
+    segments: guided.segments,
+    segmentIndex: 0,
+    segmentT: 0,
+    targetBinIndex: guided.targetBinIndex,
+    timeAlive: 0,
+    wobblePhase: Math.random() * Math.PI * 2,
   });
 }
 
@@ -371,7 +699,9 @@ function resolvePegCollision(ball, peg) {
 }
 
 function settleBallInBin(ball) {
-  const bin = bins.find(slot => ball.x >= slot.x && ball.x <= slot.x + slot.w);
+  const bin = Number.isInteger(ball.targetBinIndex)
+    ? bins[ball.targetBinIndex]
+    : bins.find(slot => ball.x >= slot.x && ball.x <= slot.x + slot.w);
   if (!bin) return false;
 
   const payout = Number((ball.bet * bin.multiplier).toFixed(2));
@@ -400,45 +730,57 @@ function updateBalls(dt) {
   const remaining = [];
 
   for (const ball of balls) {
-    const speed = Math.hypot(ball.vx, ball.vy);
-    const subSteps = Math.max(1, Math.min(5, Math.ceil((speed * dt) / 4)));
-    const stepDt = dt / subSteps;
+    if (!ball.segments || ball.segments.length === 0) {
+      remaining.push(ball);
+      continue;
+    }
 
-    for (let step = 0; step < subSteps; step += 1) {
-      ball.vy += GRAVITY * stepDt;
-      ball.vx *= AIR_DRAG;
-      ball.vy *= AIR_DRAG;
+    ball.timeAlive += dt;
+    let timeLeft = dt;
 
-      ball.vx = Math.max(-220, Math.min(220, ball.vx));
+    while (timeLeft > 0 && ball.segmentIndex < ball.segments.length) {
+      const segment = ball.segments[ball.segmentIndex] ?? { type: 'fall', duration: 0.1 };
+      const segDuration = segment.duration ?? 0.1;
+      const remainingSegTime = (1 - ball.segmentT) * segDuration;
+      const stepTime = Math.min(timeLeft, remainingSegTime);
 
-      ball.x += ball.vx * stepDt;
-      ball.y += ball.vy * stepDt;
+      ball.segmentT += stepTime / segDuration;
+      timeLeft -= stepTime;
 
-      if (ball.x - ball.r < board.left) {
-        ball.x = board.left + ball.r;
-        ball.vx = Math.abs(ball.vx) * WALL_BOUNCE;
-      }
-      if (ball.x + ball.r > board.right) {
-        ball.x = board.right - ball.r;
-        ball.vx = -Math.abs(ball.vx) * WALL_BOUNCE;
-      }
-
-      for (let pegIndex = 0; pegIndex < pegs.length; pegIndex += 1) {
-        resolvePegCollision(ball, pegs[pegIndex]);
+      if (ball.segmentT >= 1) {
+        if (segment.hitPeg) {
+          triggerPegRecoil(segment.hitPeg, segment.impactStrength);
+        }
+        ball.segmentIndex += 1;
+        ball.segmentT = 0;
       }
     }
 
-    if (ball.y + ball.r >= bins[0].y) {
-      if (!settleBallInBin(ball)) {
+    if (ball.segmentIndex >= ball.segments.length) {
+      const landed = settleBallInBin(ball);
+      if (!landed) {
         remaining.push(ball);
       }
       continue;
     }
 
-    if (ball.y - ball.r > board.height + 10) {
-      continue;
-    }
+    const segment = ball.segments[ball.segmentIndex] ?? { type: 'fall' };
+    const rawT = Math.max(0, Math.min(1, ball.segmentT));
+    let baseX = 0;
+    let baseY = 0;
 
+    const elapsed = rawT * (segment.duration ?? 0.1);
+    baseX = segment.from.x + (segment.vx * elapsed);
+    baseY = segment.from.y + (segment.vy * elapsed) + (0.5 * segment.gravity * elapsed * elapsed);
+
+    const wobbleScale = 0;
+    const wobble = wobbleScale > 0
+      ? Math.sin(ball.timeAlive * 9 + ball.wobblePhase) * wobbleScale
+      : 0;
+    const settleDip = 0;
+
+    ball.x = baseX + wobble;
+    ball.y = baseY + settleDip;
     remaining.push(ball);
   }
 
@@ -456,6 +798,7 @@ function gameLoop(timestamp) {
   lastTs = timestamp;
 
   updateBalls(dt);
+  updatePegRecoils(dt);
   updateHud();
   draw();
 

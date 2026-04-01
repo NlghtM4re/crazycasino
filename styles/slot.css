@@ -455,23 +455,63 @@
 }
 
 .slot-cell.win {
-    background-color: #16a34a;
+    background-color: rgb(
+        8,
+        clamp(0, calc(138 - (var(--win-level, 1) * 8)), 138),
+        clamp(0, calc(52 - (var(--win-level, 1) * 3.4)), 52)
+    );
+    outline: 1px solid rgba(125, 211, 252, 0.65);
+    outline-offset: -1px;
     box-shadow: 0 0 12px rgba(56, 189, 248, 0.8);
 }
 
 .slot-cell.win.level2 {
-    background-color: #0f803d;
-    box-shadow: 0 0 10px rgba(56, 189, 248, 0.6);
+    outline-color: rgba(125, 211, 252, 0.72);
+    box-shadow: 0 0 10px rgba(56, 189, 248, 0.66);
 }
 
 .slot-cell.win.level3 {
-    background-color: #0d6a33;
-    box-shadow: 0 0 8px rgba(56, 189, 248, 0.4);
+    outline-color: rgba(147, 197, 253, 0.8);
+    box-shadow: 0 0 10px rgba(59, 130, 246, 0.62);
 }
 
 .slot-cell.win.level4 {
-    background-color: #0a5129;
-    box-shadow: 0 0 6px rgba(56, 189, 248, 0.3);
+    outline-color: rgba(196, 181, 253, 0.84);
+    box-shadow: 0 0 10px rgba(167, 139, 250, 0.58);
+}
+
+.slot-cell.win.level5plus {
+    outline-color: rgba(244, 114, 182, 0.84);
+    box-shadow: 0 0 0 1px rgba(244, 114, 182, 0.55), 0 0 12px rgba(244, 114, 182, 0.45);
+}
+
+.slot-cell.win.level9plus {
+    outline-color: rgba(250, 204, 21, 0.88);
+    box-shadow: 0 0 0 1px rgba(250, 204, 21, 0.72), 0 0 15px rgba(250, 204, 21, 0.52);
+}
+
+.slot-cell.win.level14plus {
+    background-color: #000000;
+    outline-color: rgba(248, 113, 113, 0.9);
+    box-shadow: 0 0 0 2px rgba(250, 204, 21, 0.75), 0 0 18px rgba(250, 204, 21, 0.55);
+}
+
+.slot-cell.win.level19plus {
+    background-color: #000000;
+    outline-color: rgba(244, 63, 94, 0.95);
+    box-shadow: 0 0 0 2px rgba(244, 63, 94, 0.9), 0 0 24px rgba(244, 63, 94, 0.75);
+    animation: abyssOutlinePulse 0.75s ease-in-out infinite;
+}
+
+.slot-cell.win.level23plus {
+    background-color: #000000;
+    outline: 2px solid rgba(255, 255, 255, 0.96);
+    outline-offset: -1px;
+    box-shadow:
+        0 0 0 2px rgba(255, 255, 255, 0.9),
+        0 0 20px rgba(56, 189, 248, 0.8),
+        0 0 30px rgba(244, 63, 94, 0.85);
+    animation: apexBorderPulse 0.6s linear infinite, apexCoreGlow 1.25s ease-in-out infinite;
 }
 
 .slot-cell.flash {
@@ -492,6 +532,26 @@
 
 .slot-cell.flash.flash-level4 {
     animation: flashLevel4 0.98s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.slot-cell.flash.flash-level5 {
+    animation: flashLevel5 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.slot-cell.flash.flash-level9 {
+    animation: flashLevel9 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.slot-cell.flash.flash-level14 {
+    animation: flashLevel14 1.03s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.slot-cell.flash.flash-level19 {
+    animation: flashLevel19 1.16s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.slot-cell.flash.flash-level23 {
+    animation: flashLevel23 1.28s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 @keyframes flashLevel1 {
@@ -520,6 +580,107 @@
     55% { box-shadow: 0 0 42px rgba(168, 85, 247, 1); transform: scale(1.22) rotate(2.6deg); filter: saturate(1.35) hue-rotate(58deg); }
     78% { box-shadow: 0 0 34px rgba(34, 197, 94, 0.96); transform: scale(1.17) rotate(-2deg); filter: saturate(1.2) hue-rotate(95deg); }
     100% { box-shadow: 0 0 18px rgba(244, 63, 94, 0.84); transform: scale(1.06) rotate(0deg); filter: saturate(1) hue-rotate(0deg); }
+}
+
+@keyframes flashLevel5 {
+    0% { box-shadow: 0 0 16px rgba(14, 165, 233, 0.85); transform: scale(calc(1.03 + (var(--flash-power, 1) * 0.012))); }
+    45% { box-shadow: 0 0 28px rgba(14, 165, 233, 1); transform: scale(calc(1.08 + (var(--flash-power, 1) * 0.02))); }
+    100% { box-shadow: 0 0 16px rgba(14, 165, 233, 0.85); transform: scale(calc(1.03 + (var(--flash-power, 1) * 0.012))); }
+}
+
+@keyframes flashLevel9 {
+    0% { box-shadow: 0 0 18px rgba(250, 204, 21, 0.9); transform: scale(calc(1.04 + (var(--flash-power, 1) * 0.016))); filter: saturate(1.05); }
+    40% { box-shadow: 0 0 34px rgba(250, 204, 21, 1); transform: scale(calc(1.11 + (var(--flash-power, 1) * 0.026))); filter: saturate(1.2); }
+    75% { box-shadow: 0 0 26px rgba(251, 146, 60, 0.95); transform: scale(calc(1.07 + (var(--flash-power, 1) * 0.02))); filter: saturate(1.15); }
+    100% { box-shadow: 0 0 18px rgba(250, 204, 21, 0.9); transform: scale(calc(1.04 + (var(--flash-power, 1) * 0.016))); filter: saturate(1.05); }
+}
+
+@keyframes flashLevel14 {
+    0% { box-shadow: 0 0 22px rgba(244, 63, 94, 0.92); transform: scale(calc(1.05 + (var(--flash-power, 1) * 0.018))); filter: hue-rotate(0deg); }
+    35% { box-shadow: 0 0 40px rgba(244, 63, 94, 1); transform: scale(calc(1.12 + (var(--flash-power, 1) * 0.03))); filter: hue-rotate(20deg); }
+    70% { box-shadow: 0 0 38px rgba(168, 85, 247, 1); transform: scale(calc(1.09 + (var(--flash-power, 1) * 0.026))); filter: hue-rotate(52deg); }
+    100% { box-shadow: 0 0 22px rgba(244, 63, 94, 0.92); transform: scale(calc(1.05 + (var(--flash-power, 1) * 0.018))); filter: hue-rotate(0deg); }
+}
+
+@keyframes flashLevel19 {
+    0% { box-shadow: 0 0 24px rgba(255, 255, 255, 0.72), 0 0 0 2px rgba(244, 63, 94, 0.82); transform: scale(calc(1.06 + (var(--flash-power, 1) * 0.02))); filter: hue-rotate(0deg) saturate(1.25); }
+    33% { box-shadow: 0 0 46px rgba(244, 63, 94, 1), 0 0 0 2px rgba(244, 63, 94, 1); transform: scale(calc(1.14 + (var(--flash-power, 1) * 0.03))); filter: hue-rotate(30deg) saturate(1.4); }
+    66% { box-shadow: 0 0 46px rgba(168, 85, 247, 1), 0 0 0 2px rgba(250, 204, 21, 1); transform: scale(calc(1.12 + (var(--flash-power, 1) * 0.028))); filter: hue-rotate(80deg) saturate(1.45); }
+    100% { box-shadow: 0 0 24px rgba(255, 255, 255, 0.72), 0 0 0 2px rgba(244, 63, 94, 0.82); transform: scale(calc(1.06 + (var(--flash-power, 1) * 0.02))); filter: hue-rotate(0deg) saturate(1.25); }
+}
+
+@keyframes flashLevel23 {
+    0% {
+        box-shadow:
+            0 0 30px rgba(255, 255, 255, 0.82),
+            0 0 0 2px rgba(255, 255, 255, 0.98),
+            0 0 38px rgba(56, 189, 248, 0.9);
+        transform: scale(calc(1.08 + (var(--flash-power, 1) * 0.022)));
+        filter: hue-rotate(0deg) saturate(1.35);
+    }
+    35% {
+        box-shadow:
+            0 0 52px rgba(56, 189, 248, 1),
+            0 0 0 2px rgba(168, 85, 247, 1),
+            0 0 58px rgba(244, 63, 94, 0.96);
+        transform: scale(calc(1.16 + (var(--flash-power, 1) * 0.034)));
+        filter: hue-rotate(40deg) saturate(1.52);
+    }
+    68% {
+        box-shadow:
+            0 0 54px rgba(250, 204, 21, 1),
+            0 0 0 2px rgba(255, 255, 255, 1),
+            0 0 60px rgba(244, 63, 94, 1);
+        transform: scale(calc(1.15 + (var(--flash-power, 1) * 0.032)));
+        filter: hue-rotate(88deg) saturate(1.6);
+    }
+    100% {
+        box-shadow:
+            0 0 30px rgba(255, 255, 255, 0.82),
+            0 0 0 2px rgba(255, 255, 255, 0.98),
+            0 0 38px rgba(56, 189, 248, 0.9);
+        transform: scale(calc(1.08 + (var(--flash-power, 1) * 0.022)));
+        filter: hue-rotate(0deg) saturate(1.35);
+    }
+}
+
+@keyframes abyssOutlinePulse {
+    0% { box-shadow: 0 0 0 2px rgba(244, 63, 94, 0.8), 0 0 20px rgba(244, 63, 94, 0.65); }
+    50% { box-shadow: 0 0 0 2px rgba(250, 204, 21, 0.92), 0 0 26px rgba(250, 204, 21, 0.78); }
+    100% { box-shadow: 0 0 0 2px rgba(244, 63, 94, 0.8), 0 0 20px rgba(244, 63, 94, 0.65); }
+}
+
+@keyframes apexBorderPulse {
+    0% { outline-color: rgba(255, 255, 255, 0.92); }
+    33% { outline-color: rgba(56, 189, 248, 0.98); }
+    66% { outline-color: rgba(250, 204, 21, 1); }
+    100% { outline-color: rgba(255, 255, 255, 0.92); }
+}
+
+@keyframes apexCoreGlow {
+    0% {
+        box-shadow:
+            0 0 0 2px rgba(255, 255, 255, 0.9),
+            0 0 20px rgba(56, 189, 248, 0.78),
+            0 0 30px rgba(244, 63, 94, 0.82);
+    }
+    50% {
+        box-shadow:
+            0 0 0 2px rgba(250, 204, 21, 0.98),
+            0 0 26px rgba(56, 189, 248, 0.9),
+            0 0 38px rgba(244, 63, 94, 0.92);
+    }
+    100% {
+        box-shadow:
+            0 0 0 2px rgba(255, 255, 255, 0.9),
+            0 0 20px rgba(56, 189, 248, 0.78),
+            0 0 30px rgba(244, 63, 94, 0.82);
+    }
+}
+
+.bd-f-stack-exp {
+    color: #ffffff;
+    text-shadow: 0 0 7px rgba(250, 204, 21, 0.92), 0 0 12px rgba(244, 63, 94, 0.75);
 }
 
 .slot-cell.spin {
