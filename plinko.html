@@ -87,13 +87,13 @@
               </div>
 
               <div class="plinko-insights">
-                <h5>Round Stats</h5>
+                <h5>Stats</h5>
                 <div class="plinko-insights-grid">
                   <div><span>Total Drops</span><strong id="plinko-stat-drops">0</strong></div>
                   <div><span>Total Wagered</span><strong id="plinko-stat-wagered">0.00</strong></div>
                   <div><span>Total Paid</span><strong id="plinko-stat-paid">0.00</strong></div>
                   <div><span>Average Gain</span><strong id="plinko-stat-average">0.00</strong></div>
-                  <div><span>Win Rate</span><strong id="plinko-stat-winrate">0%</strong></div>
+                  <div><span>Return %</span><strong id="plinko-stat-winrate">0%</strong></div>
                   <div><span>Net Result</span><strong id="plinko-stat-net">0.00</strong></div>
                 </div>
               </div>
@@ -118,7 +118,23 @@
                 <button type="button" id="plinko-allin">All In</button>
               </div>
 
-              <button id="plinko-drop">Drop Ball</button>
+              <div class="plinko-drop-row">
+                <button id="plinko-drop">Drop Ball</button>
+                <div class="plinko-auto-wrap">
+                  <span class="plinko-auto-label">Auto</span>
+                  <label class="plinko-switch">
+                    <input class="plinko-toggle" type="checkbox" id="plinko-auto-toggle" />
+                    <span class="plinko-slider"></span>
+                  </label>
+                </div>
+              </div>
+              <div class="plinko-auto-speed">
+                <span class="plinko-auto-speed-label">Auto drop speed</span>
+                <div class="plinko-auto-speed-row">
+                  <input type="range" id="plinko-auto-speed" min="1" max="20" step="1" value="2" />
+                  <span class="plinko-auto-speed-text" id="plinko-auto-speed-value">2 balls/sec</span>
+                </div>
+              </div>
               <div id="plinko-status">Ready to drop.</div>
 
               <div class="plinko-stats">

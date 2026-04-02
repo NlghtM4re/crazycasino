@@ -5,6 +5,9 @@ const boardWrap = document.querySelector('.plinko-board-wrap');
 const betInput = document.getElementById('plinko-bet');
 const difficultySelect = document.getElementById('plinko-difficulty');
 const dropBtn = document.getElementById('plinko-drop');
+const autoToggleEl = document.getElementById('plinko-auto-toggle');
+const autoSpeedEl = document.getElementById('plinko-auto-speed');
+const autoSpeedValueEl = document.getElementById('plinko-auto-speed-value');
 const statusEl = document.getElementById('plinko-status');
 const historyEl = document.getElementById('plinko-history');
 const allInBtn = document.getElementById('plinko-allin');
@@ -386,6 +389,23 @@ function toCurrency(value) {
   });
 }
 
+function formatMultiplierDisplay(value) {
+  const multiplier = Number(value);
+  if (!Number.isFinite(multiplier)) {
+    return '0x';
+  }
+
+  if (Math.abs(multiplier) > 10) {
+    return `${Math.ceil(multiplier)}x`;
+  }
+
+  if (Number.isInteger(multiplier)) {
+    return `${multiplier}x`;
+  }
+
+  return `${multiplier.toFixed(1)}x`;
+}
+
 function setStatus(text) {
   statusEl.textContent = text;
 }
@@ -398,14 +418,14 @@ function updateHud() {
 
 function updateStatsPanel() {
   const averageGain = sessionDrops > 0 ? sessionPaid / sessionDrops : 0;
-  const winRate = sessionDrops > 0 ? sessionWins / sessionDrops : 0;
+  const rtp = sessionWagered > 0 ? sessionPaid / sessionWagered : 0;
   const net = sessionPaid - sessionWagered;
 
   statDropsEl.textContent = String(sessionDrops);
   statWageredEl.textContent = toCurrency(sessionWagered);
   statPaidEl.textContent = toCurrency(sessionPaid);
   statAverageEl.textContent = toCurrency(averageGain);
-  statWinRateEl.textContent = `${Math.round(winRate * 100)}%`;
+  statWinRateEl.textContent = `${(rtp * 100).toFixed(2)}%`;
   statNetEl.textContent = `${net >= 0 ? '+' : '-'}${toCurrency(Math.abs(net))}`;
 }
 
@@ -606,9 +626,7 @@ function drawBins() {
     ctx.font = `bold ${Math.max(9, Math.min(11, Math.floor(bin.w * 0.24)))}px Inter`;
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
-    const label = Number.isInteger(bin.multiplier)
-      ? `${bin.multiplier}x`
-      : `${bin.multiplier.toFixed(1)}x`;
+    const label = formatMultiplierDisplay(bin.multiplier);
     ctx.fillText(label, boxX + boxW / 2, boxY + boxH / 2);
   }
 }
@@ -714,7 +732,7 @@ function settleBallInBin(ball) {
 
   const row = document.createElement('div');
   row.className = 'win-entry';
-  row.textContent = `${bin.multiplier}x • Bet ${toCurrency(ball.bet)} • +${toCurrency(payout)}`;
+  row.textContent = `${formatMultiplierDisplay(bin.multiplier)} • Bet ${toCurrency(ball.bet)} • +${toCurrency(payout)}`;
   historyEl.prepend(row);
 
   while (historyEl.children.length > HISTORY_LIMIT) {
@@ -882,6 +900,74 @@ difficultySelect.addEventListener('change', () => {
 
 dropBtn.addEventListener('click', dropSingleBall);
 
+let autoDropInterval = null;
+
+function getAutoDropRate() {
+  const rate = Number(autoSpeedEl.value);
+  return Number.isFinite(rate) ? Math.min(20, Math.max(1, rate)) : 2;
+}
+
+function getAutoDropIntervalMs() {
+  return 1000 / getAutoDropRate();
+}
+
+function updateAutoSpeedDisplay() {
+  autoSpeedValueEl.textContent = `${getAutoDropRate()} balls/sec`;
+}
+
+function stopAutoDrop(updateStatus = true) {
+  if (autoDropInterval) {
+    clearInterval(autoDropInterval);
+    autoDropInterval = null;
+  }
+
+  if (updateStatus) {
+    setStatus('Auto-drop off.');
+  }
+}
+
+function startAutoDrop() {
+  stopAutoDrop(false);
+  autoDropInterval = setInterval(dropSingleBall, getAutoDropIntervalMs());
+  setStatus(`Auto-drop on · ${getAutoDropRate()} balls/sec`);
+}
+
+autoToggleEl.addEventListener('change', () => {
+  if (autoToggleEl.checked) {
+    startAutoDrop();
+  } else {
+    stopAutoDrop();
+  }
+});
+
+autoSpeedEl.addEventListener('input', () => {
+  updateAutoSpeedDisplay();
+
+  if (autoToggleEl.checked) {
+    startAutoDrop();
+  }
+});
+
+function scheduleLayoutResize() {
+  resizeCanvas();
+  requestAnimationFrame(resizeCanvas);
+  setTimeout(resizeCanvas, 220);
+}
+
+const sidebarClassObserver = new MutationObserver(mutations => {
+  for (const mutation of mutations) {
+    if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+      scheduleLayoutResize();
+      break;
+    }
+  }
+});
+
+sidebarClassObserver.observe(document.documentElement, {
+  attributes: true,
+  attributeFilter: ['class'],
+});
+
 window.addEventListener('resize', resizeCanvas);
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -893,6 +979,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   resizeCanvas();
   startLoop();
+  updateAutoSpeedDisplay();
   updateHud();
   setDifficulty(currentDifficulty, false);
   updateStatsPanel();
