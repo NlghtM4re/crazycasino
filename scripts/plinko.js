@@ -40,6 +40,11 @@ const PEG_RECOIL_MAX_VELOCITY = 32;
 
 const SLOT_COUNT = WIDEST_ROW_PEGS + 1;
 const DEFAULT_PLINKO_RTP = 0.95;
+const COMEBACK_MIN_DROPS = 100;
+const COMEBACK_TRIGGER_RTP = 0.98;
+const COMEBACK_FULL_STRENGTH_RTP = 0.52;
+const BIN_FLASH_BASE_DURATION = 0.34;
+const BIN_FLASH_EXTRA_DURATION = 0.34;
 
 function buildActualLandingProbabilities(slotCount, decisionCount) {
   const probabilities = Array.from({ length: slotCount }, () => 0);
@@ -155,6 +160,8 @@ let board = {
   slotHeight: 50,
 };
 
+let canvasScale = 1;
+
 let pegs = [];
 let bins = [];
 let balls = [];
@@ -235,6 +242,52 @@ function getPegIndexInRow(rowPegs, peg) {
   return rowPegs.indexOf(peg);
 }
 
+function getSessionRtp() {
+  if (sessionWagered <= 0) {
+    return 0;
+  }
+  return sessionPaid / sessionWagered;
+}
+
+function getComebackStrength() {
+  if (sessionDrops < COMEBACK_MIN_DROPS) {
+    return 0;
+  }
+
+  const rtp = getSessionRtp();
+  const denominator = COMEBACK_TRIGGER_RTP - COMEBACK_FULL_STRENGTH_RTP;
+  if (denominator <= 0) {
+    return 0;
+  }
+
+  const normalized = (COMEBACK_TRIGGER_RTP - rtp) / denominator;
+  return Math.max(0, Math.min(1, normalized));
+}
+
+function getRightProbabilityForRow(row, currentIndex, rowLength, comebackStrength) {
+  if (comebackStrength <= 0 || rowLength <= 1) {
+    return 0.5;
+  }
+
+  const center = (rowLength - 1) / 2;
+  const rowProgress = row / Math.max(1, ROWS - 1);
+  const distanceFromCenter = Math.abs(currentIndex - center) / Math.max(1, center);
+  const baseBias = 0.14 + (0.2 * rowProgress) + (0.08 * distanceFromCenter);
+  const outwardBias = Math.min(0.42, baseBias * comebackStrength);
+
+  let outwardDirection = 0;
+  if (currentIndex < center) {
+    outwardDirection = -1;
+  } else if (currentIndex > center) {
+    outwardDirection = 1;
+  } else {
+    outwardDirection = Math.random() < 0.5 ? -1 : 1;
+  }
+
+  const rightProbability = 0.5 + (outwardDirection * outwardBias);
+  return Math.max(0.06, Math.min(0.94, rightProbability));
+}
+
 function pointOnPeg(peg, angle, radius) {
   return {
     x: peg.x + (Math.cos(angle) * radius),
@@ -301,6 +354,7 @@ function buildGuidedPath() {
   const pegRows = getPegRows();
   const contactRadius = PEG_RADIUS + BALL_RADIUS + PEG_COLLISION_MARGIN + 0.35;
   const segments = [];
+  const comebackStrength = getComebackStrength();
   const topRow = pegRows[0] ?? [];
   const centerPeg = topRow[Math.floor(topRow.length / 2)] ?? null;
 
@@ -332,7 +386,13 @@ function buildGuidedPath() {
       break;
     }
 
-    const goesRight = Math.random() < 0.5;
+    const rightProbability = getRightProbabilityForRow(
+      row,
+      currentIndex,
+      currentRow.length,
+      comebackStrength,
+    );
+    const goesRight = Math.random() < rightProbability;
     const direction = goesRight ? 1 : -1;
     const pushOffsetX = direction * Math.max(6, board.colGap * 0.14);
     const pushDropY = Math.max(6, board.rowGap * 0.16);
@@ -504,9 +564,8 @@ function resizeCanvas() {
   const rect = boardWrap.getBoundingClientRect();
   if (!rect.width) return;
 
-  const maxWidth = Math.min(900, Math.max(520, rect.width));
   const ratioWH = 520 / 760;
-  const cssWidth = maxWidth;
+  const cssWidth = Math.max(320, Math.min(900, rect.width));
   const cssHeight = Math.round(cssWidth * ratioWH);
 
   const dpr = window.devicePixelRatio || 1;
@@ -523,7 +582,9 @@ function resizeCanvas() {
   board.right = cssWidth - 34;
   board.top = 14;
   board.bottom = cssHeight - 26;
-  board.slotHeight = 50;
+
+  canvasScale = cssWidth / 760;
+  board.slotHeight = Math.round(50 * canvasScale);
 
   const rowsAreaHeight = (board.bottom - board.top) - board.slotHeight - 8;
   board.rowGap = rowsAreaHeight / (ROWS + 1);
@@ -551,7 +612,7 @@ function buildTriangle() {
         row,
         x: startX + index * board.colGap,
         y,
-        r: PEG_RADIUS,
+        r: PEG_RADIUS * canvasScale,
         recoilOffset: 0,
         recoilVelocity: 0,
       };
@@ -585,6 +646,9 @@ function buildTriangle() {
       w: slotW,
       h: board.slotHeight,
       multiplier: multipliers[index] ?? 1,
+      flashDuration: 0,
+      flashRemaining: 0,
+      flashIntensity: 0,
     });
   }
 }
@@ -598,8 +662,32 @@ function drawBins() {
   const maxMultiplier = Math.max(...bins.map(bin => bin.multiplier));
 
   for (const bin of bins) {
+    const flashDuration = bin.flashDuration || 0;
+    const flashRemaining = Math.max(0, bin.flashRemaining || 0);
+    const flashIntensity = Math.max(0, bin.flashIntensity || 0);
+    const flashProgress = flashDuration > 0 ? 1 - (flashRemaining / flashDuration) : 1;
+    const pulse = Math.sin(Math.PI * Math.max(0, Math.min(1, flashProgress)));
+    const jumpLift = pulse * (1 + (4.5 * flashIntensity));
+    const scale = 1 + (pulse * 0.035 * flashIntensity);
+    const glowAlpha = (flashRemaining > 0 ? (flashRemaining / flashDuration) : 0) * (0.22 + (0.34 * flashIntensity));
+
     const hot = bin.multiplier >= Math.max(4, maxMultiplier * 0.45);
     const medium = bin.multiplier >= 1 && !hot;
+
+    const centerX = bin.x + (bin.w / 2);
+    const centerY = bin.y + (bin.h / 2);
+
+    ctx.save();
+    ctx.translate(centerX, centerY - jumpLift);
+    ctx.scale(scale, scale);
+    ctx.translate(-centerX, -centerY);
+
+    if (glowAlpha > 0) {
+      ctx.fillStyle = `rgba(147, 197, 253, ${Math.min(0.8, glowAlpha).toFixed(3)})`;
+      ctx.beginPath();
+      ctx.roundRect(bin.x - 2, bin.y - 2, bin.w + 4, bin.h + 4, Math.min(12, bin.h * 0.48));
+      ctx.fill();
+    }
 
     ctx.fillStyle = hot
       ? 'rgba(37, 99, 235, 0.45)'
@@ -623,12 +711,38 @@ function drawBins() {
     ctx.stroke();
 
     ctx.fillStyle = '#dbeafe';
-    ctx.font = `bold ${Math.max(9, Math.min(11, Math.floor(bin.w * 0.24)))}px Inter`;
+    ctx.font = `bold ${Math.max(7 * canvasScale, Math.min(13 * canvasScale, Math.floor(bin.w * 0.24)))}px Inter`;
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
     const label = formatMultiplierDisplay(bin.multiplier);
     ctx.fillText(label, boxX + boxW / 2, boxY + boxH / 2);
+
+    ctx.restore();
   }
+}
+
+function updateBinFlashes(dt) {
+  for (const bin of bins) {
+    if (!bin.flashRemaining || bin.flashRemaining <= 0) {
+      bin.flashRemaining = 0;
+      continue;
+    }
+
+    bin.flashRemaining = Math.max(0, bin.flashRemaining - dt);
+  }
+}
+
+function triggerBinFlash(bin) {
+  if (!bin) return;
+
+  const maxMultiplier = Math.max(1, ...bins.map(slot => Number(slot.multiplier) || 0));
+  const normalized = Math.log1p(Math.max(0, bin.multiplier)) / Math.log1p(maxMultiplier);
+  const intensity = 0.45 + (0.9 * normalized);
+  const duration = BIN_FLASH_BASE_DURATION + (BIN_FLASH_EXTRA_DURATION * normalized);
+
+  bin.flashIntensity = intensity;
+  bin.flashDuration = duration;
+  bin.flashRemaining = duration;
 }
 
 function drawPegs() {
@@ -680,7 +794,7 @@ function spawnBall(bet) {
     y: start.y,
     vx: 0,
     vy: 0,
-    r: BALL_RADIUS,
+    r: BALL_RADIUS * canvasScale,
     bet,
     segments: guided.segments,
     segmentIndex: 0,
@@ -722,6 +836,9 @@ function settleBallInBin(ball) {
     : bins.find(slot => ball.x >= slot.x && ball.x <= slot.x + slot.w);
   if (!bin) return false;
 
+  sessionDrops += 1;
+  sessionWagered += ball.bet;
+
   const payout = Number((ball.bet * bin.multiplier).toFixed(2));
   updateCredits(payout);
   lastPayout = payout;
@@ -739,6 +856,7 @@ function settleBallInBin(ball) {
     historyEl.removeChild(historyEl.lastChild);
   }
 
+  triggerBinFlash(bin);
   updateStatsPanel();
 
   return true;
@@ -816,6 +934,7 @@ function gameLoop(timestamp) {
   lastTs = timestamp;
 
   updateBalls(dt);
+  updateBinFlashes(dt);
   updatePegRecoils(dt);
   updateHud();
   draw();
@@ -849,8 +968,6 @@ function dropSingleBall() {
   if (!bet) return;
 
   updateCredits(-bet);
-  sessionDrops += 1;
-  sessionWagered += bet;
   spawnBall(bet);
   setStatus(`Dropped 1 ball • ${getDifficultyConfig().label}`);
   updateHud();
@@ -948,19 +1065,23 @@ autoSpeedEl.addEventListener('input', () => {
   }
 });
 
-function scheduleLayoutResize() {
+const boardResizeObserver = new ResizeObserver(() => {
   resizeCanvas();
-  requestAnimationFrame(resizeCanvas);
-  setTimeout(resizeCanvas, 220);
+});
+
+boardResizeObserver.observe(boardWrap);
+
+const layoutResizeObserver = new ResizeObserver(() => {
+  resizeCanvas();
+});
+
+const layoutElement = document.querySelector('.plinko-layout');
+if (layoutElement) {
+  layoutResizeObserver.observe(layoutElement);
 }
 
-const sidebarClassObserver = new MutationObserver(mutations => {
-  for (const mutation of mutations) {
-    if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
-      scheduleLayoutResize();
-      break;
-    }
-  }
+const sidebarClassObserver = new MutationObserver(() => {
+  resizeCanvas();
 });
 
 sidebarClassObserver.observe(document.documentElement, {
@@ -969,6 +1090,7 @@ sidebarClassObserver.observe(document.documentElement, {
 });
 
 window.addEventListener('resize', resizeCanvas);
+window.addEventListener('orientationchange', resizeCanvas);
 
 document.addEventListener('DOMContentLoaded', () => {
   const savedDifficulty = localStorage.getItem(PLINKO_DIFFICULTY_KEY);

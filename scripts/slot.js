@@ -10,6 +10,7 @@ const symbolWeights = {
 const totalSymbolWeight = symbols.reduce((sum, sym) => sum + (symbolWeights[sym] || 0), 0);
 const ROWS = 3;
 const COLS = 5;
+const MAX_STACK_PATTERNS = 20;
 let isSpinning = false;
 
 function getWeightedRandomSymbol() {
@@ -124,7 +125,7 @@ function renderGrid(gridData, highlightedLines = [], flashCells = [], flashLevel
 
     const levelMap = new Map();
     highlightedLines.forEach((line, idx) => {
-        const level = Math.min(idx + 1, 23);
+        const level = Math.min(idx + 1, MAX_STACK_PATTERNS);
         line.cells.forEach((p) => {
             const key = `${p.row}_${p.col}`;
             const prev = levelMap.get(key) || 0;
@@ -155,16 +156,16 @@ function renderGrid(gridData, highlightedLines = [], flashCells = [], flashLevel
                 if (level >= 9) cell.classList.add('level9plus');
                 if (level >= 14) cell.classList.add('level14plus');
                 if (level >= 19) cell.classList.add('level19plus');
-                if (level >= 23) cell.classList.add('level23plus');
+                if (level >= MAX_STACK_PATTERNS) cell.classList.add('level20plus');
                 cell.style.setProperty('--win-level', String(level));
             }
             if (flashMap.has(key)) {
                 cell.classList.add('flash');
-                const effectiveFlashLevel = Math.min(Math.max(flashLevel, 1), 23);
+                const effectiveFlashLevel = Math.min(Math.max(flashLevel, 1), MAX_STACK_PATTERNS);
                 const flashPower = Math.min(4.8, Math.pow(1.11, Math.max(0, effectiveFlashLevel - 1)));
                 let flashTier = 1;
                 if (effectiveFlashLevel >= 19) flashTier = 19;
-                if (effectiveFlashLevel >= 23) flashTier = 23;
+                if (effectiveFlashLevel >= MAX_STACK_PATTERNS) flashTier = 20;
                 else if (effectiveFlashLevel >= 14) flashTier = 14;
                 else if (effectiveFlashLevel >= 9) flashTier = 9;
                 else if (effectiveFlashLevel >= 5) flashTier = 5;
@@ -233,7 +234,7 @@ function calculateWinningLines(gridData) {
         const sym = allSameSymbol(cells);
         if (!sym) return;
         const length = cells.length;
-        const patternMultiplier = (lineType === 'v-shape' || lineType === 'x-shape' || lineType === 'plus-shape') ? 20 : getPatternMultiplier(length);
+        const patternMultiplier = (lineType === 'v-shape' || lineType === 'x-shape') ? 20 : getPatternMultiplier(length);
         const multiplier = basePercent[sym] * length * patternMultiplier;
         lineResults.push({ symbol: sym, length, lineType, cells, multiplier, baseValue: basePercent[sym], patternMult: patternMultiplier });
     }
@@ -339,17 +340,6 @@ function calculateWinningLines(gridData) {
         ], 'x-shape');
     }
 
-    // Plus pattern can be anywhere in each 3-column window (stack on top of base lines)
-    for (let startCol = 0; startCol <= COLS - 3; startCol++) {
-        pushSpecialPattern([
-            { symbol: gridData[0][startCol + 1], row: 0, col: startCol + 1 },
-            { symbol: gridData[1][startCol], row: 1, col: startCol },
-            { symbol: gridData[1][startCol + 1], row: 1, col: startCol + 1 },
-            { symbol: gridData[1][startCol + 2], row: 1, col: startCol + 2 },
-            { symbol: gridData[2][startCol + 1], row: 2, col: startCol + 1 }
-        ], 'plus-shape');
-    }
-
     // Jackpot: every cell on the board is the same symbol.
     const jackpotSymbol = isAllBoardSame();
     if (jackpotSymbol) {
@@ -382,7 +372,7 @@ function playWinningLinesSequentially(lines, gridData, betAmount) {
     let totalCreditsGained = 0;
     const appliedLines = [];
     const patternCount = Math.max(lines.length, 1);
-    const stackMultiplierFactor = patternCount >= 23
+    const stackMultiplierFactor = patternCount >= MAX_STACK_PATTERNS
         ? Number(Math.pow(patternCount, 1.28).toFixed(2))
         : patternCount;
     const baseFlashDurationMs = 420;
@@ -495,7 +485,7 @@ function playWinningLinesSequentially(lines, gridData, betAmount) {
                 + ` <span class="bd-f-op">×</span> <span class="bd-f-sym">${line.baseValue} sym</span>`
                 + ` <span class="bd-f-op">×</span> <span class="bd-f-line">×${line.patternMult} line</span>`
                 + (patternCount > 1
-                    ? ` <span class="bd-f-op">×</span> <span class="bd-f-stack${patternCount >= 23 ? ' bd-f-stack-exp' : ''}">×${stackMultiplierFactor.toFixed(2)} stack</span>`
+                    ? ` <span class="bd-f-op">×</span> <span class="bd-f-stack${patternCount >= MAX_STACK_PATTERNS ? ' bd-f-stack-exp' : ''}">×${stackMultiplierFactor.toFixed(2)} stack</span>`
                     : '')
                 + `</span>`;
             row.innerHTML = `<span class="bd-symbol">${line.symbol}</span><span class="bd-type">${typeLabel}</span>${formulaParts}<span class="bd-eq">= x${scaledLineMultiplier.toFixed(2)}</span><span class="bd-credits">+${lineWinnings.toFixed(2)}</span>`;

@@ -62,14 +62,19 @@
 .plinko-layout {
   display: grid;
   grid-template-columns: minmax(0, 1fr) clamp(210px, 23vw, 250px);
+  grid-template-areas:
+    "board controls"
+    "stats controls";
   gap: 12px;
   align-items: start;
+  overflow-x: auto;
+  min-width: 0;
 }
 
 .plinko-board-column {
+  grid-area: board;
   display: flex;
   flex-direction: column;
-  gap: 10px;
 }
 
 .plinko-board-wrap {
@@ -86,6 +91,7 @@
 }
 
 .plinko-insights {
+  grid-area: stats;
   background: rgba(15, 23, 42, 0.55);
   border: 1px solid #334155;
   border-radius: 10px;
@@ -125,6 +131,7 @@
 }
 
 .plinko-controls {
+  grid-area: controls;
   display: flex;
   flex-direction: column;
   gap: clamp(6px, 0.7vw, 8px);
@@ -284,18 +291,19 @@
 
 .plinko-auto-speed-row {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-columns: minmax(0, 1fr) 5.5ch;
   align-items: center;
-  gap: 8px;
+  gap: 4px;
 }
 
 .plinko-auto-speed-text {
-  flex: 0 0 68px;
+  width: 9ch;
   font-size: 9px;
   color: #94a3b8;
   line-height: 1;
   white-space: nowrap;
   text-align: right;
+  font-variant-numeric: tabular-nums;
 }
 
 #plinko-auto-speed {
@@ -432,12 +440,81 @@
   color: #fbbf24;
 }
 
-@media (max-width: 1050px) {
+@media (max-width: 800px) {
   .plinko-layout {
     grid-template-columns: 1fr;
+    grid-template-areas:
+      "board"
+      "controls"
+      "stats";
+    max-width: 500px;
+  }
+
+  .plinko-board-wrap {
+    max-width: 500px;
   }
 
   .plinko-insights-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .plinko-controls {
+    gap: 10px;
+    padding: 12px;
+  }
+
+  .plinko-controls h4 {
+    font-size: 15px;
+  }
+
+  .plinko-controls label {
+    font-size: 13px;
+  }
+
+  #plinko-bet,
+  #plinko-difficulty {
+    padding: 10px;
+    font-size: 15px;
+  }
+
+  .plinko-quick-bets button,
+  #plinko-drop {
+    padding: 10px;
+    font-size: 13px;
+  }
+
+  #plinko-auto-speed {
+    min-height: 24px;
+  }
+}
+
+@media (max-width: 400px) {
+  .plinko-card {
+    padding: 8px;
+  }
+
+  .plinko-layout {
+    gap: 2px;
+    position: relative;
+  }
+
+  .plinko-board-column {
+    z-index: 10;
+  }
+
+  .plinko-controls {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 120px;
+    background: rgba(15, 23, 42, 0.95);
+    border: 1px solid #334155;
+    gap: 6px;
+    padding: 8px;
+    border-radius: 8px;
+  }
+
+  .plinko-insights {
+    margin-top: 8px;
   }
 }

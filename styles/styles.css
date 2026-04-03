@@ -233,7 +233,6 @@ html.sidebar-collapsed .sidebar .game-title-text::before {
     padding: 10px;
     display: flex;
     flex-direction: column;
-    transition: margin-left 0.3s ease, margin-right 0.3s ease;
 }
 
 html.sidebar-collapsed .main-content {

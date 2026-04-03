@@ -362,14 +362,6 @@
     --cells: 14px 0 #22d3ee, 7px 7px #22d3ee, 0 14px #22d3ee, 14px 14px #22d3ee;
 }
 
-.pattern-mini.pattern-plus-shape {
-    --w: 19px;
-    --h: 19px;
-    --px: 7px;
-    --py: 0px;
-    --cells: -7px 7px #22d3ee, 0 7px #22d3ee, 7px 7px #22d3ee, 0 14px #22d3ee;
-}
-
 .pattern-mini.pattern-all {
     --w: 33px;
     --h: 19px;
@@ -378,15 +370,6 @@
     --cells: 7px 0 #22d3ee, 14px 0 #22d3ee, 21px 0 #22d3ee, 28px 0 #22d3ee,
         0 7px #22d3ee, 7px 7px #22d3ee, 14px 7px #22d3ee, 21px 7px #22d3ee, 28px 7px #22d3ee,
         0 14px #22d3ee, 7px 14px #22d3ee, 14px 14px #22d3ee, 21px 14px #22d3ee, 28px 14px #22d3ee;
-}
-
-.pattern-plus {
-    display: inline-block;
-    font-size: 19px;
-    font-weight: 700;
-    line-height: 1;
-    vertical-align: middle;
-    margin-right: 2px;
 }
 
 .slot-game h2 {
@@ -503,7 +486,7 @@
     animation: abyssOutlinePulse 0.75s ease-in-out infinite;
 }
 
-.slot-cell.win.level23plus {
+.slot-cell.win.level20plus {
     background-color: #000000;
     outline: 2px solid rgba(255, 255, 255, 0.96);
     outline-offset: -1px;
@@ -550,8 +533,8 @@
     animation: flashLevel19 1.16s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.slot-cell.flash.flash-level23 {
-    animation: flashLevel23 1.28s cubic-bezier(0.16, 1, 0.3, 1);
+.slot-cell.flash.flash-level20 {
+    animation: flashLevel20 1.28s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 @keyframes flashLevel1 {
@@ -609,7 +592,7 @@
     100% { box-shadow: 0 0 24px rgba(255, 255, 255, 0.72), 0 0 0 2px rgba(244, 63, 94, 0.82); transform: scale(calc(1.06 + (var(--flash-power, 1) * 0.02))); filter: hue-rotate(0deg) saturate(1.25); }
 }
 
-@keyframes flashLevel23 {
+@keyframes flashLevel20 {
     0% {
         box-shadow:
             0 0 30px rgba(255, 255, 255, 0.82),

@@ -5,7 +5,16 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Crazy Casino</title>
   <link rel="icon" type="image/svg+xml" href="favicon.svg" />
-  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9742870781660837" crossorigin="anonymous"></script>
+  <script>
+  window.__ccCanLoadAds = window.location.protocol !== 'file:';
+  if (window.__ccCanLoadAds) {
+    const adsScript = document.createElement('script');
+    adsScript.async = true;
+    adsScript.src = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9742870781660837';
+    adsScript.crossOrigin = 'anonymous';
+    document.head.appendChild(adsScript);
+  }
+  </script>
   <meta name="google-adsense-account" content="ca-pub-9742870781660837">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles/styles.css" />
@@ -67,10 +76,11 @@
 
     <div class="ad-space">
       <div class="ad-container">
-        <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9742870781660837" crossorigin="anonymous"></script>
         <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-9742870781660837" data-ad-slot="4995831174" data-ad-format="auto" data-full-width-responsive="true"></ins>
         <script>
-          (adsbygoogle = window.adsbygoogle || []).push({});
+          if (window.__ccCanLoadAds) {
+            (adsbygoogle = window.adsbygoogle || []).push({});
+          }
         </script>
       </div>
     </div>
@@ -84,18 +94,6 @@
             <div class="plinko-board-column">
               <div class="plinko-board-wrap">
                 <canvas id="plinko-canvas" width="760" height="520"></canvas>
-              </div>
-
-              <div class="plinko-insights">
-                <h5>Stats</h5>
-                <div class="plinko-insights-grid">
-                  <div><span>Total Drops</span><strong id="plinko-stat-drops">0</strong></div>
-                  <div><span>Total Wagered</span><strong id="plinko-stat-wagered">0.00</strong></div>
-                  <div><span>Total Paid</span><strong id="plinko-stat-paid">0.00</strong></div>
-                  <div><span>Average Gain</span><strong id="plinko-stat-average">0.00</strong></div>
-                  <div><span>Return %</span><strong id="plinko-stat-winrate">0%</strong></div>
-                  <div><span>Net Result</span><strong id="plinko-stat-net">0.00</strong></div>
-                </div>
               </div>
             </div>
 
@@ -147,6 +145,18 @@
                 <div id="plinko-history"></div>
               </div>
             </div>
+
+            <div class="plinko-insights">
+              <h5>Stats</h5>
+              <div class="plinko-insights-grid">
+                <div><span>Total Drops</span><strong id="plinko-stat-drops">0</strong></div>
+                <div><span>Total Wagered</span><strong id="plinko-stat-wagered">0.00</strong></div>
+                <div><span>Total Paid</span><strong id="plinko-stat-paid">0.00</strong></div>
+                <div><span>Average Gain</span><strong id="plinko-stat-average">0.00</strong></div>
+                <div><span>Return %</span><strong id="plinko-stat-winrate">0%</strong></div>
+                <div><span>Net Result</span><strong id="plinko-stat-net">0.00</strong></div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -165,10 +175,11 @@
 
     <div class="ad-horizontal">
       <div class="ad-horizontal-container">
-        <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9742870781660837" crossorigin="anonymous"></script>
         <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-9742870781660837" data-ad-slot="1397042108" data-ad-format="auto" data-full-width-responsive="true"></ins>
         <script>
-          (adsbygoogle = window.adsbygoogle || []).push({});
+          if (window.__ccCanLoadAds) {
+            (adsbygoogle = window.adsbygoogle || []).push({});
+          }
         </script>
       </div>
     </div>
