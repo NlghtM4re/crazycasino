@@ -368,8 +368,8 @@ function calculateWinningLines(gridData) {
 }
 
 function playWinningLinesSequentially(lines, gridData, betAmount) {
-    let currentMultiplier = 0;
-    let totalCreditsGained = 0;
+    let currentBaseMultiplier = 0;
+    let totalBaseCreditsGained = 0;
     const appliedLines = [];
     const patternCount = Math.max(lines.length, 1);
     const stackMultiplierFactor = patternCount >= MAX_STACK_PATTERNS
@@ -444,22 +444,40 @@ function playWinningLinesSequentially(lines, gridData, betAmount) {
         );
 
         if (index >= lines.length) {
-            document.getElementById('win').textContent = `Total Multiplier: x${currentMultiplier.toFixed(2)}`;
-            if (totalCreditsGained === 0) {
+            const finalMultiplier = currentBaseMultiplier * stackMultiplierFactor;
+            const finalCredits = totalBaseCreditsGained * stackMultiplierFactor;
+            const stackBonusCredits = Math.max(0, finalCredits - totalBaseCreditsGained);
+
+            if (stackBonusCredits > 0) {
+                updateCredits(stackBonusCredits);
+            }
+
+            document.getElementById('win').textContent = `Total Multiplier: x${finalMultiplier.toFixed(2)}`;
+            if (finalCredits === 0) {
                 credEl.textContent = '0 credits';
                 credEl.className = 'zero';
+            } else {
+                credEl.textContent = `+${finalCredits.toFixed(2)} credits`;
+                credEl.className = '';
+
+                if (stackMultiplierFactor > 1) {
+                    const bdRows = document.getElementById('win-breakdown-rows');
+                    const bonusRow = document.createElement('div');
+                    bonusRow.className = 'win-breakdown-row';
+                    bonusRow.innerHTML = `<span class="bd-symbol">⚡</span><span class="bd-type">stack bonus</span><span class="bd-formula"><span class="bd-f-cells">base total</span> <span class="bd-f-op">×</span> <span class="bd-f-stack${patternCount >= MAX_STACK_PATTERNS ? ' bd-f-stack-exp' : ''}">×${stackMultiplierFactor.toFixed(2)} stack</span></span><span class="bd-eq">= +${stackBonusCredits.toFixed(2)}</span><span class="bd-credits">+${finalCredits.toFixed(2)}</span>`;
+                    bdRows.appendChild(bonusRow);
+                }
             }
             isSpinning = false;
             return;
         }
 
         const line = lines[index];
-        const scaledLineMultiplier = line.multiplier * stackMultiplierFactor;
-        const prevMultiplier = currentMultiplier;
-        const prevCredits = totalCreditsGained;
-        currentMultiplier += scaledLineMultiplier;
-        const lineWinnings = betAmount * scaledLineMultiplier;
-        totalCreditsGained += lineWinnings;
+        const prevMultiplier = currentBaseMultiplier;
+        const prevCredits = totalBaseCreditsGained;
+        currentBaseMultiplier += line.multiplier;
+        const lineWinnings = betAmount * line.multiplier;
+        totalBaseCreditsGained += lineWinnings;
         appliedLines.push(line);
 
         const flashPositions = line.cells.map(v => ({ row: v.row, col: v.col }));
@@ -472,8 +490,8 @@ function playWinningLinesSequentially(lines, gridData, betAmount) {
             applyPatternLevelFx(index);
 
             // Animate both counters simultaneously
-            animateMultiplier(prevMultiplier, currentMultiplier, counterAnimDurationMs);
-            animateCredits(prevCredits, totalCreditsGained, counterAnimDurationMs);
+            animateMultiplier(prevMultiplier, currentBaseMultiplier, counterAnimDurationMs);
+            animateCredits(prevCredits, totalBaseCreditsGained, counterAnimDurationMs);
 
             // Add breakdown row
             const bdRows = document.getElementById('win-breakdown-rows');
@@ -484,11 +502,8 @@ function playWinningLinesSequentially(lines, gridData, betAmount) {
                 + `<span class="bd-f-cells">${line.length} cells</span>`
                 + ` <span class="bd-f-op">×</span> <span class="bd-f-sym">${line.baseValue} sym</span>`
                 + ` <span class="bd-f-op">×</span> <span class="bd-f-line">×${line.patternMult} line</span>`
-                + (patternCount > 1
-                    ? ` <span class="bd-f-op">×</span> <span class="bd-f-stack${patternCount >= MAX_STACK_PATTERNS ? ' bd-f-stack-exp' : ''}">×${stackMultiplierFactor.toFixed(2)} stack</span>`
-                    : '')
                 + `</span>`;
-            row.innerHTML = `<span class="bd-symbol">${line.symbol}</span><span class="bd-type">${typeLabel}</span>${formulaParts}<span class="bd-eq">= x${scaledLineMultiplier.toFixed(2)}</span><span class="bd-credits">+${lineWinnings.toFixed(2)}</span>`;
+            row.innerHTML = `<span class="bd-symbol">${line.symbol}</span><span class="bd-type">${typeLabel}</span>${formulaParts}<span class="bd-eq">= x${line.multiplier.toFixed(2)}</span><span class="bd-credits">+${lineWinnings.toFixed(2)}</span>`;
             bdRows.appendChild(row);
 
             renderGrid(gridData, appliedLines);
