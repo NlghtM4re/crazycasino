@@ -83,6 +83,8 @@
   overflow: hidden;
   background: #171627;
   width: 100%;
+  max-width: 760px;
+  margin: 0 auto;
 }
 
 #plinko-canvas {
@@ -460,8 +462,9 @@
 
   .plinko-board-wrap {
     width: 100%;
-    max-width: none;
+    max-width: min(100%, 640px);
     min-width: 0;
+    margin: 0 auto;
   }
 
   .plinko-insights-grid {
@@ -520,6 +523,10 @@
     gap: 6px;
     padding: 8px;
     border-radius: 8px;
+  }
+
+  .plinko-board-wrap {
+    max-width: min(100%, 560px);
   }
 
   .plinko-quick-bets {

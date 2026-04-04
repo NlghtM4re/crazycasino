@@ -365,6 +365,16 @@ html.sidebar-collapsed .top-bar {
     overflow: hidden;
 }
 
+.ad-horizontal .adsbygoogle,
+.ad-horizontal-container .adsbygoogle {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    min-height: 0;
+    height: auto;
+    overflow: hidden;
+}
+
 /* Responsive ad adjustments */
 @media (max-width: 1400px) {
     .ad-space {
@@ -398,11 +408,28 @@ html.sidebar-collapsed .top-bar {
     
     .main-content {
         margin-right: 10px;
-        margin-bottom: 58px;
+        margin-bottom: 50px;
     }
     
     .top-bar {
         right: 0;
+    }
+
+    .ad-horizontal {
+        padding: 2px 6px;
+        max-height: 40px;
+    }
+
+    .ad-horizontal-container {
+        padding: 1px 6px;
+        max-height: 32px;
+    }
+
+    .ad-horizontal .adsbygoogle,
+    .ad-horizontal-container .adsbygoogle {
+        height: 24px !important;
+        min-height: 24px !important;
+        max-height: 24px !important;
     }
 }
 
@@ -442,7 +469,7 @@ html.sidebar-collapsed .top-bar {
     .main-content {
         margin-left: 8px;
         margin-right: 8px;
-        margin-bottom: 48px !important;
+        margin-bottom: 42px !important;
         padding-inline: 8px;
     }
 
@@ -467,19 +494,26 @@ html.sidebar-collapsed .top-bar {
     }
 
     .main-content {
-        margin-bottom: 48px !important;
+        margin-bottom: 42px !important;
     }
     
     .ad-horizontal {
         padding: 2px 6px !important;
-        max-height: 42px !important;
+        max-height: 34px !important;
         overflow: hidden !important;
     }
     
     .ad-horizontal-container {
         padding: 2px 6px !important;
-        max-height: 34px !important;
+        max-height: 28px !important;
         overflow: hidden !important;
+    }
+
+    .ad-horizontal .adsbygoogle,
+    .ad-horizontal-container .adsbygoogle {
+        height: 20px !important;
+        min-height: 20px !important;
+        max-height: 20px !important;
     }
     
     .logo {
@@ -516,18 +550,25 @@ html.sidebar-collapsed .top-bar {
 
     .ad-horizontal {
         padding: 1px 4px !important;
-        max-height: 36px !important;
+        max-height: 30px !important;
         overflow: hidden !important;
     }
     
     .ad-horizontal-container {
         padding: 1px 4px !important;
-        max-height: 28px !important;
+        max-height: 24px !important;
         overflow: hidden !important;
     }
     
     .main-content {
-        margin-bottom: 40px !important;
+        margin-bottom: 34px !important;
+    }
+
+    .ad-horizontal .adsbygoogle,
+    .ad-horizontal-container .adsbygoogle {
+        height: 18px !important;
+        min-height: 18px !important;
+        max-height: 18px !important;
     }
     
     .logo {
@@ -569,18 +610,25 @@ html.sidebar-collapsed .top-bar {
 
     .ad-horizontal {
         padding: 0 4px !important;
-        max-height: 30px !important;
+        max-height: 28px !important;
         overflow: hidden !important;
     }
     
     .ad-horizontal-container {
         padding: 0 4px !important;
-        max-height: 24px !important;
+        max-height: 22px !important;
         overflow: hidden !important;
     }
     
     .main-content {
-        margin-bottom: 34px !important;
+        margin-bottom: 30px !important;
+    }
+
+    .ad-horizontal .adsbygoogle,
+    .ad-horizontal-container .adsbygoogle {
+        height: 16px !important;
+        min-height: 16px !important;
+        max-height: 16px !important;
     }
     
     .top-bar {

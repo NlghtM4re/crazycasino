@@ -25,6 +25,7 @@ const PEG_RADIUS = 5;
 const PEG_COLLISION_MARGIN = 0.15;
 const ROWS = 14;
 const WIDEST_ROW_PEGS = 16;
+const PLINKO_TWO_ROW_BREAKPOINT = 460;
 const HISTORY_LIMIT = 18;
 const PLINKO_DIFFICULTY_KEY = 'plinkoDifficulty';
 const PLINKO_DECISIONS = ROWS;
@@ -564,7 +565,7 @@ function resizeCanvas() {
   const rect = boardWrap.getBoundingClientRect();
   if (!rect.width) return;
 
-  const ratioWH = 520 / 760;
+  const ratioWH = rect.width <= 560 ? (560 / 760) : (520 / 760);
   const cssWidth = Math.min(900, Math.max(0, rect.width - 2));
   if (cssWidth < 120) {
     return;
@@ -583,13 +584,17 @@ function resizeCanvas() {
   board.height = cssHeight;
 
   canvasScale = cssWidth / 760;
-  board.left = Math.max(16, Math.round(34 * canvasScale));
-  board.right = cssWidth - Math.max(16, Math.round(34 * canvasScale));
-  board.top = Math.max(10, Math.round(14 * canvasScale));
-  board.bottom = cssHeight - Math.max(18, Math.round(26 * canvasScale));
-  board.slotHeight = Math.round(50 * canvasScale);
+  const sidePadding = Math.max(10, Math.round(26 * canvasScale));
+  board.left = sidePadding;
+  board.right = cssWidth - sidePadding;
+  board.top = Math.max(8, Math.round(10 * canvasScale));
+  board.bottom = cssHeight - Math.max(14, Math.round(20 * canvasScale));
+  board.slotHeight = cssWidth <= PLINKO_TWO_ROW_BREAKPOINT
+    ? Math.max(44, Math.round(96 * canvasScale))
+    : Math.max(28, Math.round(56 * canvasScale));
 
-  const rowsAreaHeight = (board.bottom - board.top) - board.slotHeight - 8;
+  const slotGap = cssWidth <= 560 ? 4 : 8;
+  const rowsAreaHeight = (board.bottom - board.top) - board.slotHeight - slotGap;
   board.rowGap = rowsAreaHeight / (ROWS + 1);
 
   const maxCount = WIDEST_ROW_PEGS;
@@ -641,13 +646,46 @@ function buildTriangle() {
   const config = getDifficultyConfig();
   const multipliers = getScaledMultipliers(config.multipliers ?? [], slots);
 
+  const useTwoRows = board.width <= PLINKO_TWO_ROW_BREAKPOINT;
+  if (!useTwoRows) {
+    for (let index = 0; index < slots; index += 1) {
+      bins.push({
+        index,
+        x: slotLeft + index * slotW,
+        y: by,
+        w: slotW,
+        h: board.slotHeight,
+        multiplier: multipliers[index] ?? 1,
+        flashDuration: 0,
+        flashRemaining: 0,
+        flashIntensity: 0,
+      });
+    }
+    return;
+  }
+
+  const rowGap = Math.max(4, Math.round(board.slotHeight * 0.08));
+  const rowHeight = Math.max(18, Math.round((board.slotHeight - rowGap) / 2));
+  const upperY = by;
+  const lowerY = by + rowHeight + rowGap;
+
+  const topRowCount = Math.ceil(slots / 2);
+  const bottomRowCount = Math.floor(slots / 2);
+  const topW = (slotRight - slotLeft) / Math.max(1, topRowCount);
+  const bottomW = (slotRight - slotLeft) / Math.max(1, bottomRowCount);
+
   for (let index = 0; index < slots; index += 1) {
+    const isTopRow = index % 2 === 0;
+    const column = Math.floor(index / 2);
+    const width = isTopRow ? topW : bottomW;
+    const x = slotLeft + (column * width);
+
     bins.push({
       index,
-      x: slotLeft + index * slotW,
-      y: by,
-      w: slotW,
-      h: board.slotHeight,
+      x,
+      y: isTopRow ? upperY : lowerY,
+      w: width,
+      h: rowHeight,
       multiplier: multipliers[index] ?? 1,
       flashDuration: 0,
       flashRemaining: 0,
@@ -688,7 +726,7 @@ function drawBins() {
     if (glowAlpha > 0) {
       ctx.fillStyle = `rgba(147, 197, 253, ${Math.min(0.8, glowAlpha).toFixed(3)})`;
       ctx.beginPath();
-      ctx.roundRect(bin.x - 2, bin.y - 2, bin.w + 4, bin.h + 4, Math.min(12, bin.h * 0.48));
+      ctx.roundRect(bin.x - 2, bin.y - 2, bin.w + 4, bin.h + 4, Math.min(5, bin.h * 0.18));
       ctx.fill();
     }
 
@@ -706,7 +744,7 @@ function drawBins() {
     const boxY = bin.y + insetY;
     const boxW = Math.max(4, bin.w - insetX * 2);
     const boxH = Math.max(4, bin.h - insetY * 2);
-    const radius = Math.min(8, boxH * 0.42);
+    const radius = Math.min(4, boxH * 0.16);
 
     ctx.beginPath();
     ctx.roundRect(boxX, boxY, boxW, boxH, radius);
@@ -714,10 +752,21 @@ function drawBins() {
     ctx.stroke();
 
     ctx.fillStyle = '#dbeafe';
-    ctx.font = `bold ${Math.max(7 * canvasScale, Math.min(13 * canvasScale, Math.floor(bin.w * 0.24)))}px Inter`;
+    const fontByWidth = Math.floor(bin.w * 0.33);
+    const maxFont = Math.max(12, Math.floor(16 * canvasScale));
+    const minFont = board.width <= 560 ? 10 : 8;
+    let labelFont = Math.max(minFont, Math.min(maxFont, fontByWidth));
+    const label = formatMultiplierDisplay(bin.multiplier);
+
+    ctx.font = `bold ${labelFont}px Inter`;
+    const maxTextWidth = Math.max(4, boxW - 6);
+    while (labelFont > minFont && ctx.measureText(label).width > maxTextWidth) {
+      labelFont -= 1;
+      ctx.font = `bold ${labelFont}px Inter`;
+    }
+
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
-    const label = formatMultiplierDisplay(bin.multiplier);
     ctx.fillText(label, boxX + boxW / 2, boxY + boxH / 2);
 
     ctx.restore();
