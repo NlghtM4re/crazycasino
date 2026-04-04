@@ -1,7 +1,7 @@
 /* Main container */
 .game-box {
   border-radius: 16px;
-  background: #1a1f3a;
+  background: var(--game-panel-bg);
   padding: 20px;
   margin: 5px auto;
   width: 100%;
@@ -205,7 +205,7 @@
 .info-section {
   margin-top: 15px;
   padding: 20px;
-  background-color: #1a1f3a;
+  background-color: var(--game-panel-bg);
   border-radius: 12px;
   color: #cbd5e1;
 }

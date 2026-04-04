@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Privacy Policy - Crazy Casino</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles/styles.css" />
+  <script>
+  (function() {
+    if (localStorage.getItem("sidebarCollapsed") === "true") {
+      document.documentElement.classList.add("sidebar-collapsed");
+    }
+  })();
+</script>
+</head>
+<body>
+  <div class="app">
+      <aside class="sidebar">
+        <nav>
+          <ul>
+            <li style="padding-top: 0;">
+              <a><button class="toggle-sidebar" onclick="toggleSidebar()">☰</button></a>
+            </li>
+            <li><a href="index.html">🛖 <span>Home</span></a></li>
+          </ul>
+          <div class="game-section">
+            <h3 class="game-section-title"><span class="game-title-text">Games</span></h3>
+            <ul class="game-links">
+              <li><a href="slot.html">🍉 <span>Slot</span></a></li>
+              <li><a href="chicken.html">🐔 <span>Chicken Road</span></a></li>
+              <li><a href="mines.html">💣 <span>Mines</span></a></li>
+              <li><a href="crash.html">🚀 <span>Crash</span></a></li>
+              <li><a href="blackjack.html">🃏 <span>Blackjack</span></a></li>
+              <li><a href="plinko.html">🔺 <span>Plinko</span></a></li>
+              <li><a href="stockmarket.html">〽️ <span>Stock Market</span></a></li>
+            </ul>
+          </div>
+          <ul>
+            <li><a href="bank.html">💳 <span>Bank</span></a></li>
+            <li><a href="help.html">❓ <span>Help</span></a></li>
+            <li><a href="update.html">❕ <span>Update</span></a></li>
+          </ul>
+        </nav>
+      </aside>
+    <header class="top-bar">
+      <div class="logo"><a href="index.html" style="color: white; text-decoration: none;">Crazy Casino</a></div>
+      <div class="money-display">
+        <div class="credit-display">Credits: <span id="credits"></span></div>
+        <div class="dept-display">Debt: <span id="debt">0</span></div>
+      </div>
+    </header>
+
+    <main class="main-content">
+      <section class="legal-page">
+        <div class="legal-content">
+          <h1>Privacy Policy</h1>
+          <p class="last-updated">Last Updated: April 3, 2026</p>
+
+          <h2>Introduction</h2>
+          <p>Welcome to Crazy Casino ("we," "our," or "us"). We are committed to protecting your privacy and ensuring you have a positive experience on our website. This Privacy Policy explains our information practices and how we collect, use, and safeguard your data.</p>
+
+          <h2>Information We Collect</h2>
+          <h3>Information You Provide</h3>
+          <ul>
+            <li><strong>Local Storage Data:</strong> We store game progress, credits, debt, and preferences locally in your browser using localStorage. This data never leaves your device unless you share it.</li>
+            <li><strong>Game Data:</strong> Your gameplay statistics, scores, and transactions are stored locally in your browser.</li>
+          </ul>
+
+          <h3>Information Collected Automatically</h3>
+          <ul>
+            <li><strong>Usage Analytics:</strong> We may use Google Analytics to understand how visitors use our website. This includes page views, time on site, and referral sources.</li>
+            <li><strong>Cookies:</strong> We use cookies to enhance your experience and remember your preferences.</li>
+            <li><strong>Device Information:</strong> Your browser type, operating system, and device type may be collected to optimize the website's performance.</li>
+            <li><strong>IP Address:</strong> Your IP address may be logged for security and analytics purposes.</li>
+          </ul>
+
+          <h2>How We Use Your Information</h2>
+          <ul>
+            <li>To provide and maintain the website and games</li>
+            <li>To improve website performance and user experience</li>
+            <li>To analyze usage patterns and trends</li>
+            <li>To serve relevant advertisements (if applicable)</li>
+            <li>To prevent fraud and ensure security</li>
+            <li>To comply with legal obligations</li>
+          </ul>
+
+          <h2>Advertising</h2>
+          <p>We use Google AdSense and other advertising partners to display ads on our website. Our advertising partners may use cookies and other technologies to collect information about your browsing activity to deliver personalized ads.</p>
+          <p>You can opt out of personalized advertising through your browser settings or by visiting <a href="https://adssettings.google.com" target="_blank" rel="noopener">Google Ads Settings</a>.</p>
+
+          <h2>Third-Party Services</h2>
+          <p>We use the following third-party services:</p>
+          <ul>
+            <li><strong>Google Analytics:</strong> For website usage analysis</li>
+            <li><strong>Google AdSense:</strong> For advertising</li>
+            <li><strong>Google Fonts:</strong> For typography</li>
+          </ul>
+          <p>These services may collect information as described in their respective privacy policies.</p>
+
+          <h2>Data Security</h2>
+          <p>We take data security seriously. Most of your information is stored locally on your device, which means we don't have direct access to or control over your personal data. However, information transmitted across the internet may be vulnerable to interception.</p>
+
+          <h2>Your Rights</h2>
+          <ul>
+            <li><strong>Access:</strong> You can access data stored in your browser's localStorage by inspecting your browser data.</li>
+            <li><strong>Deletion:</strong> You can delete all game data by clearing your browser's localStorage and cookies.</li>
+            <li><strong>Opt-Out:</strong> You can opt out of analytics and personalized advertising through third-party settings.</li>
+          </ul>
+
+          <h2>Children's Privacy</h2>
+          <p>Crazy Casino is not intended for children under 13. We do not knowingly collect information from children under 13. If we become aware that we have collected data from a child under 13, we will take steps to delete such information promptly.</p>
+
+          <h2>Changes to This Policy</h2>
+          <p>We may update this Privacy Policy from time to time. Changes will be posted on this page with an updated "Last Updated" date. Your continued use of the website constitutes acceptance of the updated policy.</p>
+
+          <h2>Contact Us</h2>
+          <p>If you have questions about this Privacy Policy or our privacy practices, please contact us through the website's contact information or submit an inquiry through our support channels.</p>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <footer class="site-footer">
+    <div class="footer-links">
+      <a href="privacy-policy.html">Privacy Policy</a>
+      <a href="terms-of-service.html">Terms of Service</a>
+      <a href="about.html">About Us</a>
+      <a href="help.html">Help</a>
+    </div>
+    <p>&copy; 2026 Crazy Casino. All rights reserved.</p>
+  </footer>
+
+  <script src="scripts/main.js"></script>
+</body>
+</html>

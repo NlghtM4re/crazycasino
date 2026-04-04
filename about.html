@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>About Us - Crazy Casino</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles/styles.css" />
+  <script>
+  (function() {
+    if (localStorage.getItem("sidebarCollapsed") === "true") {
+      document.documentElement.classList.add("sidebar-collapsed");
+    }
+  })();
+</script>
+</head>
+<body>
+  <div class="app">
+      <aside class="sidebar">
+        <nav>
+          <ul>
+            <li style="padding-top: 0;">
+              <a><button class="toggle-sidebar" onclick="toggleSidebar()">☰</button></a>
+            </li>
+            <li><a href="index.html">🛖 <span>Home</span></a></li>
+          </ul>
+          <div class="game-section">
+            <h3 class="game-section-title"><span class="game-title-text">Games</span></h3>
+            <ul class="game-links">
+              <li><a href="slot.html">🍉 <span>Slot</span></a></li>
+              <li><a href="chicken.html">🐔 <span>Chicken Road</span></a></li>
+              <li><a href="mines.html">💣 <span>Mines</span></a></li>
+              <li><a href="crash.html">🚀 <span>Crash</span></a></li>
+              <li><a href="blackjack.html">🃏 <span>Blackjack</span></a></li>
+              <li><a href="plinko.html">🔺 <span>Plinko</span></a></li>
+              <li><a href="stockmarket.html">〽️ <span>Stock Market</span></a></li>
+            </ul>
+          </div>
+          <ul>
+            <li><a href="bank.html">💳 <span>Bank</span></a></li>
+            <li><a href="help.html">❓ <span>Help</span></a></li>
+            <li><a href="update.html">❕ <span>Update</span></a></li>
+          </ul>
+        </nav>
+      </aside>
+    <header class="top-bar">
+      <div class="logo"><a href="index.html" style="color: white; text-decoration: none;">Crazy Casino</a></div>
+      <div class="money-display">
+        <div class="credit-display">Credits: <span id="credits"></span></div>
+        <div class="dept-display">Debt: <span id="debt">0</span></div>
+      </div>
+    </header>
+
+    <main class="main-content">
+      <section class="legal-page">
+        <div class="legal-content">
+          <h1>About Us</h1>
+
+          <h2>Welcome to Crazy Casino</h2>
+          <p>Crazy Casino is a free-to-play online casino and arcade gaming platform designed to bring entertainment and excitement directly to your browser. No downloads, no registration required—just pure gaming fun.</p>
+
+          <h2>Our Mission</h2>
+          <p>Our mission is to provide a diverse collection of engaging casino and arcade games that are accessible, fun, and entertaining for all players. We believe gaming should be enjoyable, straightforward, and available to everyone.</p>
+
+          <h2>What We Offer</h2>
+          <p>At Crazy Casino, we've developed a variety of games across different genres:</p>
+          <ul>
+            <li><strong>Slot Games:</strong> Classic reels with fast-paced action and clear payouts</li>
+            <li><strong>Arcade Games:</strong> Chicken Road – dodge traffic and test your reflexes</li>
+            <li><strong>Luck-Based Games:</strong> Mines, Crash, and Plinko – take calculated risks for big rewards</li>
+            <li><strong>Strategy Games:</strong> Blackjack – play against the dealer with strategic decisions</li>
+            <li><strong>Investment Games:</strong> Stock Market – trade virtual stocks and grow your portfolio</li>
+          </ul>
+
+          <h2>How It Works</h2>
+          <p>Simply start playing with 100 free credits. Each game offers unique mechanics and payout structures. Track your progress in the Bank, check game rules in Help, and stay updated on new features through our Update page.</p>
+          <p>All credits are virtual and are stored locally in your browser. Your progress and credits are private to your device, and you can reset them at any time.</p>
+
+          <h2>Why Choose Crazy Casino?</h2>
+          <ul>
+            <li><strong>Free to Play:</strong> No real money, no subscriptions, no hidden costs</li>
+            <li><strong>Privacy First:</strong> Most data is stored locally on your device, not on our servers</li>
+            <li><strong>Regular Updates:</strong> We continuously improve games and add new features</li>
+            <li><strong>Responsive Design:</strong> Play on desktop, tablet, or mobile</li>
+            <li><strong>Fair Games:</strong> All outcomes are determined by secure random number generation</li>
+            <li><strong>No Registration:</strong> Start playing immediately</li>
+          </ul>
+
+          <h2>Game Balance & Fairness</h2>
+          <p>We're committed to fair gameplay. All games use random number generation to ensure unpredictable, fair outcomes. We regularly balance games to maintain engaging difficulty and payout rates that keep the platform fun and challenging.</p>
+
+          <h2>Development & Updates</h2>
+          <p>Crazy Casino is actively maintained and regularly updated. We listen to player feedback, fix bugs, and continuously improve the user experience. Check our Update section to see all changes and new releases.</p>
+
+          <h2>Support & Feedback</h2>
+          <p>If you have questions, suggestions, or encounter any issues, please visit our <a href="help.html">Help page</a> or contact us directly. We value your feedback and use it to improve Crazy Casino.</p>
+
+          <h2>Legal & Compliance</h2>
+          <p>Crazy Casino operates with full transparency. All games are for entertainment purposes only. Credits have no real monetary value. Please review our <a href="privacy-policy.html">Privacy Policy</a> and <a href="terms-of-service.html">Terms of Service</a> for complete information.</p>
+
+          <h2>Get Started</h2>
+          <p>Ready to play? Head over to our <a href="index.html">Home page</a> to browse all available games and begin your adventure at Crazy Casino!</p>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <footer class="site-footer">
+    <div class="footer-links">
+      <a href="privacy-policy.html">Privacy Policy</a>
+      <a href="terms-of-service.html">Terms of Service</a>
+      <a href="about.html">About Us</a>
+      <a href="help.html">Help</a>
+    </div>
+    <p>&copy; 2026 Crazy Casino. All rights reserved.</p>
+  </footer>
+
+  <script src="scripts/main.js"></script>
+</body>
+</html>

@@ -110,7 +110,7 @@
 
 /* Connect settings and graph backgrounds into a single panel */
 .stockmarket-container {
-  background-color: #29283c;
+  background-color: var(--game-panel-bg);
   border-radius: 12px;
   padding: 12px;
   gap: 16px;
@@ -636,6 +636,7 @@
 }
 
 .info-section {
+  background-color: var(--game-panel-bg);
   color: #cbd5e1;
 }
 

@@ -9,6 +9,7 @@
   <meta name="google-adsense-account" content="ca-pub-9742870781660837">-->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles/styles.css" />
+  <link rel="stylesheet" href="styles/help.css" />
   <script>
   (function() {
     if (localStorage.getItem("sidebarCollapsed") === "true") {
@@ -82,16 +83,131 @@
     </div>
 
     <main class="main-content"> 
-      <section id="help-section" style=" text-align: center;">
-        <h3 style="margin: 0; display: flex;">Help</h3><br>
-        <p style="text-align: center; color: rgb(222, 221, 221);">Crazy Casino is an online entertainment platform featuring browser-based games such as Slot, Chicken Road and Mines.<br> All games are designed for fun and do not involve real-money gambling. Please play responsibly. <br>Good luck</p>
-        
-        <footer style=" text-align: center; color: #999; font-size: 0.9em; margin-top: 65vh;">
-          <p>© 2026 Crazy Casino. All rights reserved.</p>
-        </footer>
-        <div class="money" style="margin-top: 100vh;">
-          <p>You found a cent on the ground. </p>
-          <button onclick="findMoney()">Pick it up</button>
+      <section id="help-section" class="help-page">
+        <div class="help-hero">
+          <div class="help-hero-copy">
+            <span class="help-eyebrow">Support Center</span>
+            <h1>Help</h1>
+            <p>
+              Learn how credits, debt, and each game work so you can jump in faster and avoid confusion.
+            </p>
+          </div>
+          <div class="help-hero-panel">
+            <h2>Quick Summary</h2>
+            <ul>
+              <li>All games are free to play and use virtual credits only.</li>
+              <li>Your progress is stored in your browser with local storage.</li>
+              <li>The Bank and loan system help you recover when credits run low.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="help-grid">
+          <article class="help-card help-card-wide">
+            <h2>How Crazy Casino Works</h2>
+            <p>
+              Crazy Casino is a browser-based arcade and casino platform built around short sessions, simple controls, and virtual credits. There is no real-money gambling, no account creation, and no downloads.
+            </p>
+            <div class="help-points">
+              <div>
+                <h3>Virtual Credits</h3>
+                <p>You start with credits and use them to place bets across games. Wins and losses update instantly.</p>
+              </div>
+              <div>
+                <h3>Stored Locally</h3>
+                <p>Your credits, debt, and settings stay in your own browser storage on the current device.</p>
+              </div>
+              <div>
+                <h3>Different Play Styles</h3>
+                <p>Some games reward quick reactions, some reward timing, and others are mostly luck-driven.</p>
+              </div>
+            </div>
+          </article>
+
+          <article class="help-card">
+            <h2>Credits, Debt, and Bank</h2>
+            <ul class="help-list">
+              <li>Credits are your main play balance across the site.</li>
+              <li>Debt increases when you take a loan and decreases when you repay it.</li>
+              <li>The lower your debt, the more you can borrow again.</li>
+              <li>Use the Bank page to understand borrowing rules and payment strategy.</li>
+            </ul>
+            <a class="help-link" href="bank.html">Open Bank</a>
+          </article>
+
+          <article class="help-card">
+            <h2>Troubleshooting</h2>
+            <ul class="help-list">
+              <li>If credits look wrong, refresh the page once before assuming data is lost.</li>
+              <li>If progress resets, your browser storage may have been cleared.</li>
+              <li>If ads do not appear, an ad blocker or browser privacy setting may be hiding them.</li>
+              <li>If a game feels slow, close heavy tabs and try again.</li>
+            </ul>
+          </article>
+
+          <article class="help-card help-card-wide">
+            <h2>Game Basics</h2>
+            <div class="game-help-grid">
+              <div class="game-help-item">
+                <h3>Slot</h3>
+                <p><strong>Goal:</strong> Spin for matching symbols and higher-value patterns.</p>
+                <p><strong>Best for:</strong> Fast rounds and simple betting.</p>
+              </div>
+              <div class="game-help-item">
+                <h3>Chicken Road</h3>
+                <p><strong>Goal:</strong> Keep moving and avoid getting hit.</p>
+                <p><strong>Best for:</strong> Reaction-based arcade play.</p>
+              </div>
+              <div class="game-help-item">
+                <h3>Mines</h3>
+                <p><strong>Goal:</strong> Reveal safe tiles and cash out before hitting a mine.</p>
+                <p><strong>Best for:</strong> Risk control and tension.</p>
+              </div>
+              <div class="game-help-item">
+                <h3>Crash</h3>
+                <p><strong>Goal:</strong> Cash out before the multiplier crashes.</p>
+                <p><strong>Best for:</strong> Timing decisions and discipline.</p>
+              </div>
+              <div class="game-help-item">
+                <h3>Blackjack</h3>
+                <p><strong>Goal:</strong> Beat the dealer without going over 21.</p>
+                <p><strong>Best for:</strong> Players who want more strategy.</p>
+              </div>
+              <div class="game-help-item">
+                <h3>Plinko and Stock Market</h3>
+                <p><strong>Goal:</strong> Chase strong lanes in Plinko or make smart buy/sell decisions in Stock Market.</p>
+                <p><strong>Best for:</strong> Longer sessions and experimenting with different approaches.</p>
+              </div>
+            </div>
+          </article>
+
+          <article class="help-card">
+            <h2>Common Questions</h2>
+            <div class="faq-list">
+              <div>
+                <h3>Is this real-money gambling?</h3>
+                <p>No. Crazy Casino uses virtual credits only.</p>
+              </div>
+              <div>
+                <h3>Do I need an account?</h3>
+                <p>No. The site works directly in your browser.</p>
+              </div>
+              <div>
+                <h3>Why did my progress disappear?</h3>
+                <p>Browser storage may have been cleared, switched, or blocked.</p>
+              </div>
+            </div>
+          </article>
+
+          <article class="help-card">
+            <h2>Useful Links</h2>
+            <div class="help-actions">
+              <a class="help-link" href="index.html">Browse Games</a>
+              <a class="help-link" href="update.html">View Updates</a>
+              <a class="help-link" href="privacy-policy.html">Privacy Policy</a>
+              <a class="help-link" href="terms-of-service.html">Terms of Service</a>
+            </div>
+          </article>
         </div>
       </section>
     </main>
@@ -114,6 +230,27 @@
 </script>
     </div>
   </div>
+
+  <footer class="site-footer">
+    <div class="footer-links">
+      <a href="privacy-policy.html">Privacy Policy</a>
+      <a href="terms-of-service.html">Terms of Service</a>
+      <a href="about.html">About Us</a>
+      <a href="help.html">Help</a>
+    </div>
+    <p>&copy; 2026 Crazy Casino. All rights reserved.</p>
+  </footer>
+
+  <section class="ground-secret" id="groundSecret" aria-label="Hidden easter egg">
+    <div class="ground-secret-track">
+      <div class="ground-secret-card">
+        <h2>You found a coin</h2>
+        <p>Pick it up.</p>
+        <button id="groundSecretButton" type="button" onclick="findMoney()">Pick it up</button>
+        <p class="ground-secret-result" id="groundSecretResult" aria-live="polite"></p>
+      </div>
+    </div>
+  </section>
 
   <script src="scripts/main.js"></script>
   <script src="scripts/help.js"></script>

@@ -85,26 +85,146 @@
     <main class="main-content"> 
 
       <section id="home-section" class="home-section">
-        <h1 style="display: flex; justify-content: center;">Welcome to Crazy Casino</h1>
-        <p style="text-align: center; color: rgb(208, 208, 208);">Free to play casino</p>
+        <div class="home-hero">
+          <div class="home-hero-copy">
+            <span class="home-eyebrow">Free-to-play casino arcade</span>
+            <h1>Welcome to Crazy Casino</h1>
+            <p>
+              A collection of free casino and arcade games. Play slots, test your luck, and compete for big wins.
+            </p>
+            <div class="home-hero-actions">
+              <a class="home-primary-link" href="#games-section">Browse games</a>
+              <a class="home-secondary-link" href="update.html">See updates</a>
+            </div>
+          </div>
+        </div>
       </section>
 
       <section id="games-section" class="games-section">
-        <div class="games-grid">
-          <!--<a class="game-card" href="counter/main.html"><h3>Global Counter</h3><div class="game-icon">🔢</div><p>A real-time counter shared across all players</p><span style="color: #10b981; font-weight: bold;">Try now</span></a>-->
-          <a class="game-card" href="slot.html"><h3>Slot</h3><div class="game-icon">🎰</div><p>Classic slot machine with 3 reels and spinning action</p><span style="color: #10b981; font-weight: bold;">Try now</span></a>
-          <a class="game-card" href="chicken.html"><h3>Chicken</h3><div class="game-icon">🐔</div><p>Guide the chicken across the road and avoid obstacles</p><span style="color: #10b981; font-weight: bold;">Try now</span></a>
-          <a class="game-card" href="mines.html"><h3>Mine</h3><div class="game-icon">💣</div><p>Click tiles to avoid hidden mines and win big</p><span style="color: #10b981; font-weight: bold;">Try now</span></a>
-          <a class="game-card" href="crash.html"><h3>Crash</h3><div class="game-icon">🚀</div><p>Cash out before the multiplier crashes</p><span style="color: #10b981; font-weight: bold;">Try now</span></a>
-          <a class="game-card" href="blackjack.html"><h3>Blackjack</h3><div class="game-icon">🃏</div><p>Beat the dealer by getting closer to 21</p><span style="color: #10b981; font-weight: bold;">Try now</span></a>
-          <a class="game-card" href="plinko.html"><h3>Plinko</h3><div class="game-icon">🔺</div><p>Drop a ball through pegs and land on multiplier slots</p><span style="color: #10b981; font-weight: bold;">Try now</span></a>
-          <a class="game-card" href="stockmarket.html"><h3>Stock market</h3><div class="game-icon">〽️</div><p>stock market simulation</p><span style="color: #10b981; font-weight: bold;">Try now</span></a>
-          <!--<a class="game-card" href="#"><h3>Roulette</h3><span>Coming soon...</span></a>
-          <a class="game-card" href="#"><h3>Blackjack</h3><span>Coming soon...</span></a>
-          <a class="game-card" href="#"><h3>Red or Black</h3><span>Coming soon...</span></a>
-          <a class="game-card" href="#"><h3>The Dickner Game</h3><span>Coming soon...</span></a>-->
+        <div class="games-section-header">
+          <div>
+            <span class="games-section-kicker">Main Menu</span>
+            <h2>Pick your game</h2>
+          </div>
+          <a class="games-section-link" href="update.html">Latest release notes</a>
         </div>
-        <p>More games coming soon...</p>
+
+        <ul class="games-grid" aria-label="Game catalog">
+          <li class="games-grid-item">
+            <a class="game-card" href="slot.html" style="--card-accent: #f59e0b; --card-accent-soft: rgba(245, 158, 11, 0.16);">
+              <div class="game-card-top">
+                <span class="game-card-badge">Classic</span>
+                <div class="game-icon">🎰</div>
+              </div>
+              <div class="game-card-body">
+                <h3>Slot</h3>
+                <p>Classic reels, quick spins, and clean payout breakdowns.</p>
+              </div>
+              <div class="game-card-footer">
+                <span class="game-card-tag">Fast rounds</span>
+                <span class="game-card-cta">Play now</span>
+              </div>
+            </a>
+          </li>
+          <li class="games-grid-item">
+            <a class="game-card" href="chicken.html" style="--card-accent: #f97316; --card-accent-soft: rgba(249, 115, 22, 0.16);">
+              <div class="game-card-top">
+                <span class="game-card-badge">Arcade</span>
+                <div class="game-icon">🐔</div>
+              </div>
+              <div class="game-card-body">
+                <h3>Chicken Road</h3>
+                <p>Dash across traffic, dodge danger, and keep the run alive.</p>
+              </div>
+              <div class="game-card-footer">
+                <span class="game-card-tag">Reaction-based</span>
+                <span class="game-card-cta">Play now</span>
+              </div>
+            </a>
+          </li>
+          <li class="games-grid-item">
+            <a class="game-card" href="mines.html" style="--card-accent: #ef4444; --card-accent-soft: rgba(239, 68, 68, 0.16);">
+              <div class="game-card-top">
+                <span class="game-card-badge">Risk</span>
+                <div class="game-icon">💣</div>
+              </div>
+              <div class="game-card-body">
+                <h3>Mines</h3>
+                <p>Open safe tiles, grow the multiplier, and cash out before a blast.</p>
+              </div>
+              <div class="game-card-footer">
+                <span class="game-card-tag">High tension</span>
+                <span class="game-card-cta">Play now</span>
+              </div>
+            </a>
+          </li>
+          <li class="games-grid-item">
+            <a class="game-card" href="crash.html" style="--card-accent: #22d3ee; --card-accent-soft: rgba(34, 211, 238, 0.16);">
+              <div class="game-card-top">
+                <span class="game-card-badge">Multiplier</span>
+                <div class="game-icon">🚀</div>
+              </div>
+              <div class="game-card-body">
+                <h3>Crash</h3>
+                <p>Ride the multiplier up and bail out before the round implodes.</p>
+              </div>
+              <div class="game-card-footer">
+                <span class="game-card-tag">Quick cashouts</span>
+                <span class="game-card-cta">Play now</span>
+              </div>
+            </a>
+          </li>
+          <li class="games-grid-item">
+            <a class="game-card" href="blackjack.html" style="--card-accent: #10b981; --card-accent-soft: rgba(16, 185, 129, 0.16);">
+              <div class="game-card-top">
+                <span class="game-card-badge">Table</span>
+                <div class="game-icon">🃏</div>
+              </div>
+              <div class="game-card-body">
+                <h3>Blackjack</h3>
+                <p>Play the dealer, manage decisions, and stay closer to 21.</p>
+              </div>
+              <div class="game-card-footer">
+                <span class="game-card-tag">Strategy</span>
+                <span class="game-card-cta">Play now</span>
+              </div>
+            </a>
+          </li>
+          <li class="games-grid-item">
+            <a class="game-card" href="plinko.html" style="--card-accent: #8b5cf6; --card-accent-soft: rgba(139, 92, 246, 0.16);">
+              <div class="game-card-top">
+                <span class="game-card-badge">Drop game</span>
+                <div class="game-icon">🔺</div>
+              </div>
+              <div class="game-card-body">
+                <h3>Plinko</h3>
+                <p>Drop the ball, bounce through pegs, and hunt the best lane.</p>
+              </div>
+              <div class="game-card-footer">
+                <span class="game-card-tag">Easy to learn</span>
+                <span class="game-card-cta">Play now</span>
+              </div>
+            </a>
+          </li>
+          <li class="games-grid-item">
+            <a class="game-card" href="stockmarket.html" style="--card-accent: #38bdf8; --card-accent-soft: rgba(56, 189, 248, 0.16);">
+              <div class="game-card-top">
+                <span class="game-card-badge">Simulation</span>
+                <div class="game-icon">〽️</div>
+              </div>
+              <div class="game-card-body">
+                <h3>Stock Market</h3>
+                <p>Watch trends, time entries, and manage risk over longer sessions.</p>
+              </div>
+              <div class="game-card-footer">
+                <span class="game-card-tag">Longer play</span>
+                <span class="game-card-cta">Play now</span>
+              </div>
+            </a>
+          </li>
+        </ul>
+
+        <p class="games-footer-note">More games coming soon.</p>
       </section>
 
     </main>
@@ -125,6 +245,16 @@
 </script>
       </div>
     </div>
+
+    <footer class="site-footer">
+      <div class="footer-links">
+        <a href="privacy-policy.html">Privacy Policy</a>
+        <a href="terms-of-service.html">Terms of Service</a>
+        <a href="about.html">About Us</a>
+        <a href="help.html">Help</a>
+      </div>
+      <p>&copy; 2026 Crazy Casino. All rights reserved.</p>
+    </footer>
   </div>
 
   <script src="scripts/main.js"></script>

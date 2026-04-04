@@ -4,7 +4,7 @@
 
 /* How It Works Section */
 .how-it-works {
-  background: #1a1f3a;
+  background: var(--game-panel-bg);
   border-radius: 16px;
   padding: 20px;
   margin: 12px 0;
@@ -39,7 +39,7 @@
 }
 
 .blackjack-card {
-  background: #1a1f3a;
+  background: var(--game-panel-bg);
   border-radius: 16px;
   padding: 20px;
   margin-top: 12px;

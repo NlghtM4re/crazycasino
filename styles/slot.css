@@ -6,7 +6,7 @@
 
 .slot-game {
     text-align: center;
-    background-color: rgba(26, 31, 58, 0.92);
+    background-color: var(--game-panel-bg);
     margin: 5px auto;
     padding: 16px;
     border-radius: 16px;
@@ -61,7 +61,7 @@
     margin: 12px auto 0;
     padding: 20px;
     box-sizing: border-box;
-    background: #1a1f3a;
+    background: var(--game-panel-bg);
     border: 1px solid #334155;
     border-radius: 16px;
     box-shadow: 0 4px 32px rgba(0, 0, 0, 0.45);
@@ -128,7 +128,7 @@
 }
 
 .slot-panel {
-    background: #111827;
+    background: var(--game-panel-bg);
     border: 2px solid #10b981;
     border-radius: 12px;
     padding: 10px 12px;
@@ -156,7 +156,7 @@
 }
 
 .slot-breakdown-inline {
-    background: #111827;
+    background: var(--game-panel-bg);
     border: 1px solid #334155;
     border-radius: 10px;
     padding: 10px 12px;

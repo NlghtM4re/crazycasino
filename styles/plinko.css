@@ -49,7 +49,7 @@
 
 .plinko-card,
 .plinko-how {
-  background-color: #29283c;
+  background-color: var(--game-panel-bg);
   border: 1px solid #3e3e5a;
   border-radius: 14px;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.45);
