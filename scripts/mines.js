@@ -6,6 +6,23 @@ let gameBoard = [];
 let currentBet = 1;
 let multiplier = 1.0;
 
+function bindTileInteraction(tile, index) {
+    const reveal = () => {
+        revealTile(index, tile);
+    };
+
+    if (window.PointerEvent) {
+        tile.addEventListener('pointerup', (event) => {
+            if (event.pointerType === 'mouse' && event.button !== 0) return;
+            reveal(event);
+        });
+        return;
+    }
+
+    tile.addEventListener('touchend', reveal, { passive: false });
+    tile.addEventListener('click', reveal);
+}
+
 function setMinBet() {
     document.getElementById('bet').value = 0.01;
 }
@@ -78,7 +95,7 @@ function startGame() {
         const tile = document.createElement('div');
         tile.classList.add('tile');
         tile.dataset.index = i;
-        tile.onclick = () => revealTile(i, tile);
+        bindTileInteraction(tile, i);
         gameBoard[i] = bombIndices.has(i) ? 'bomb' : 'safe';
         game.appendChild(tile);
     }

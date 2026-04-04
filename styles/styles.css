@@ -439,6 +439,15 @@ html.sidebar-collapsed .top-bar {
         min-height: 18px !important;
         max-height: 18px !important;
     }
+
+    .ad-horizontal,
+    .ad-horizontal-container,
+    .ad-horizontal .adsbygoogle,
+    .ad-horizontal-container .adsbygoogle,
+    .ad-horizontal .adsbygoogle iframe,
+    .ad-horizontal-container .adsbygoogle iframe {
+        pointer-events: none !important;
+    }
 }
 
 @media (max-width: 768px) {

@@ -156,6 +156,7 @@
   width: 100%;
   max-width: calc(var(--tile-size) * 5 + 40px);
   margin: auto;
+  touch-action: manipulation;
 }
 
 /* Tiles */
@@ -173,6 +174,9 @@
   justify-content: center;
   transition: background 0.2s;
   color: inherit;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .tile.revealed {
