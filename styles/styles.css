@@ -55,6 +55,12 @@ body {
     min-height: 100vh;
 }
 
+a,
+button,
+canvas {
+    touch-action: manipulation;
+}
+
 /* Custom Scrollbar */
 ::-webkit-scrollbar {
     width: 12px;
@@ -392,10 +398,6 @@ html.sidebar-collapsed .top-bar {
     .main-content {
         margin-right: 220px;
     }
-
-    .site-footer {
-        margin-right: 220px;
-    }
 }
 
 @media (max-width: 1200px) {
@@ -404,10 +406,6 @@ html.sidebar-collapsed .top-bar {
     }
     
     .main-content {
-        margin-right: 180px;
-    }
-
-    .site-footer {
         margin-right: 180px;
     }
 }
@@ -425,10 +423,6 @@ html.sidebar-collapsed .top-bar {
     .main-content {
         margin-right: 10px;
         margin-bottom: 40px;
-    }
-
-    .site-footer {
-        margin-right: 0;
     }
     
     .top-bar {
@@ -1098,10 +1092,28 @@ html.sidebar-collapsed .top-bar {
     padding: 24px 40px;
     text-align: center;
     margin-top: 60px;
-    margin-right: 280px;
+    margin-right: 0;
     margin-bottom: 0;
     color: #94a3b8;
     font-size: 14px;
+}
+
+@media (min-width: 1025px) {
+    .site-footer {
+        margin-right: 280px;
+    }
+}
+
+@media (min-width: 1025px) and (max-width: 1400px) {
+    .site-footer {
+        margin-right: 220px;
+    }
+}
+
+@media (min-width: 1025px) and (max-width: 1200px) {
+    .site-footer {
+        margin-right: 180px;
+    }
 }
 
 .footer-links {
