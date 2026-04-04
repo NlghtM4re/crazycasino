@@ -954,18 +954,28 @@
 
 @media (max-width: 920px) {
     .slot-game-outer {
-        grid-template-columns: 1fr;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
         grid-template-areas:
-            "center"
-            "left"
-            "right";
+            "center center"
+            "left right";
         min-height: auto;
+    }
+
+    .slot-left-col,
+    .slot-right-col {
+        min-width: 0;
     }
 
     .slot-left-col .slot-panel,
     .slot-right-col .slot-panel {
-        height: auto;
-        flex: 0 0 auto;
+        height: 100%;
+        flex: 1 1 auto;
+    }
+
+    .slot-left-col,
+    .slot-right-col {
+        display: flex;
+        align-self: stretch;
     }
 
     .slot-game {
@@ -995,6 +1005,20 @@
         padding: 12px;
     }
 
+    .slot-game-outer {
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+        grid-template-areas:
+            "center center"
+            "left right";
+        gap: 10px;
+    }
+
+    .slot-left-col .slot-panel,
+    .slot-right-col .slot-panel {
+        height: 100%;
+        flex: 1 1 auto;
+    }
+
     .slot-grid {
         transform: scale(0.9);
         transform-origin: top center;
@@ -1007,6 +1031,34 @@
 }
 
 @media (max-width: 460px) {
+    .slot-game-outer {
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+        grid-template-areas:
+            "center center"
+            "left right";
+    }
+
+    .slot-left-col,
+    .slot-right-col {
+        display: flex;
+        align-self: stretch;
+    }
+
+    .slot-panel {
+        padding: 8px 8px;
+    }
+
+    .slot-panel h4 {
+        font-size: 13px;
+        margin-bottom: 6px;
+    }
+
+    #symbolValues li,
+    #chanceValues li,
+    .pattern-rule-head {
+        font-size: 11px;
+    }
+
     .slot-grid {
         transform: scale(0.8);
         margin: 4px auto 10px;

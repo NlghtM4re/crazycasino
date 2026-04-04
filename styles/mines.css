@@ -442,3 +442,35 @@
     height: 45px;
   }
 }
+
+/* Unified board centering on small displays */
+@media (max-width: 900px) {
+  #game {
+    --tile-size: clamp(40px, 9vw, 62px);
+    grid-template-columns: repeat(5, var(--tile-size));
+    width: auto;
+    max-width: none;
+    justify-content: center;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .game-grid-container {
+    justify-content: center;
+    align-items: center;
+  }
+}
+
+@media (max-width: 520px) {
+  #game {
+    --tile-size: clamp(34px, 10.5vw, 52px);
+    gap: 8px;
+  }
+}
+
+@media (max-width: 420px) {
+  #game {
+    --tile-size: clamp(30px, 11vw, 44px);
+    gap: 7px;
+  }
+}

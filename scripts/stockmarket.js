@@ -518,20 +518,24 @@ function drawAxes(padding, graphWidth, graphHeight) {
 
   // Draw axis labels
   ctx.fillStyle = '#aaa';
-  ctx.font = '12px Inter, sans-serif';
+  const xTickCount = graphWidth < 300 ? 4 : (graphWidth < 450 ? 6 : 10);
+  const xLabelFontSize = graphWidth < 300 ? 8 : (graphWidth < 450 ? 9 : 12);
+  const xLabelOffset = graphWidth < 300 ? 14 : (graphWidth < 450 ? 16 : 20);
+
+  ctx.font = `${xLabelFontSize}px Inter, sans-serif`;
   ctx.textAlign = 'center';
 
   // X axis labels (time) with units and decimals
-  for (let i = 0; i <= 10; i++) {
-    const x = padding + (graphWidth / 10) * i;
-    const seconds = Math.max(0, time - 100 + (100 / 10) * i);
+  for (let i = 0; i <= xTickCount; i++) {
+    const x = padding + (graphWidth / xTickCount) * i;
+    const seconds = Math.max(0, time - 100 + (100 / xTickCount) * i);
     let label;
     if (seconds < 60) {
       label = seconds < 10 ? seconds.toFixed(1) + 's' : Math.floor(seconds) + 's';
     } else {
       label = Math.floor(seconds / 60) + 'm';
     }
-    ctx.fillText(label, x, padding + graphHeight + 20);
+    ctx.fillText(label, x, padding + graphHeight + xLabelOffset);
   }
 
   // Y axis labels (value) - adaptive decimals

@@ -129,9 +129,11 @@ function generateSteps(count = 10) {
 function updateChickenPosition() {
     const steps = document.querySelectorAll(".step");
     const roadWidth = road.offsetWidth;
+    const roadHeight = road.offsetHeight;
+    const chickenHeight = chicken.offsetHeight;
     const windowWidth = window.innerWidth;
 
-    chicken.style.top = '160px';
+    chicken.style.top = `${Math.max(8, ((roadHeight - chickenHeight) / 2) - 6)}px`;
 
     if (stepIndex === -1) {
         chicken.style.left = `${Math.min(-80, -roadWidth / 10)}px`;
@@ -141,7 +143,7 @@ function updateChickenPosition() {
         const step = steps[stepIndex];
         let offsetLeft = step.offsetLeft + step.offsetWidth / 2 - chicken.offsetWidth / 2;
 
-        offsetLeft -= 40;
+        offsetLeft -= Math.min(40, step.offsetWidth * 0.35);
 
         chicken.style.left = `${Math.min(offsetLeft, roadWidth - chicken.offsetWidth)}px`;
     }
@@ -160,7 +162,7 @@ function setDefaultChickenPosition() {
     const roadHeight = road.offsetHeight;
     const chickenHeight = chicken.offsetHeight;
     chicken.style.left = "-100px"; 
-    chicken.style.bottom = `${(roadHeight - chickenHeight) / 2 + 20}px`;
+    chicken.style.bottom = `${Math.max(6, (roadHeight - chickenHeight) / 2)}px`;
 }
 
 function resetChickenPosition() {

@@ -565,7 +565,10 @@ function resizeCanvas() {
   if (!rect.width) return;
 
   const ratioWH = 520 / 760;
-  const cssWidth = Math.max(320, Math.min(900, rect.width));
+  const cssWidth = Math.min(900, Math.max(0, rect.width - 2));
+  if (cssWidth < 120) {
+    return;
+  }
   const cssHeight = Math.round(cssWidth * ratioWH);
 
   const dpr = window.devicePixelRatio || 1;
@@ -578,12 +581,12 @@ function resizeCanvas() {
 
   board.width = cssWidth;
   board.height = cssHeight;
-  board.left = 34;
-  board.right = cssWidth - 34;
-  board.top = 14;
-  board.bottom = cssHeight - 26;
 
   canvasScale = cssWidth / 760;
+  board.left = Math.max(16, Math.round(34 * canvasScale));
+  board.right = cssWidth - Math.max(16, Math.round(34 * canvasScale));
+  board.top = Math.max(10, Math.round(14 * canvasScale));
+  board.bottom = cssHeight - Math.max(18, Math.round(26 * canvasScale));
   board.slotHeight = Math.round(50 * canvasScale);
 
   const rowsAreaHeight = (board.bottom - board.top) - board.slotHeight - 8;
