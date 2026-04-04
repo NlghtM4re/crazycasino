@@ -101,6 +101,24 @@ function showPopup(message) {
 
 window.showPopup = showPopup;
 
+function disableDoubleTapZoom() {
+    let lastTouchEnd = 0;
+
+    document.addEventListener("touchend", (event) => {
+        const now = Date.now();
+        if (now - lastTouchEnd <= 280) {
+            event.preventDefault();
+        }
+        lastTouchEnd = now;
+    }, { passive: false });
+
+    document.addEventListener("dblclick", (event) => {
+        event.preventDefault();
+    }, { passive: false });
+}
+
+disableDoubleTapZoom();
+
 document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("credits").textContent = credits.toLocaleString("en-US", {minimumFractionDigits: 2, maximumFractionDigits: 2});
     document.getElementById("debt").textContent = dept.toLocaleString("en-US", {minimumFractionDigits: 2, maximumFractionDigits: 2});
