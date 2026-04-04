@@ -55,12 +55,6 @@ body {
     min-height: 100vh;
 }
 
-a,
-button,
-canvas {
-    touch-action: manipulation;
-}
-
 /* Custom Scrollbar */
 ::-webkit-scrollbar {
     width: 12px;

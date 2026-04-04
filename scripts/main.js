@@ -101,43 +101,6 @@ function showPopup(message) {
 
 window.showPopup = showPopup;
 
-function disableDoubleTapZoom() {
-    let lastTapTime = 0;
-    let lastTapX = 0;
-    let lastTapY = 0;
-    let lastTarget = null;
-
-    document.addEventListener("touchend", (event) => {
-        if (event.changedTouches.length !== 1) return;
-
-        const target = event.target;
-        const touch = event.changedTouches[0];
-        const now = Date.now();
-        const isQuickTap = now - lastTapTime <= 320;
-        const distance = Math.hypot(touch.clientX - lastTapX, touch.clientY - lastTapY);
-        const isSameSpot = distance <= 24;
-        const isSameTarget = lastTarget === target;
-        const isFormControl = target instanceof Element
-            ? !!target.closest("input, textarea, select, label, [contenteditable='true']")
-            : false;
-
-        if (isQuickTap && isSameSpot && isSameTarget && !isFormControl && event.cancelable) {
-            event.preventDefault();
-        }
-
-        lastTapTime = now;
-        lastTapX = touch.clientX;
-        lastTapY = touch.clientY;
-        lastTarget = target;
-    }, { passive: false });
-
-    document.addEventListener("dblclick", (event) => {
-        event.preventDefault();
-    }, { passive: false });
-}
-
-disableDoubleTapZoom();
-
 document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("credits").textContent = credits.toLocaleString("en-US", {minimumFractionDigits: 2, maximumFractionDigits: 2});
     document.getElementById("debt").textContent = dept.toLocaleString("en-US", {minimumFractionDigits: 2, maximumFractionDigits: 2});
