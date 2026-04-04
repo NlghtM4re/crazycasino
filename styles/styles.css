@@ -1095,10 +1095,25 @@ html.sidebar-collapsed .top-bar {
     padding: 24px 40px;
     text-align: center;
     margin-top: 60px;
+    margin-left: var(--sidebar-expanded-width);
     margin-right: 0;
     margin-bottom: 0;
     color: #94a3b8;
     font-size: 14px;
+}
+
+html.sidebar-collapsed .site-footer {
+    margin-left: var(--sidebar-collapsed-width);
+}
+
+@media (max-width: 1024px) {
+    .site-footer {
+        margin-left: var(--sidebar-expanded-width);
+    }
+    
+    html.sidebar-collapsed .site-footer {
+        margin-left: var(--sidebar-collapsed-width);
+    }
 }
 
 @media (min-width: 1025px) {
