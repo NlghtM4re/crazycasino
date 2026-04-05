@@ -1,0 +1,397 @@
+/* ── Roulette page layout ── */
+.roulette-section {
+  padding: 0;
+}
+
+.roulette-section h3 {
+  margin: 0 0 12px;
+}
+
+/* Game box reuse from mines.css-style */
+.roulette-box {
+  border-radius: 16px;
+  background: var(--game-panel-bg);
+  padding: 20px;
+  margin: 5px auto;
+  width: 100%;
+  box-shadow: 0 4px 32px rgba(0, 0, 0, 0.6);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  box-sizing: border-box;
+}
+
+/* ── Top controls ── */
+.roulette-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+}
+
+.roulette-controls label {
+  color: #cbd5e1;
+  font-size: 14px;
+}
+
+.roulette-controls input[type="number"] {
+  width: 80px;
+  text-align: center;
+  font-size: 1rem;
+  padding: 5px 8px;
+  border: 2px solid #3e3e5a;
+  border-radius: 5px;
+  background-color: #1e1e2f;
+  color: #ffffff;
+}
+
+.roulette-controls button,
+#roulette-spin-btn,
+#roulette-clear-btn {
+  padding: 8px 18px;
+  font-size: 14px;
+  font-weight: bold;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.1s ease;
+}
+
+#roulette-spin-btn {
+  background: linear-gradient(180deg, #34d399, #10b981);
+}
+
+#roulette-spin-btn:hover {
+  background: linear-gradient(180deg, #6ee7b7, #34d399);
+  transform: scale(1.04);
+}
+
+#roulette-clear-btn {
+  background: #64748b;
+}
+
+#roulette-clear-btn:hover {
+  background: #94a3b8;
+  transform: scale(1.04);
+}
+
+#roulette-spin-btn:disabled,
+#roulette-clear-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.roulette-bet-total {
+  color: #fbbf24;
+  font-size: 14px;
+  font-weight: 600;
+  margin-left: auto;
+}
+
+/* ── Main row: wheel + table ── */
+.roulette-main-row {
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+  flex-wrap: wrap;
+}
+
+/* ── Wheel canvas ── */
+.roulette-wheel-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  flex: 0 0 auto;
+}
+
+#roulette-canvas {
+  display: block;
+  border-radius: 50%;
+  box-shadow: 0 0 24px rgba(0, 0, 0, 0.7);
+  touch-action: none;
+}
+
+.roulette-result-display {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #60a5fa;
+  min-height: 28px;
+  text-align: center;
+}
+
+/* ── Betting table ── */
+.roulette-table-wrap {
+  flex: 1 1 340px;
+  min-width: 0;
+}
+
+.roulette-number-grid {
+  display: grid;
+  grid-template-columns: 40px repeat(12, 1fr);
+  gap: 4px;
+  margin-bottom: 8px;
+}
+
+.rn-cell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 5px;
+  font-size: clamp(10px, 1.5vw, 13px);
+  font-weight: 700;
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
+  height: 36px;
+  border: 2px solid transparent;
+  transition: border-color 0.15s, opacity 0.15s, transform 0.1s;
+  position: relative;
+}
+
+.rn-cell:hover {
+  opacity: 0.85;
+  transform: scale(1.06);
+}
+
+.rn-cell.selected {
+  border-color: #fbbf24;
+  box-shadow: 0 0 6px rgba(251, 191, 36, 0.7);
+}
+
+/* Number colours */
+.rn-zero {
+  background: #15803d;
+  color: #fff;
+}
+
+.rn-red {
+  background: #dc2626;
+  color: #fff;
+}
+
+.rn-black {
+  background: #1f2430;
+  color: #fff;
+  border: 2px solid #475569;
+}
+
+.rn-black.selected {
+  border-color: #fbbf24;
+}
+
+/* Column-bet row */
+.roulette-column-row {
+  display: grid;
+  grid-template-columns: 40px repeat(3, 1fr);
+  gap: 4px;
+  margin-bottom: 8px;
+}
+
+.roulette-column-row .rc-spacer {
+  /* empty cell under zero */
+}
+
+.rc-btn {
+  height: 30px;
+  border-radius: 5px;
+  background: #334155;
+  color: #cbd5e1;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: border-color 0.15s, background 0.15s, transform 0.1s;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.rc-btn:hover {
+  background: #475569;
+  transform: scale(1.04);
+}
+
+.rc-btn.selected {
+  border-color: #fbbf24;
+  box-shadow: 0 0 6px rgba(251, 191, 36, 0.6);
+}
+
+/* Outside bets */
+.roulette-outside-bets {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.rob-btn {
+  flex: 1 1 calc(33% - 6px);
+  min-width: 80px;
+  padding: 8px 6px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: border-color 0.15s, background 0.15s, transform 0.1s;
+  user-select: none;
+  -webkit-user-select: none;
+  text-align: center;
+  color: #fff;
+}
+
+.rob-btn:hover {
+  transform: scale(1.03);
+}
+
+.rob-btn.selected {
+  border-color: #fbbf24;
+  box-shadow: 0 0 6px rgba(251, 191, 36, 0.6);
+}
+
+.rob-red { background: #dc2626; }
+.rob-black { background: #1f2430; border: 2px solid #475569; }
+.rob-black.selected { border-color: #fbbf24; }
+.rob-even,
+.rob-odd { background: #334155; color: #e2e8f0; }
+.rob-low,
+.rob-high { background: #334155; color: #e2e8f0; }
+.rob-dozen { background: #1e3a5f; color: #e2e8f0; }
+
+/* Bet chips on cells */
+.rn-cell .chip,
+.rc-btn .chip,
+.rob-btn .chip {
+  position: absolute;
+  top: -7px;
+  right: -7px;
+  background: #fbbf24;
+  color: #1e1e2f;
+  font-size: 9px;
+  font-weight: 900;
+  border-radius: 50%;
+  width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
+  pointer-events: none;
+}
+
+.rc-btn,
+.rob-btn {
+  position: relative;
+}
+
+/* Message */
+#roulette-message {
+  margin-top: 4px;
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: #60a5fa;
+  text-align: center;
+  min-height: 24px;
+}
+
+/* History pills */
+.roulette-history {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  min-height: 28px;
+}
+
+.roulette-history-label {
+  color: #64748b;
+  font-size: 12px;
+  margin-bottom: 4px;
+}
+
+.history-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  font-size: 11px;
+  font-weight: 700;
+  color: #fff;
+}
+
+.history-pill.hp-zero { background: #15803d; }
+.history-pill.hp-red { background: #dc2626; }
+.history-pill.hp-black { background: #374151; }
+
+/* ── How to play ── */
+.info-section {
+  margin-top: 15px;
+  padding: 20px;
+  background-color: var(--game-panel-bg);
+  border-radius: 12px;
+  color: #cbd5e1;
+}
+
+.info-section h3 {
+  margin-top: 0;
+  color: #10b981;
+  font-size: 18px;
+}
+
+.info-section h4 {
+  margin: 12px 0 8px;
+  color: #60a5fa;
+  font-size: 16px;
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px;
+}
+
+.info-section ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.info-section li {
+  margin-bottom: 10px;
+  padding-left: 18px;
+  position: relative;
+}
+
+.info-section li:before {
+  content: "▸";
+  position: absolute;
+  left: 0;
+  color: #10b981;
+}
+
+/* ── Responsive ── */
+@media (max-width: 900px) {
+  .roulette-main-row {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .roulette-table-wrap {
+    width: 100%;
+  }
+}
+
+@media (max-width: 560px) {
+  .rn-cell {
+    height: 28px;
+    font-size: 10px;
+  }
+
+  .rob-btn {
+    flex: 1 1 calc(50% - 6px);
+    font-size: 11px;
+    padding: 7px 4px;
+  }
+}
