@@ -1,7 +1,7 @@
 .how-to-play {
   margin-top: 20px;
   padding: 20px;
-  background: var(--game-panel-bg); /* Match shared game panel */
+  background: rgba(15, 23, 42, 0.98);
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.12);
   font-family: 'Inter', Arial, sans-serif;
@@ -73,7 +73,7 @@
     --road-min-width: 680px;
     --car-width: 60px;
     --car-height: 100px;
-    background-color: var(--game-panel-bg);
+    background: rgba(15, 23, 42, 0.98);
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     padding-top: 0;

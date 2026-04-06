@@ -234,7 +234,9 @@ function calculateWinningLines(gridData) {
         const sym = allSameSymbol(cells);
         if (!sym) return;
         const length = cells.length;
-        const patternMultiplier = (lineType === 'v-shape' || lineType === 'x-shape') ? 20 : getPatternMultiplier(length);
+        const patternMultiplier = lineType === 'eye-shape'
+            ? 50
+            : ((lineType === 'v-shape' || lineType === 'x-shape') ? 20 : getPatternMultiplier(length));
         const multiplier = basePercent[sym] * length * patternMultiplier;
         lineResults.push({ symbol: sym, length, lineType, cells, multiplier, baseValue: basePercent[sym], patternMult: patternMultiplier });
     }
@@ -340,6 +342,20 @@ function calculateWinningLines(gridData) {
         ], 'x-shape');
     }
 
+    // Eye pattern: all cells except the 4 corners and the center of the 3rd column.
+    pushSpecialPattern([
+        { symbol: gridData[0][1], row: 0, col: 1 },
+        { symbol: gridData[0][2], row: 0, col: 2 },
+        { symbol: gridData[0][3], row: 0, col: 3 },
+        { symbol: gridData[1][0], row: 1, col: 0 },
+        { symbol: gridData[1][1], row: 1, col: 1 },
+        { symbol: gridData[1][3], row: 1, col: 3 },
+        { symbol: gridData[1][4], row: 1, col: 4 },
+        { symbol: gridData[2][1], row: 2, col: 1 },
+        { symbol: gridData[2][2], row: 2, col: 2 },
+        { symbol: gridData[2][3], row: 2, col: 3 }
+    ], 'eye-shape');
+
     // Jackpot: every cell on the board is the same symbol.
     const jackpotSymbol = isAllBoardSame();
     if (jackpotSymbol) {
@@ -371,10 +387,6 @@ function playWinningLinesSequentially(lines, gridData, betAmount) {
     let currentBaseMultiplier = 0;
     let totalBaseCreditsGained = 0;
     const appliedLines = [];
-    const patternCount = Math.max(lines.length, 1);
-    const stackMultiplierFactor = patternCount >= MAX_STACK_PATTERNS
-        ? Number(Math.pow(patternCount, 1.28).toFixed(2))
-        : patternCount;
     const baseFlashDurationMs = 420;
     const flashDecayRate = 0.9;
     const minFlashDurationMs = 90;
@@ -444,13 +456,8 @@ function playWinningLinesSequentially(lines, gridData, betAmount) {
         );
 
         if (index >= lines.length) {
-            const finalMultiplier = currentBaseMultiplier * stackMultiplierFactor;
-            const finalCredits = totalBaseCreditsGained * stackMultiplierFactor;
-            const stackBonusCredits = Math.max(0, finalCredits - totalBaseCreditsGained);
-
-            if (stackBonusCredits > 0) {
-                updateCredits(stackBonusCredits);
-            }
+            const finalMultiplier = currentBaseMultiplier;
+            const finalCredits = totalBaseCreditsGained;
 
             document.getElementById('win').textContent = `Total Multiplier: x${finalMultiplier.toFixed(2)}`;
             if (finalCredits === 0) {
@@ -459,14 +466,6 @@ function playWinningLinesSequentially(lines, gridData, betAmount) {
             } else {
                 credEl.textContent = `+${finalCredits.toFixed(2)} credits`;
                 credEl.className = '';
-
-                if (stackMultiplierFactor > 1) {
-                    const bdRows = document.getElementById('win-breakdown-rows');
-                    const bonusRow = document.createElement('div');
-                    bonusRow.className = 'win-breakdown-row';
-                    bonusRow.innerHTML = `<span class="bd-symbol">⚡</span><span class="bd-type">stack bonus</span><span class="bd-formula"><span class="bd-f-cells">base total</span> <span class="bd-f-op">×</span> <span class="bd-f-stack${patternCount >= MAX_STACK_PATTERNS ? ' bd-f-stack-exp' : ''}">×${stackMultiplierFactor.toFixed(2)} stack</span></span><span class="bd-eq">= +${stackBonusCredits.toFixed(2)}</span><span class="bd-credits">+${finalCredits.toFixed(2)}</span>`;
-                    bdRows.appendChild(bonusRow);
-                }
             }
             isSpinning = false;
             return;

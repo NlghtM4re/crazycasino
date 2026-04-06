@@ -60,7 +60,7 @@ function startGame() {
     currentBet = parseFloat(document.getElementById('bet').value);
 
     if (isNaN(currentBet) || currentBet <= 0 || currentBet > credits) {
-        displayMessage("Invalid bet amount or insufficient credits!");
+        displayMessage("Invalid bet amount or insufficient credits!", 'danger');
         return;
     }
 
@@ -95,13 +95,14 @@ function startGame() {
         const tile = document.createElement('div');
         tile.classList.add('tile');
         tile.dataset.index = i;
+        tile.style.setProperty('--tile-i', i);
         bindTileInteraction(tile, i);
         gameBoard[i] = bombIndices.has(i) ? 'bomb' : 'safe';
         game.appendChild(tile);
     }
 
     updateGameDetails();
-    displayMessage("Game started! Click on tiles to reveal them.");
+    displayMessage("Game started. Reveal safe tiles or cash out any time.", 'info');
     if (_raccoonState === true) {
         for (let i = 0; i < totalTiles; i++) {
             if (gameBoard[i] === 'bomb') {
@@ -155,11 +156,11 @@ function revealTile(index, tileEl) {
 
     const tile = gameBoard[index];
     if (tile === 'bomb') {
+        tileEl.classList.remove('disabled-tile');
         tileEl.classList.add('bomb');
-        tileEl.textContent = '';
-        displayMessage("Boom! You hit a bomb. Game over!");
+        displayMessage("Boom! You hit a bomb. Round lost.", 'danger');
         gameOver = true;
-        revealAllBombs();
+        revealAllBombs(index);
 
         // Show Start button, hide Cash Out, re-enable controls
         document.getElementById('start-game-btn').style.display = '';
@@ -172,7 +173,7 @@ function revealTile(index, tileEl) {
         revealedCount++;
         multiplier *= getTileMultiplier(); // Use dynamic multiplier
         updateGameDetails();
-        displayMessage(`You revealed a safe tile! Multiplier: ${multiplier.toFixed(2)}x`);
+        displayMessage(`Safe tile found. Multiplier is now ${multiplier.toFixed(2)}x.`, 'success');
 
         // Automatically cash out if all safe tiles are revealed
         const totalTiles = gridSize * gridSize;
@@ -183,13 +184,16 @@ function revealTile(index, tileEl) {
     }
 }
 
-function revealAllBombs() {
+function revealAllBombs(triggeredIndex = -1) {
     const game = document.getElementById('game');
     for (let i = 0; i < gameBoard.length; i++) {
         if (gameBoard[i] === 'bomb') {
             const tile = game.children[i];
+            tile.classList.remove('disabled-tile');
             tile.classList.add('bomb');
-            tile.textContent = '';
+            if (i === triggeredIndex) {
+                tile.classList.add('bomb-triggered');
+            }
         }
     }
 }
@@ -198,7 +202,7 @@ function stopGame() {
     if (gameOver) return;
 
     gameOver = true;
-    revealAllBombs();
+    revealAllBombs(-1);
 
     const totalTiles = gridSize * gridSize;
     const safeTiles = totalTiles - bombCount;
@@ -207,10 +211,10 @@ function stopGame() {
     if (revealedCount >= safeTiles) {
         totalReward = currentBet * multiplier;
         
-        displayMessage(`Congratulations! You cleared the board and earned $${totalReward.toFixed(2)}!`);
+        displayMessage(`Perfect run! You cleared the board and earned $${totalReward.toFixed(2)}.`, 'success');
     } else {
         totalReward = currentBet * multiplier;
-        displayMessage(`Game stopped. You earned $${totalReward.toFixed(2)}!`);
+        displayMessage(`Cash out successful. You earned $${totalReward.toFixed(2)}.`, 'success');
     }
 
     updateCredits(totalReward);
@@ -234,9 +238,10 @@ function updateGameDetails() {
     document.getElementById('potential-earnings').textContent = `$${(currentBet * multiplier).toFixed(2)}`;
 }
 
-function displayMessage(message) {
+function displayMessage(message, tone = 'info') {
     const messageEl = document.getElementById('message');
     messageEl.textContent = message;
+    messageEl.dataset.tone = tone;
 }
 
 
@@ -251,6 +256,7 @@ function renderDisabledGrid() {
         const tile = document.createElement('div');
         tile.classList.add('tile', 'disabled-tile');
         tile.dataset.index = i;
+        tile.style.setProperty('--tile-i', i);
         // No click handler
         game.appendChild(tile);
     }
@@ -259,4 +265,5 @@ function renderDisabledGrid() {
     document.getElementById('start-game-btn').style.display = '';
     document.getElementById('stop-game-btn').style.display = 'none';
     setControlsDisabled(false);
+    displayMessage('Set your bet and start a new round.', 'info');
 }

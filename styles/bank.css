@@ -2,16 +2,36 @@
   display: flex;
   flex-wrap: wrap;
   gap: 24px;
-  padding: 16px 0;
+  padding: 20px;
+  border-radius: 24px;
+  background: var(--site-shared-panel-solid-dark);
+  border: 1px solid rgba(51, 65, 85, 0.7);
+  box-shadow: 0 18px 48px rgba(0, 0, 0, 0.24);
 }
 
 #loan-section .bank,
 #loan-section .loan {
   flex: 1;
   min-width: 280px;
-  background-color: #1a1f3a;
+  background-color: rgba(15, 23, 42, 0.98);
   border-radius: 12px;
   padding: 20px;
+}
+
+#loan-info-section {
+  margin-top: 18px;
+  padding: 20px;
+  border-radius: 24px;
+  background: var(--site-shared-panel-solid-dark);
+  border: 1px solid rgba(51, 65, 85, 0.7);
+  box-shadow: 0 18px 48px rgba(0, 0, 0, 0.24);
+}
+
+#loan-info-section > div {
+  background: rgba(15, 23, 42, 0.98);
+  border: 1px solid rgba(71, 85, 105, 0.4);
+  border-radius: 18px;
+  padding: 18px;
 }
 
 #loan-section h2,

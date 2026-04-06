@@ -695,7 +695,11 @@ function buildTriangle() {
 }
 
 function drawBackgroundGrid() {
-  ctx.fillStyle = '#171627';
+  const bgGradient = ctx.createLinearGradient(0, 0, board.width, board.height);
+  bgGradient.addColorStop(0, 'rgba(24, 34, 52, 0.98)');
+  bgGradient.addColorStop(0.72, 'rgba(31, 45, 64, 0.96)');
+  bgGradient.addColorStop(1, 'rgba(43, 57, 77, 0.94)');
+  ctx.fillStyle = bgGradient;
   ctx.fillRect(0, 0, board.width, board.height);
 }
 

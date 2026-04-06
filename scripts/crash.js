@@ -78,12 +78,16 @@ function clampBet(value) {
   return Math.max(0.01, Number(value.toFixed(2)));
 }
 
-function setMessage(text) {
-  if (messageBox) messageBox.innerText = text;
+function setMessage(text, tone = 'info') {
+  if (!messageBox) return;
+  messageBox.innerText = text;
+  messageBox.dataset.tone = tone;
 }
 
-function setRoundState(text) {
-  if (roundStateEl) roundStateEl.innerText = text;
+function setRoundState(text, tone = 'idle') {
+  if (!roundStateEl) return;
+  roundStateEl.innerText = text;
+  roundStateEl.dataset.tone = tone;
 }
 
 function setMultiplierDisplay(multiplier, crashed = false) {
@@ -155,8 +159,7 @@ function getMultiplierByTime(seconds) {
 
 function addHistoryEntry(finalCrash, won, amount) {
   const row = document.createElement('div');
-  row.classList.add('crash-entry');
-  row.style.color = won ? '#4ade80' : '#f87171';
+  row.classList.add('crash-entry', won ? 'is-win' : 'is-loss');
 
   row.innerHTML = `
     <span>${finalCrash.toFixed(2)}x</span>
@@ -223,7 +226,6 @@ function drawCurve() {
   if (!renderWidth || !renderHeight) return;
 
   ctx.clearRect(0, 0, renderWidth, renderHeight);
-  drawGrid();
 
   if (curvePoints.length < 2) return;
 
@@ -277,12 +279,12 @@ function settleRound(crashedAt) {
 
   const won = profitsTaken;
   if (won) {
-    setMessage(`Cashed out at ${cashoutMultiplier.toFixed(2)}x (+${formatCurrency(payoutAmount)})`);
+    setMessage(`Cashed out at ${cashoutMultiplier.toFixed(2)}x (+${formatCurrency(payoutAmount)})`, 'success');
   } else {
-    setMessage(`Crashed at ${crashedAt.toFixed(2)}x. You lost ${formatCurrency(betAmount)}.`);
+    setMessage(`Crashed at ${crashedAt.toFixed(2)}x. You lost ${formatCurrency(betAmount)}.`, 'danger');
   }
 
-  setRoundState('Crashed');
+  setRoundState('Crashed', 'crashed');
   submitBetBtn.disabled = false;
   takeProfitsBtn.disabled = true;
 
@@ -313,7 +315,7 @@ function tryCashout(isAutomatic = false) {
     isAutomatic
       ? `Auto cashout at ${cashoutMultiplier.toFixed(2)}x (+${formatCurrency(payoutAmount)})`
       : `Profit taken at ${cashoutMultiplier.toFixed(2)}x (+${formatCurrency(payoutAmount)})`
-  );
+  , 'success');
 }
 
 function gameTick(timestamp) {
@@ -350,8 +352,8 @@ function gameTick(timestamp) {
 
 function startRunningPhase() {
   gameState = 'running';
-  setRoundState('Running');
-  setMessage('Round live. Cash out before crash!');
+  setRoundState('Running', 'running');
+  setMessage('Round live. Cash out before crash!', 'info');
   takeProfitsBtn.disabled = false;
 
   elapsedSeconds = 0;
@@ -365,12 +367,12 @@ function startRunningPhase() {
 
 function beginCountdown() {
   let countdown = COUNTDOWN_SECONDS;
-  setRoundState(`Starting in ${countdown}`);
+  setRoundState(`Starting in ${countdown}`, 'countdown');
 
   countdownTimer = setInterval(() => {
     countdown -= 1;
     if (countdown > 0) {
-      setRoundState(`Starting in ${countdown}`);
+      setRoundState(`Starting in ${countdown}`, 'countdown');
       return;
     }
 
@@ -385,12 +387,12 @@ async function beginRound() {
 
   const requestedBet = clampBet(parseFloat(betAmountInput.value));
   if (!requestedBet) {
-    setMessage('Enter a valid bet amount.');
+    setMessage('Enter a valid bet amount.', 'danger');
     return;
   }
 
   if (requestedBet > credits) {
-    setMessage('Not enough credits.');
+    setMessage('Not enough credits.', 'danger');
     return;
   }
 
@@ -409,7 +411,7 @@ async function beginRound() {
   } catch (error) {
     gameState = 'idle';
     submitBetBtn.disabled = false;
-    setMessage('Failed to create round seed. Try again.');
+    setMessage('Failed to create round seed. Try again.', 'danger');
     return;
   }
 
@@ -420,7 +422,7 @@ async function beginRound() {
   resetFairnessReveal();
 
   setMultiplierDisplay(1);
-  setMessage(`Bet locked: ${formatCurrency(betAmount)}. Good luck!`);
+  setMessage(`Bet locked: ${formatCurrency(betAmount)}. Good luck!`, 'info');
   beginCountdown();
 }
 
@@ -465,6 +467,6 @@ document.addEventListener('DOMContentLoaded', () => {
   submitBetBtn.disabled = false;
   takeProfitsBtn.disabled = true;
   setMultiplierDisplay(1);
-  setRoundState('Waiting');
-  setMessage('Ready for next round.');
+  setRoundState('Waiting', 'idle');
+  setMessage('Ready for next round.', 'info');
 });

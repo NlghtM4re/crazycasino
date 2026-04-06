@@ -188,6 +188,9 @@ function toggleSidebar() {
     }
 
     localStorage.setItem("sidebarCollapsed", isCollapsed);
+
+    // Notify canvas-based games to resize after the sidebar CSS transition (0.3s) finishes
+    setTimeout(() => window.dispatchEvent(new Event('resize')), 320);
 }
 
 

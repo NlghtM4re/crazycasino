@@ -44,36 +44,6 @@ let portfolio = {
 
 let sellMarkers = []; // Array of {price, time} for sell markers
 
-// Lifetime statistics tracking
-let lifetimeStats = {
-  totalProfit: 0,
-  totalInvested: 0,
-  sharesBought: 0,
-  sharesSold: 0,
-  totalTrades: 0,
-  profitableTrades: 0,
-  biggestWin: 0,
-  biggestLoss: 0,
-  tradeHistory: [] // Array of {profit, invested}
-};
-
-// Load lifetime stats from localStorage
-function loadLifetimeStats() {
-  const saved = localStorage.getItem('stockMarketLifetimeStats');
-  if (saved) {
-    try {
-      lifetimeStats = JSON.parse(saved);
-    } catch (e) {
-      console.error('Failed to load lifetime stats:', e);
-    }
-  }
-}
-
-// Save lifetime stats to localStorage
-function saveLifetimeStats() {
-  localStorage.setItem('stockMarketLifetimeStats', JSON.stringify(lifetimeStats));
-}
-
 // Save state to localStorage
 function saveState() {
   const state = {
@@ -196,9 +166,6 @@ function initializeStockMarket() {
     resizeTimeout = setTimeout(resizeCanvas, 150);
   });
 
-  // Load lifetime stats
-  loadLifetimeStats();
-  
   // Initialize risk level from localStorage
   initializeRiskLevel();
 
@@ -422,40 +389,6 @@ function drawGraph() {
   if (stockData.length > 0) {
     drawDataLine(padding, graphWidth, graphHeight);
   }
-}
-
-// Statistics Modal Functions
-function openStatsModal() {
-  // Calculate derived stats
-  const winRate = lifetimeStats.totalTrades > 0 
-    ? ((lifetimeStats.profitableTrades / lifetimeStats.totalTrades) * 100).toFixed(1) 
-    : 0;
-  const avgProfit = lifetimeStats.totalTrades > 0 
-    ? (lifetimeStats.totalProfit / lifetimeStats.totalTrades).toFixed(4) 
-    : 0;
-  
-  // Update all stat values in modal
-  document.getElementById('stat-total-profit').textContent = lifetimeStats.totalProfit.toFixed(4);
-  document.getElementById('stat-total-profit').style.color = lifetimeStats.totalProfit >= 0 ? '#4ade80' : '#f87171';
-  document.getElementById('stat-total-invested').textContent = lifetimeStats.totalInvested.toFixed(4);
-  document.getElementById('stat-shares-bought').textContent = lifetimeStats.sharesBought.toFixed(4);
-  document.getElementById('stat-shares-sold').textContent = lifetimeStats.sharesSold.toFixed(4);
-  document.getElementById('stat-total-trades').textContent = lifetimeStats.totalTrades;
-  document.getElementById('stat-profitable-trades').textContent = lifetimeStats.profitableTrades;
-  document.getElementById('stat-biggest-win').textContent = lifetimeStats.biggestWin.toFixed(4);
-  document.getElementById('stat-biggest-win').style.color = '#4ade80';
-  document.getElementById('stat-biggest-loss').textContent = lifetimeStats.biggestLoss.toFixed(4);
-  document.getElementById('stat-biggest-loss').style.color = '#f87171';
-  document.getElementById('stat-win-rate').textContent = winRate + '%';
-  document.getElementById('stat-avg-profit').textContent = avgProfit;
-  document.getElementById('stat-avg-profit').style.color = avgProfit >= 0 ? '#4ade80' : '#f87171';
-  
-  // Show modal
-  document.getElementById('stats-modal').style.display = 'flex';
-}
-
-function closeStatsModal() {
-  document.getElementById('stats-modal').style.display = 'none';
 }
 
 // Draw grid lines
@@ -753,11 +686,6 @@ function buyStock() {
   
   portfolio.sharesOwned += buyAmount;
   
-  // Track lifetime stats
-  lifetimeStats.totalInvested += costInCredits;
-  lifetimeStats.sharesBought += buyAmount;
-  saveLifetimeStats();
-  
   // Update UI
   updatePortfolioDisplay();
   document.getElementById('buy-amount').value = 1.00;
@@ -778,16 +706,6 @@ function sellAllStock() {
   // Calculate profit/loss for this trade
   const cost = portfolio.sharesOwned * portfolio.buyPrice;
   const profit = saleValue - cost;
-  
-  // Track lifetime stats
-  lifetimeStats.sharesSold += portfolio.sharesOwned;
-  lifetimeStats.totalProfit += profit;
-  lifetimeStats.totalTrades += 1;
-  if (profit > 0) lifetimeStats.profitableTrades += 1;
-  if (profit > lifetimeStats.biggestWin) lifetimeStats.biggestWin = profit;
-  if (profit < lifetimeStats.biggestLoss) lifetimeStats.biggestLoss = profit;
-  lifetimeStats.tradeHistory.push({profit, invested: cost});
-  saveLifetimeStats();
   
   // Add sell marker
   sellMarkers.push({price: currentValue, time: time});
@@ -824,16 +742,6 @@ function sellCustomStock() {
   // Calculate profit/loss for this partial trade
   const cost = sellAmount * portfolio.buyPrice;
   const profit = saleValue - cost;
-  
-  // Track lifetime stats
-  lifetimeStats.sharesSold += sellAmount;
-  lifetimeStats.totalProfit += profit;
-  lifetimeStats.totalTrades += 1;
-  if (profit > 0) lifetimeStats.profitableTrades += 1;
-  if (profit > lifetimeStats.biggestWin) lifetimeStats.biggestWin = profit;
-  if (profit < lifetimeStats.biggestLoss) lifetimeStats.biggestLoss = profit;
-  lifetimeStats.tradeHistory.push({profit, invested: cost});
-  saveLifetimeStats();
   
   // Reduce portfolio
   portfolio.sharesOwned -= sellAmount;

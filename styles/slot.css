@@ -6,7 +6,7 @@
 
 .slot-game {
     text-align: center;
-    background-color: var(--game-panel-bg);
+    background: rgba(15, 23, 42, 0.98);
     margin: 5px auto;
     padding: 16px;
     border-radius: 16px;
@@ -61,7 +61,7 @@
     margin: 12px auto 0;
     padding: 20px;
     box-sizing: border-box;
-    background: var(--game-panel-bg);
+    background: rgba(15, 23, 42, 0.98);
     border: 1px solid #334155;
     border-radius: 16px;
     box-shadow: 0 4px 32px rgba(0, 0, 0, 0.45);
@@ -128,7 +128,7 @@
 }
 
 .slot-panel {
-    background: var(--game-panel-bg);
+    background: rgba(15, 23, 42, 0.98);
     border: 2px solid #10b981;
     border-radius: 12px;
     padding: 10px 12px;
@@ -156,7 +156,7 @@
 }
 
 .slot-breakdown-inline {
-    background: var(--game-panel-bg);
+    background: rgba(15, 23, 42, 0.98);
     border: 1px solid #334155;
     border-radius: 10px;
     padding: 10px 12px;
@@ -360,6 +360,16 @@
     --px: 0px;
     --py: 0px;
     --cells: 14px 0 #22d3ee, 7px 7px #22d3ee, 0 14px #22d3ee, 14px 14px #22d3ee;
+}
+
+.pattern-mini.pattern-eyeshape {
+    --w: 33px;
+    --h: 19px;
+    --px: 7px;
+    --py: 0px;
+    --cells: 7px 0 #22d3ee, 14px 0 #22d3ee,
+        -7px 7px #22d3ee, 0 7px #22d3ee, 14px 7px #22d3ee, 21px 7px #22d3ee,
+        0 14px #22d3ee, 7px 14px #22d3ee, 14px 14px #22d3ee;
 }
 
 .pattern-mini.pattern-all {

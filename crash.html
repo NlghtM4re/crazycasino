@@ -82,71 +82,129 @@
     </div>
 
     <main class="main-content"> 
-      <h3 style="margin: 0; display: flex;">Crash</h3>
       <section id="crash-section" class="crash-section">
-        <div class="crash-main-container">
-          <div class="crash-game-area">
-            <div id="gameContainer">
-              <canvas id="game" width="400" height="350"></canvas>
-              <p id="currentMultiplier">0.0x</p>
+        <div class="crash-hero game-page-hero">
+          <h2>Crash</h2>
+          <p>Ride the multiplier curve, react before the explosion, and chain together disciplined exits.</p>
+        </div>
+
+        <div class="game-box crash-box">
+          <div class="crash-layout-grid">
+
+            <div class="crash-controls-grid">
+              <div class="control-card crash-bet-card">
+                <label for="betAmount">Bet Amount</label>
+                <div class="control-inline">
+                  <input type="number" id="betAmount" value="1" min="0.01" step="0.01">
+                  <button type="button" class="quick-bet-btn" id="maxBetBtn">Max</button>
+                </div>
+                <label class="crash-sub-label">Quick Bet</label>
+                <div class="quick-bet-row">
+                  <button type="button" class="quick-bet-btn" data-bet-add="1">+1</button>
+                  <button type="button" class="quick-bet-btn" data-bet-add="10">+10</button>
+                  <button type="button" class="quick-bet-btn" data-bet-mult="2">x2</button>
+                </div>
+              </div>
+
+              <div class="control-card crash-auto-card">
+                <label>Automation</label>
+                <div class="auto-controls">
+                  <label><input type="checkbox" id="autoBetToggle"> Auto Bet</label>
+                  <label><input type="checkbox" id="autoCashoutToggle"> Auto Cashout</label>
+                  <div class="auto-cashout-input">
+                    <span>Target</span>
+                    <input type="number" id="autoCashoutValue" value="2.00" min="1.01" step="0.01">
+                  </div>
+                </div>
+              </div>
             </div>
 
-            <div id="infoContainer">
-              <div id="messageBox">Ready for next round.</div>
-              <div id="roundState">Waiting</div>
-            </div>
-
-            <div id="buttonContainer">
+            <div class="action-buttons crash-action-buttons">
               <button id="submitBet">Start Round</button>
               <button id="takeProfits">Take Profits</button>
-              <label for="betAmount">Bet Amount</label>
-              <input type="number" id="betAmount" value="1" min="0.01" step="0.01">
-              <div class="quick-bet-row">
-                <button type="button" class="quick-bet-btn" data-bet-add="1">+1</button>
-                <button type="button" class="quick-bet-btn" data-bet-add="10">+10</button>
-                <button type="button" class="quick-bet-btn" data-bet-mult="2">x2</button>
-                <button type="button" class="quick-bet-btn" id="maxBetBtn">Max</button>
+            </div>
+
+            <div class="crash-stage-card">
+              <div id="gameContainer">
+                <canvas id="game" width="400" height="350"></canvas>
+                <p id="currentMultiplier">0.0x</p>
               </div>
-              <div class="auto-controls">
-                <label><input type="checkbox" id="autoBetToggle"> Auto Bet</label>
-                <label><input type="checkbox" id="autoCashoutToggle"> Auto Cashout</label>
-                <input type="number" id="autoCashoutValue" value="2.00" min="1.01" step="0.01">
+
+              <div id="infoContainer" class="crash-status-grid">
+                <div class="crash-status-card crash-status-wide">
+                  <span class="status-label">Message</span>
+                  <strong id="messageBox">Ready for next round.</strong>
+                </div>
+                <div class="crash-status-card">
+                  <span class="status-label">Round State</span>
+                  <strong id="roundState">Waiting</strong>
+                </div>
               </div>
             </div>
 
-            <div id="fairnessPanel">
+            <aside id="lastCrashesContainer" class="crash-history-panel">
+              <div class="panel-header">
+                <h3>Round History</h3>
+              </div>
+              <div class="crash-table-header">
+                <span>Crash</span>
+                <span>Bet</span>
+                <span>Result</span>
+              </div>
+              <div id="lastCrashes"></div>
+            </aside>
+
+            <div id="fairnessPanel" class="crash-fairness-panel">
+              <div class="panel-header">
+                <h3>Round Data</h3>
+              </div>
               <div class="fair-row"><span>Round</span><code id="fairRound">-</code></div>
               <div class="fair-row"><span>Commit</span><code id="fairCommit">-</code></div>
               <div class="fair-row"><span>Seed</span><code id="fairSeed">-</code></div>
               <div class="fair-row"><span>Hash</span><code id="fairHash">-</code></div>
               <div class="fair-row"><span>Crash Point</span><code id="fairCrash">-</code></div>
             </div>
-          </div>
 
-          <div id="lastCrashesContainer">
-            <p>Last Crashes:</p>
-            <div class="crash-table-header">
-              <span>Crash</span>
-              <span>Bet</span>
-              <span>Result</span>
-            </div>
-            <div id="lastCrashes"></div>
           </div>
         </div>
       </section>
 
-      <section id="howToPlay" class="how-to-play" style="padding: 15px; color: white; border-radius: 15px;">
-        <h2>How to Play</h2>
-        <p>
-          1. Enter your bet and click <strong>Start Round</strong>. Your bet is locked immediately.<br>
-          2. A short countdown starts, then the multiplier begins at <strong>1.00x</strong> and rises continuously.<br>
-          3. Click <strong>Take Profits</strong> before crash to cash out: <strong>payout = bet × current multiplier</strong>.<br>
-          4. If the round crashes before you cash out, you lose your bet for that round.<br>
-          5. Use quick bet buttons (<strong>+1</strong>, <strong>+10</strong>, <strong>x2</strong>, <strong>Max</strong>) to adjust faster.<br>
-          6. Optional automation: enable <strong>Auto Bet</strong> and/or <strong>Auto Cashout</strong> with a target multiplier.<br>
-          7. The <strong>Provably Fair</strong> panel shows commit/reveal data (Seed, Hash, Crash Point) after each round.<br>
-          8. Round history on the right shows recent crash multipliers, your bet, and win/loss result.<br>
-        </p>
+      <section id="howToPlay" class="crash-info-section info-section">
+        <h3>How to Play Crash</h3>
+        <div class="info-grid crash-info-grid">
+          <div>
+            <h4>Goal</h4>
+            <ul>
+              <li>Start the round and watch the multiplier rise from 1.00x.</li>
+              <li>Cash out before the crash to lock in your payout.</li>
+              <li>If the crash hits first, the whole bet is lost.</li>
+            </ul>
+          </div>
+          <div>
+            <h4>Setup</h4>
+            <ul>
+              <li>Enter your wager or use the quick bet shortcuts.</li>
+              <li>Use Max if you want to stake all available credits.</li>
+              <li>Enable auto bet or auto cashout for repetitive rounds.</li>
+            </ul>
+          </div>
+          <div>
+            <h4>During the Round</h4>
+            <ul>
+              <li>Every second increases the potential payout and the risk.</li>
+              <li>Take Profits cashes out instantly at the live multiplier.</li>
+              <li>The status strip shows whether the round is waiting, counting down, running, or crashed.</li>
+            </ul>
+          </div>
+          <div>
+            <h4>Fairness</h4>
+            <ul>
+              <li>Each round generates a fresh seed and public commit.</li>
+              <li>After the round, the seed and resulting hash are revealed.</li>
+              <li>You can verify that the crash point came from the published data.</li>
+            </ul>
+          </div>
+        </div>
       </section>
 
 

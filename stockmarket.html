@@ -181,96 +181,11 @@
                     <span class="input-suffix">ms</span>
                     <small class="time-conversion" id="time-conversion">1 real-time second = 5.0 in-game seconds</small>
                   </div>
-                  <button id="stats-btn" onclick="openStatsModal()" class="stats-button">📊 View Statistics</button>
                   <button id="reset-btn" onclick="resetGraph()" class="reset-button">🔄 Reset Graph</button>
                 </div>
               </div>
             </div>
       </section>
-
-      <!-- Statistics Modal -->
-      <div id="stats-modal" class="stats-modal" style="display: none;">
-        <div class="stats-modal-content">
-          <div class="stats-modal-header">
-            <h3>📊 Lifetime Trading Statistics</h3>
-            <button class="stats-close" onclick="closeStatsModal()">&times;</button>
-          </div>
-          <div class="stats-modal-body">
-            <div class="stats-grid">
-              <div class="stat-item">
-                <div class="stat-icon">💰</div>
-                <div class="stat-info">
-                  <div class="stat-label">Total Profit/Loss</div>
-                  <div class="stat-value" id="stat-total-profit">$0.00</div>
-                </div>
-              </div>
-              <div class="stat-item">
-                <div class="stat-icon">💵</div>
-                <div class="stat-info">
-                  <div class="stat-label">Total Invested</div>
-                  <div class="stat-value" id="stat-total-invested">$0.00</div>
-                </div>
-              </div>
-              <div class="stat-item">
-                <div class="stat-icon">📈</div>
-                <div class="stat-info">
-                  <div class="stat-label">Total Shares Bought</div>
-                  <div class="stat-value" id="stat-shares-bought">0</div>
-                </div>
-              </div>
-              <div class="stat-item">
-                <div class="stat-icon">📉</div>
-                <div class="stat-info">
-                  <div class="stat-label">Total Shares Sold</div>
-                  <div class="stat-value" id="stat-shares-sold">0</div>
-                </div>
-              </div>
-              <div class="stat-item">
-                <div class="stat-icon">🔄</div>
-                <div class="stat-info">
-                  <div class="stat-label">Total Trades</div>
-                  <div class="stat-value" id="stat-total-trades">0</div>
-                </div>
-              </div>
-              <div class="stat-item">
-                <div class="stat-icon">✅</div>
-                <div class="stat-info">
-                  <div class="stat-label">Profitable Trades</div>
-                  <div class="stat-value" id="stat-profitable-trades">0</div>
-                </div>
-              </div>
-              <div class="stat-item">
-                <div class="stat-icon">🔺</div>
-                <div class="stat-info">
-                  <div class="stat-label">Biggest Win</div>
-                  <div class="stat-value" id="stat-biggest-win">$0.00</div>
-                </div>
-              </div>
-              <div class="stat-item">
-                <div class="stat-icon">🔻</div>
-                <div class="stat-info">
-                  <div class="stat-label">Biggest Loss</div>
-                  <div class="stat-value" id="stat-biggest-loss">$0.00</div>
-                </div>
-              </div>
-              <div class="stat-item">
-                <div class="stat-icon">🎯</div>
-                <div class="stat-info">
-                  <div class="stat-label">Win Rate</div>
-                  <div class="stat-value" id="stat-win-rate">0%</div>
-                </div>
-              </div>
-              <div class="stat-item">
-                <div class="stat-icon">📊</div>
-                <div class="stat-info">
-                  <div class="stat-label">Average Profit</div>
-                  <div class="stat-value" id="stat-avg-profit">$0.00</div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
 
       <section id="info-section" class="info-section" style="margin-top: 40px; padding: 20px; border-radius: 12px;">
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
