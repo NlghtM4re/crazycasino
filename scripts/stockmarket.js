@@ -372,7 +372,8 @@ function drawGraph() {
   const width = canvas.width;
   const height = canvas.height;
   const padding = 40;
-  const graphWidth = width - padding * 2;
+  const paddingLeft = 72;
+  const graphWidth = width - paddingLeft - padding;
   const graphHeight = height - padding * 2;
 
   // Clear canvas
@@ -380,25 +381,25 @@ function drawGraph() {
   ctx.fillRect(0, 0, width, height);
 
   // Draw grid lines
-  drawGridLines(padding, graphWidth, graphHeight);
+  drawGridLines(padding, paddingLeft, graphWidth, graphHeight);
 
   // Draw axes
-  drawAxes(padding, graphWidth, graphHeight);
+  drawAxes(padding, paddingLeft, graphWidth, graphHeight);
 
   // Draw data line
   if (stockData.length > 0) {
-    drawDataLine(padding, graphWidth, graphHeight);
+    drawDataLine(padding, paddingLeft, graphWidth, graphHeight);
   }
 }
 
 // Draw grid lines
-function drawGridLines(padding, graphWidth, graphHeight) {
+function drawGridLines(padding, paddingLeft, graphWidth, graphHeight) {
   ctx.strokeStyle = '#222';
   ctx.lineWidth = 1;
 
   // Vertical grid lines
   for (let i = 0; i <= 10; i++) {
-    const x = padding + (graphWidth / 10) * i;
+    const x = paddingLeft + (graphWidth / 10) * i;
     ctx.beginPath();
     ctx.moveTo(x, padding);
     ctx.lineTo(x, padding + graphHeight);
@@ -409,27 +410,27 @@ function drawGridLines(padding, graphWidth, graphHeight) {
   for (let i = 0; i <= 10; i++) {
     const y = padding + (graphHeight / 10) * i;
     ctx.beginPath();
-    ctx.moveTo(padding, y);
-    ctx.lineTo(padding + graphWidth, y);
+    ctx.moveTo(paddingLeft, y);
+    ctx.lineTo(paddingLeft + graphWidth, y);
     ctx.stroke();
   }
 }
 
 // Draw axes
-function drawAxes(padding, graphWidth, graphHeight) {
+function drawAxes(padding, paddingLeft, graphWidth, graphHeight) {
   ctx.strokeStyle = '#666';
   ctx.lineWidth = 2;
 
   // Y axis
   ctx.beginPath();
-  ctx.moveTo(padding, padding);
-  ctx.lineTo(padding, padding + graphHeight);
+  ctx.moveTo(paddingLeft, padding);
+  ctx.lineTo(paddingLeft, padding + graphHeight);
   ctx.stroke();
 
   // X axis
   ctx.beginPath();
-  ctx.moveTo(padding, padding + graphHeight);
-  ctx.lineTo(padding + graphWidth, padding + graphHeight);
+  ctx.moveTo(paddingLeft, padding + graphHeight);
+  ctx.lineTo(paddingLeft + graphWidth, padding + graphHeight);
   ctx.stroke();
 
   // Calculate dynamic min/max from filtered data (not all data)
@@ -453,14 +454,14 @@ function drawAxes(padding, graphWidth, graphHeight) {
   ctx.fillStyle = '#aaa';
   const xTickCount = graphWidth < 300 ? 4 : (graphWidth < 450 ? 6 : 10);
   const xLabelFontSize = graphWidth < 300 ? 8 : (graphWidth < 450 ? 9 : 12);
-  const xLabelOffset = graphWidth < 300 ? 14 : (graphWidth < 450 ? 16 : 20);
+  const xLabelOffset = graphWidth < 300 ? 9 : (graphWidth < 450 ? 11 : 15);
 
   ctx.font = `${xLabelFontSize}px Inter, sans-serif`;
   ctx.textAlign = 'center';
 
   // X axis labels (time) with units and decimals
   for (let i = 0; i <= xTickCount; i++) {
-    const x = padding + (graphWidth / xTickCount) * i;
+    const x = paddingLeft + (graphWidth / xTickCount) * i;
     const seconds = Math.max(0, time - 100 + (100 / xTickCount) * i);
     let label;
     if (seconds < 60) {
@@ -486,24 +487,24 @@ function drawAxes(padding, graphWidth, graphHeight) {
     const y = padding + (graphHeight / 10) * i;
     const value = maxValue - ((maxValue - minValue) / 10) * i;
     const label = value < 0.01 ? value.toExponential(1) : value.toFixed(decimalPlaces);
-    ctx.fillText(label, padding + 5, y + 4);
+    ctx.fillText(label, paddingLeft - 7, y + 4);
   }
 
   // Axis titles
   ctx.textAlign = 'center';
   ctx.fillStyle = '#ccc';
   ctx.font = 'bold 14px Inter, sans-serif';
-  ctx.fillText('Time', padding + graphWidth / 2, canvas.height - 10);
+  ctx.fillText('Time', paddingLeft + graphWidth / 2, canvas.height - 10);
 
   ctx.save();
-  ctx.translate(10, padding + graphHeight / 2);
+  ctx.translate(20, padding + graphHeight / 2);
   ctx.rotate(-Math.PI / 2);
   ctx.fillText('Value', 0, 0);
   ctx.restore();
 }
 
 // Draw the data line
-function drawDataLine(padding, graphWidth, graphHeight) {
+function drawDataLine(padding, paddingLeft, graphWidth, graphHeight) {
   if (stockData.length < 1) return;
 
   // Calculate dynamic min/max from filtered data
@@ -537,7 +538,7 @@ function drawDataLine(padding, graphWidth, graphHeight) {
     const point = filteredData[i];
 
     // Calculate canvas coordinates - use full width for filtered data
-    const x = padding + (i / Math.max(1, filteredData.length - 1)) * graphWidth;
+    const x = paddingLeft + (i / Math.max(1, filteredData.length - 1)) * graphWidth;
     const y = padding + graphHeight - ((point.value - minValue) / valueRange) * graphHeight;
 
     if (i === 0) {
@@ -562,7 +563,7 @@ function drawDataLine(padding, graphWidth, graphHeight) {
   // Draw current value indicator
   if (filteredData.length > 0) {
     const lastPoint = filteredData[filteredData.length - 1];
-    const x = padding + ((filteredData.length - 1) / Math.max(1, filteredData.length - 1)) * graphWidth;
+    const x = paddingLeft + ((filteredData.length - 1) / Math.max(1, filteredData.length - 1)) * graphWidth;
     const y = padding + graphHeight - ((lastPoint.value - minValue) / valueRange) * graphHeight;
 
     ctx.fillStyle = lastColor;
@@ -598,8 +599,8 @@ function drawDataLine(padding, graphWidth, graphHeight) {
   for (let marker of portfolio.buyMarkers) {
     const markerY = padding + graphHeight - ((marker.price - minValue) / valueRange) * graphHeight;
     ctx.beginPath();
-    ctx.moveTo(padding, markerY);
-    ctx.lineTo(padding + graphWidth, markerY);
+    ctx.moveTo(paddingLeft, markerY);
+    ctx.lineTo(paddingLeft + graphWidth, markerY);
     ctx.stroke();
     
     // Draw label with adaptive decimals
@@ -614,7 +615,7 @@ function drawDataLine(padding, graphWidth, graphHeight) {
     ctx.fillStyle = '#3b82f6';
     ctx.font = 'bold 11px Inter, sans-serif';
     ctx.textAlign = 'left';
-    ctx.fillText(`BUY: ${priceLabel}¢`, padding + 5, markerY - 5);
+    ctx.fillText(`BUY: ${priceLabel}¢`, paddingLeft + 5, markerY - 5);
   }
 
   // Draw sell markers
@@ -623,8 +624,8 @@ function drawDataLine(padding, graphWidth, graphHeight) {
   for (let marker of sellMarkers) {
     const markerY = padding + graphHeight - ((marker.price - minValue) / valueRange) * graphHeight;
     ctx.beginPath();
-    ctx.moveTo(padding, markerY);
-    ctx.lineTo(padding + graphWidth, markerY);
+    ctx.moveTo(paddingLeft, markerY);
+    ctx.lineTo(paddingLeft + graphWidth, markerY);
     ctx.stroke();
     
     // Draw label with adaptive decimals
@@ -639,7 +640,7 @@ function drawDataLine(padding, graphWidth, graphHeight) {
     ctx.fillStyle = '#ef4444';
     ctx.font = 'bold 11px Inter, sans-serif';
     ctx.textAlign = 'left';
-    ctx.fillText(`SELL: ${priceLabel}¢`, padding + 5, markerY + 12);
+    ctx.fillText(`SELL: ${priceLabel}¢`, paddingLeft + 5, markerY + 12);
   }
 
   // Clear line dash

@@ -709,11 +709,7 @@ html.sidebar-collapsed .top-bar {
     flex-direction: column;
     gap: 22px;
     color: #e2e8f0;
-    padding: 20px;
     border-radius: 24px;
-    background: var(--site-shared-panel-solid-dark);
-    border: 1px solid rgba(51, 65, 85, 0.7);
-    box-shadow: 0 18px 48px rgba(0, 0, 0, 0.24);
 }
 
 .updates-hero {
