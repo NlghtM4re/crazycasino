@@ -29,7 +29,7 @@
           <div class="slot-left-col">
             <aside class="slot-panel" id="symbolPanel">
               <h4>Symbol</h4>
-              <p class="panel-subtitle">Value</p>
+              <p class="panel-subtitle">Value Per Symbol</p>
               <ul id="symbolValues">
                 <li><span class="symbol-item-label">🍒</span><span class="symbol-item-value"><span class="symbol-credit">0</span> credits</span></li>
                 <li><span class="symbol-item-label">🍉</span><span class="symbol-item-value"><span class="symbol-credit">0</span> credits</span></li>
@@ -67,7 +67,7 @@
               <h4>Pattern</h4>
               <ul class="pattern-rules">
                 <li class="pattern-rule-item">
-                  <div class="pattern-rule-head"><span>3-symbol line</span><span class="pattern-rule-pay">x2</span></div>
+                  <div class="pattern-rule-head"><span>3-symbol line</span><span class="pattern-rule-pay">x1</span><button type="button" class="pattern-test-btn" onclick="startPatternTest('line3')">Test</button></div>
                   <div class="pattern-preview-row">
                     <div class="pattern-mini-wrap"><div class="pattern-mini pattern-h3"></div></div>
                     <div class="pattern-mini-wrap"><div class="pattern-mini pattern-v3"></div></div>
@@ -75,38 +75,38 @@
                   </div>
                 </li>
                 <li class="pattern-rule-item">
-                  <div class="pattern-rule-head"><span>4-symbol line</span><span class="pattern-rule-pay">x5</span></div>
+                  <div class="pattern-rule-head"><span>4-symbol line</span><span class="pattern-rule-pay">x2</span><button type="button" class="pattern-test-btn" onclick="startPatternTest('line4')">Test</button></div>
                   <div class="pattern-preview-row">
                     <div class="pattern-mini-wrap"><div class="pattern-mini pattern-h4"></div></div>
                   </div>
                 </li>
                 <li class="pattern-rule-item">
-                  <div class="pattern-rule-head"><span>5-symbol line</span><span class="pattern-rule-pay">x10</span></div>
+                  <div class="pattern-rule-head"><span>5-symbol line</span><span class="pattern-rule-pay">x3</span><button type="button" class="pattern-test-btn" onclick="startPatternTest('line5')">Test</button></div>
                   <div class="pattern-preview-row">
                     <div class="pattern-mini-wrap"><div class="pattern-mini pattern-h5"></div></div>
                   </div>
                 </li>
                 <li class="pattern-rule-item">
-                  <div class="pattern-rule-head"><span>V shape</span><span class="pattern-rule-pay">x20</span></div>
+                  <div class="pattern-rule-head"><span>V shape</span><span class="pattern-rule-pay">x4</span><button type="button" class="pattern-test-btn" onclick="startPatternTest('vshape')">Test</button></div>
                   <div class="pattern-preview-row">
                     <div class="pattern-mini-wrap"><div class="pattern-mini pattern-vshape"></div></div>
                     <div class="pattern-mini-wrap"><div class="pattern-mini pattern-vshape-up"></div></div>
                   </div>
                 </li>
                 <li class="pattern-rule-item">
-                  <div class="pattern-rule-head"><span>X shape</span><span class="pattern-rule-pay">x20</span></div>
+                  <div class="pattern-rule-head"><span>X shape</span><span class="pattern-rule-pay">x4</span><button type="button" class="pattern-test-btn" onclick="startPatternTest('xshape')">Test</button></div>
                   <div class="pattern-preview-row">
                     <div class="pattern-mini-wrap"><div class="pattern-mini pattern-xshape"></div></div>
                   </div>
                 </li>
                 <li class="pattern-rule-item">
-                  <div class="pattern-rule-head"><span>Eye shape</span><span class="pattern-rule-pay">x50</span></div>
+                  <div class="pattern-rule-head"><span>Eye shape</span><span class="pattern-rule-pay">x8</span><button type="button" class="pattern-test-btn" onclick="startPatternTest('eyeshape')">Test</button></div>
                   <div class="pattern-preview-row">
                     <div class="pattern-mini-wrap"><div class="pattern-mini pattern-eyeshape"></div></div>
                   </div>
                 </li>
                 <li class="pattern-rule-item">
-                  <div class="pattern-rule-head"><span>Jackpot</span><span class="pattern-rule-pay">x100</span></div>
+                  <div class="pattern-rule-head"><span>Jackpot</span><span class="pattern-rule-pay">x15</span><button type="button" class="pattern-test-btn" onclick="startPatternTest('jackpot')">Test</button></div>
                   <div class="pattern-preview-row">
                     <div class="pattern-mini-wrap"><div class="pattern-mini pattern-all"></div></div>
                   </div>
@@ -141,7 +141,8 @@
                 <ul>
                   <li>Match 3 or more identical symbols in valid lines.</li>
                   <li>Horizontal, vertical, and diagonal lines can all pay.</li>
-                  <li>Eye shape pays x50 when all required cells match.</li>
+                  <li>Symbol base for 3-line payout: fruit x1, 🔔/💎 x2, and <span id="secretPatternToggle7" class="secret-seven-toggle" role="button" tabindex="0" aria-label="Toggle pattern test buttons">7️⃣</span> x7.</li>
+                  <li>Eye shape pays x8 of the symbol base when all required cells match.</li>
                   <li>Special shapes pay higher multipliers.</li>
                   <li>Multiple winning patterns stack in one spin.</li>
                 </ul>
@@ -151,6 +152,7 @@
                 <h5>Payout Logic</h5>
                 <ul>
                   <li>Each pattern pays symbol value x line multiplier.</li>
+                  <li>Pattern multipliers are based on the 3-line base payout.</li>
                   <li>Extra stacking applies when several patterns hit.</li>
                   <li>The right panel shows all multiplier types.</li>
                   <li>Last Spin Breakdown shows exact formula per pattern.</li>

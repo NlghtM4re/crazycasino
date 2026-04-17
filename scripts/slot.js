@@ -12,6 +12,14 @@ const ROWS = 3;
 const COLS = 5;
 const MAX_STACK_PATTERNS = 20;
 let isSpinning = false;
+let isPatternTestModeEnabled = false;
+
+function setPatternTestButtonsVisible(visible) {
+    const testButtons = document.querySelectorAll('.pattern-test-btn');
+    testButtons.forEach((btn) => {
+        btn.classList.toggle('is-visible', visible);
+    });
+}
 
 function getWeightedRandomSymbol() {
     const roll = Math.random() * totalSymbolWeight;
@@ -98,12 +106,13 @@ function renderHybridGrid(finalGrid, stoppedColumns = new Set()) {
 function updateSymbolValues() {
     const betInput = parseFloat(document.getElementById('bet').value);
     const betAmount = Number.isFinite(betInput) ? betInput : 0;
-    const basePercent = { '🍒': 0.15, '🍉': 0.15, '🔔': 0.50, '💎': 0.50, '7️⃣': 1.00 };
+    const symbolBaseMultiplier = { '🍒': 1, '🍉': 1, '🔔': 2, '💎': 2, '7️⃣': 7 };
     const symbols_list = ['🍒', '🍉', '🔔', '💎', '7️⃣'];
     
     const spans = document.querySelectorAll('#symbolValues .symbol-credit');
     spans.forEach((span, idx) => {
-        const credit = betAmount * basePercent[symbols_list[idx]];
+        // Display value for one symbol; payout patterns still apply their own multipliers.
+        const credit = betAmount * (symbolBaseMultiplier[symbols_list[idx]] / 3);
         span.textContent = credit.toFixed(2);
     });
 }
@@ -203,12 +212,12 @@ function renderSpinningReels(durationSeconds = 0.9) {
 
 function calculateWinningLines(gridData) {
     const lineResults = [];
-    const basePercent = { '🍒': 0.15, '🍉': 0.15, '🔔': 0.50, '💎': 0.50, '7️⃣': 1.00 };
+    const symbolBaseMultiplier = { '🍒': 1, '🍉': 1, '🔔': 2, '💎': 2, '7️⃣': 7 };
 
     function getPatternMultiplier(length) {
-        if (length === 3) return 2;
-        if (length === 4) return 5;
-        return 10;
+        if (length === 3) return 1;
+        if (length === 4) return 2;
+        return 3;
     }
 
     function allSameSymbol(cells) {
@@ -235,10 +244,10 @@ function calculateWinningLines(gridData) {
         if (!sym) return;
         const length = cells.length;
         const patternMultiplier = lineType === 'eye-shape'
-            ? 50
-            : ((lineType === 'v-shape' || lineType === 'x-shape') ? 20 : getPatternMultiplier(length));
-        const multiplier = basePercent[sym] * length * patternMultiplier;
-        lineResults.push({ symbol: sym, length, lineType, cells, multiplier, baseValue: basePercent[sym], patternMult: patternMultiplier });
+            ? 8
+            : ((lineType === 'v-shape' || lineType === 'x-shape') ? 4 : getPatternMultiplier(length));
+        const multiplier = symbolBaseMultiplier[sym] * patternMultiplier;
+        lineResults.push({ symbol: sym, length, lineType, cells, multiplier, baseValue: symbolBaseMultiplier[sym], patternMult: patternMultiplier });
     }
 
     function checkLine(cells, lineType) {
@@ -250,8 +259,8 @@ function calculateWinningLines(gridData) {
             if (length >= 3) {
                 const runCells = cells.slice(runStartIdx, runEndIdx + 1);
                 const patternMultiplier = getPatternMultiplier(length);
-                const multiplier = basePercent[runSymbol] * length * patternMultiplier;
-                lineResults.push({ symbol: runSymbol, length, lineType, cells: runCells, multiplier, baseValue: basePercent[runSymbol], patternMult: patternMultiplier });
+                const multiplier = symbolBaseMultiplier[runSymbol] * patternMultiplier;
+                lineResults.push({ symbol: runSymbol, length, lineType, cells: runCells, multiplier, baseValue: symbolBaseMultiplier[runSymbol], patternMult: patternMultiplier });
             }
         }
 
@@ -366,14 +375,14 @@ function calculateWinningLines(gridData) {
             }
         }
         const jackpotLength = ROWS * COLS;
-        const jackpotPatternMult = 100;
-        const jackpotBaseValue = basePercent[jackpotSymbol];
+        const jackpotPatternMult = 15;
+        const jackpotBaseValue = symbolBaseMultiplier[jackpotSymbol];
         lineResults.push({
             symbol: jackpotSymbol,
             length: jackpotLength,
             lineType: 'jackpot',
             cells: jackpotCells,
-            multiplier: jackpotBaseValue * jackpotLength * jackpotPatternMult,
+            multiplier: jackpotBaseValue * jackpotPatternMult,
             baseValue: jackpotBaseValue,
             patternMult: jackpotPatternMult
         });
@@ -566,15 +575,88 @@ function runSpinWithGrid(betAmount, finalGrid, spinningText = 'Spinning...') {
     }
 }
 
-function startSpin() {
-    if (isSpinning) return;
-
+function getValidatedBetAmount() {
     const betInput = parseFloat(document.getElementById('bet').value);
     const betAmount = Number.isFinite(betInput) ? betInput : 0;
     if (betAmount <= 0 || betAmount > credits) {
         showPopup('Invalid bet amount!');
+        return null;
+    }
+    return betAmount;
+}
+
+function createPatternTestGrid(patternType) {
+    const forcedSymbol = getWeightedRandomSymbol();
+    const baseGrid = [
+        ['🍒', '🍉', '🔔', '💎', '7️⃣'],
+        ['🍉', '🔔', '💎', '7️⃣', '🍒'],
+        ['🔔', '💎', '7️⃣', '🍒', '🍉']
+    ];
+    const grid = baseGrid.map((row) => row.slice());
+
+    function setCells(cells) {
+        cells.forEach(([row, col]) => {
+            grid[row][col] = forcedSymbol;
+        });
+    }
+
+    if (patternType === 'line3') {
+        setCells([[0, 0], [0, 1], [0, 2]]);
+        return grid;
+    }
+    if (patternType === 'line4') {
+        setCells([[0, 0], [0, 1], [0, 2], [0, 3]]);
+        return grid;
+    }
+    if (patternType === 'line5') {
+        setCells([[0, 0], [0, 1], [0, 2], [0, 3], [0, 4]]);
+        return grid;
+    }
+    if (patternType === 'vshape') {
+        setCells([[0, 0], [1, 1], [2, 2], [1, 3], [0, 4]]);
+        return grid;
+    }
+    if (patternType === 'xshape') {
+        setCells([[0, 0], [1, 1], [2, 2], [0, 2], [2, 0]]);
+        return grid;
+    }
+    if (patternType === 'eyeshape') {
+        setCells([[0, 1], [0, 2], [0, 3], [1, 0], [1, 1], [1, 3], [1, 4], [2, 1], [2, 2], [2, 3]]);
+        return grid;
+    }
+    if (patternType === 'jackpot') {
+        for (let r = 0; r < ROWS; r++) {
+            for (let c = 0; c < COLS; c++) {
+                grid[r][c] = forcedSymbol;
+            }
+        }
+        return grid;
+    }
+
+    return null;
+}
+
+function startPatternTest(patternType) {
+    if (isSpinning) return;
+    if (!isPatternTestModeEnabled) return;
+
+    const betAmount = getValidatedBetAmount();
+    if (betAmount === null) return;
+
+    const finalGrid = createPatternTestGrid(patternType);
+    if (!finalGrid) {
+        showPopup('Unknown test pattern.');
         return;
     }
+
+    runSpinWithGrid(betAmount, finalGrid, `Testing ${patternType}...`);
+}
+
+function startSpin() {
+    if (isSpinning) return;
+
+    const betAmount = getValidatedBetAmount();
+    if (betAmount === null) return;
 
     const finalGrid = Array.from(
         { length: ROWS },
@@ -590,6 +672,7 @@ window.addEventListener('DOMContentLoaded', () => {
     renderSpinningReels(1.2);
     updateSymbolValues();
     updateSpawnChances();
+    setPatternTestButtonsVisible(false);
 
     const breakdownEl = document.getElementById('win-breakdown-rows');
     if (breakdownEl && breakdownEl.children.length === 0) {
@@ -601,6 +684,22 @@ window.addEventListener('DOMContentLoaded', () => {
     if (statusPlaceholder && statusResult) {
         statusPlaceholder.style.display = 'block';
         statusResult.style.display = 'none';
+    }
+
+    const secretToggle = document.getElementById('secretPatternToggle7');
+    if (secretToggle) {
+        const togglePatternTestMode = () => {
+            isPatternTestModeEnabled = !isPatternTestModeEnabled;
+            setPatternTestButtonsVisible(isPatternTestModeEnabled);
+        };
+
+        secretToggle.addEventListener('click', togglePatternTestMode);
+        secretToggle.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter' || event.key === ' ') {
+                event.preventDefault();
+                togglePatternTestMode();
+            }
+        });
     }
 
     document.getElementById('bet').addEventListener('change', updateSymbolValues);
