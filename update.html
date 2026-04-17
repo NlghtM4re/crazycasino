@@ -5,8 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Crazy Casino</title>
   <link rel="icon" type="image/svg+xml" href="favicon.svg" />
-  <!--<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9742870781660837" crossorigin="anonymous"></script>
-  <meta name="google-adsense-account" content="ca-pub-9742870781660837">-->
+  
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles/styles.css" />
   <script>
@@ -19,58 +18,8 @@
 </head>
 <body>
   <div class="app">
-      <aside class="sidebar">
-        <nav>
-          <ul>
-            <li style="padding-top: 0;">
-              <a><button class="toggle-sidebar" onclick="toggleSidebar()">☰</button></a>
-            </li>
-            <li><a href="index.html">🛖 <span>Home</span></a></li>
-          </ul>
-          <div class="game-section">
-            <h3 class="game-section-title"><span class="game-title-text">Games</span></h3>
-            <ul class="game-links">
-              <li><a href="slot.html">🍉 <span>Slot</span></a></li>
-              <li><a href="mines.html">💣 <span>Mines</span></a></li>
-              <li><a href="crash.html">🚀 <span>Crash</span></a></li>
-              <li><a href="blackjack.html">🃏 <span>Blackjack</span></a></li>
-              <li><a href="plinko.html">🔺 <span>Plinko</span></a></li>
-              <li><a href="stockmarket.html">〽️ <span>Stock Market</span></a></li>
-            </ul>
-          </div>
-          <ul>
-            <li><a href="bank.html">💳 <span>Bank</span></a></li>
-            <li><a href="help.html">❓ <span>Help</span></a></li>
-            <li><a href="update.html">❕ <span>Update</span></a></li>
-          </ul>
-        </nav>
-      </aside>
-    <header class="top-bar">
-      <div class="logo"><a href="index.html" style="color: white; text-decoration: none;">Crazy Casino</a></div>
-      <div class="money-display">
-        <div class="credit-display">Credits: <span id="credits"></span></div>
-        <div class="dept-display">Debt: <span id="debt">0</span></div>
-      </div>
-    </header>
-
-    <div class="ad-space">
-      <div class="ad-container">
-        <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9742870781660837"
-            crossorigin="anonymous"></script>
-        <!-- verticale -->
-        <ins class="adsbygoogle"
-            style="display:block"
-            data-ad-client="ca-pub-9742870781660837"
-            data-ad-slot="4995831174"
-            data-ad-format="auto"
-            data-full-width-responsive="true"></ins>
-        <script>
-            (adsbygoogle = window.adsbygoogle || []).push({});
-        </script>
-      </div>
-    </div>
-
-    <main class="main-content"> 
+    <script src="scripts/layout.js"></script>
+<main class="main-content"> 
 
       <section id="update-section" class="updates-page">
         <div class="updates-hero">
@@ -81,19 +30,18 @@
               Track game reworks, balance changes, new features, and interface updates in a simple changelog view.
             </p>
             <div class="updates-hero-meta">
-              <span class="updates-pill">Latest: v1.9.9</span>
-              <span class="updates-pill">Updated 2026-04-06</span>
+              <span class="updates-pill">Latest: v2.0.0</span>
+              <span class="updates-pill">Updated 2026-04-17</span>
               <span class="updates-pill">Since 2025-05-17</span>
             </div>
           </div>
           <aside class="updates-featured-card">
             <div class="updates-featured-label">Current Patch</div>
-            <div class="updates-featured-version">1.9.9</div>
-            <div class="updates-featured-date">April 6, 2026</div>
+            <div class="updates-featured-version">2.0.0</div>
+            <div class="updates-featured-date">April 17, 2026</div>
             <ul class="updates-featured-list">
-              <li>Full redesign of the Crash game.</li>
-              <li>Full redesign of the Mines game.</li>
-              <li>New game title header added across all games.</li>
+              <li>No ad blocks and no reserved ad space on any device.</li>
+              <li>New shared sidebar logic through the layout script.</li>
             </ul>
           </aside>
         </div>
@@ -108,6 +56,19 @@
 
           <div class="update-log">
             <article class="update-entry is-highlight">
+              <div class="update-marker"></div>
+              <div class="update-card">
+                <div class="update-topline">
+                  <p class="version">Version 2.0.0</p>
+                  <span class="update-date">2026-04-17</span>
+                </div>
+                <ul>
+                  <li>No ad blocks and no reserved ad space on any device</li>
+                  <li>New shared sidebar logic through the layout script</li>
+                </ul>
+              </div>
+            </article>
+            <article class="update-entry">
               <div class="update-marker"></div>
               <div class="update-card">
                 <div class="update-topline">
@@ -557,35 +518,6 @@
       </section>
     </main>
   </div>
-
-
-  <div class="ad-horizontal">
-    <div class="ad-horizontal-container">
-      <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9742870781660837"
-   crossorigin="anonymous"></script>
-<!-- crazycasino horizontal -->
-<ins class="adsbygoogle"
-   style="display:block"
-   data-ad-client="ca-pub-9742870781660837"
-   data-ad-slot="1397042108"
-   data-ad-format="auto"
-   data-full-width-responsive="true"></ins>
-<script>
-   (adsbygoogle = window.adsbygoogle || []).push({});
-</script>
-    </div>
-  </div>
-
-  <footer class="site-footer">
-    <div class="footer-links">
-      <a href="privacy-policy.html">Privacy Policy</a>
-      <a href="terms-of-service.html">Terms of Service</a>
-      <a href="about.html">About Us</a>
-      <a href="help.html">Help</a>
-    </div>
-    <p>&copy; 2026 Crazy Casino. All rights reserved.</p>
-  </footer>
-
-  <script src="scripts/main.js"></script>
+<script src="scripts/main.js"></script>
 </body>
 </html>

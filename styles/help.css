@@ -154,7 +154,7 @@
     height: calc(56px + (320px * var(--secret-progress)));
     overflow: hidden;
     margin-left: var(--sidebar-expanded-width, 200px);
-    margin-right: 280px;
+    margin-right: 10px;
     background:
         linear-gradient(180deg, rgba(15, 23, 42, 0) 0%, rgba(9, 14, 25, 0.72) 18%, rgba(5, 8, 15, 0.96) 100%),
         radial-gradient(circle at top center, rgba(148, 163, 184, 0.2), transparent 48%);
