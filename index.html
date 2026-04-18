@@ -10,7 +10,9 @@
   <link rel="stylesheet" href="styles/index.css" />
   <script>
   (function() {
-    if (localStorage.getItem("sidebarCollapsed") === "true") {
+    var isMobile = window.matchMedia("(max-width: 767px)").matches;
+    var isCollapsed = isMobile || localStorage.getItem("sidebarCollapsed") === "true";
+    if (isCollapsed) {
       document.documentElement.classList.add("sidebar-collapsed");
     }
   })();

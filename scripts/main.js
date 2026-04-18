@@ -157,17 +157,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
 document.addEventListener("DOMContentLoaded", () => {
     const html = document.documentElement;
-    // Mobile adaptation enabled - removed mobile block overlay
-    // Users can now access the site on all devices
+    const isMobile = window.innerWidth < 768;
+    const shouldCollapse = isMobile;
 
-    if (window.innerWidth < 768) {
-        html.classList.add("sidebar-collapsed");
-        html.classList.remove("sidebar-expanded");
-    }
-    
-    const sidebarCollapsed = localStorage.getItem("sidebarCollapsed") === "true";
-
-    if (sidebarCollapsed) {
+    if (shouldCollapse) {
         html.classList.add("sidebar-collapsed");
         html.classList.remove("sidebar-expanded");
     } else {

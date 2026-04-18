@@ -1,4 +1,11 @@
 (function () {
+  var html = document.documentElement;
+  var isMobile = window.matchMedia('(max-width: 767px)').matches;
+  var shouldCollapse = isMobile;
+
+  html.classList.toggle('sidebar-collapsed', shouldCollapse);
+  html.classList.toggle('sidebar-expanded', !shouldCollapse);
+
   var script = document.currentScript;
   var app = script.parentElement;
 
