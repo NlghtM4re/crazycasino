@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Crazy Casino</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles/styles.css" />
+  <link rel="stylesheet" href="styles/roulette.css" />
+  <script>
+  (function() {
+    if (localStorage.getItem("sidebarCollapsed") === "true") {
+      document.documentElement.classList.add("sidebar-collapsed");
+    }
+  })();
+</script>
+</head>
+<body>
+  <div class="app">
+    <script src="scripts/layout.js"></script>
+    <main class="main-content">
+      <div class="game-page-hero">
+        <h2>Roulette</h2>
+        <p>Pick your pocket, spin the wheel, and watch momentum decide the round.</p>
+      </div>
+
+      <section class="roulette-section">
+        <div class="roulette-card">
+          <div class="roulette-layout">
+            <div class="roulette-main-column">
+              <div class="roulette-wheel-wrap">
+                <canvas id="roulette-wheel" width="800" height="800" aria-label="Roulette wheel"></canvas>
+                <div class="roulette-pointer" aria-hidden="true"></div>
+              </div>
+
+              <div class="roulette-table" id="roulette-table">
+                <div class="roulette-table-inner">
+                  <div class="roulette-straight-grid" id="roulette-straight-grid"></div>
+                  <div class="roulette-dozens" id="roulette-dozens">
+                    <button type="button" class="roulette-bet-btn roulette-outside-btn" data-type="dozen1">1 to 12</button>
+                    <button type="button" class="roulette-bet-btn roulette-outside-btn" data-type="dozen2">13 to 24</button>
+                    <button type="button" class="roulette-bet-btn roulette-outside-btn" data-type="dozen3">25 to 36</button>
+                  </div>
+                  <div class="roulette-evens" id="roulette-evens">
+                    <button type="button" class="roulette-bet-btn roulette-outside-btn" data-type="low">1 to 18</button>
+                    <button type="button" class="roulette-bet-btn roulette-outside-btn" data-type="even">Even</button>
+                    <button type="button" class="roulette-bet-btn roulette-color-btn roulette-red-btn" data-type="red" aria-label="Bet red"></button>
+                    <button type="button" class="roulette-bet-btn roulette-color-btn roulette-black-btn" data-type="black" aria-label="Bet black"></button>
+                    <button type="button" class="roulette-bet-btn roulette-outside-btn" data-type="odd">Odd</button>
+                    <button type="button" class="roulette-bet-btn roulette-outside-btn" data-type="high">19 to 36</button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="roulette-status" id="roulette-status">Choose a bet and spin.</div>
+            </div>
+
+            <aside class="roulette-side-panel">
+              <div class="roulette-panel-block roulette-control-bar">
+                <label for="roulette-bet">Bet Amount</label>
+                <input type="number" id="roulette-bet" min="0.01" step="0.01" value="10" />
+                <div class="roulette-quick-bets">
+                  <button type="button" data-bet="10">10</button>
+                  <button type="button" data-bet="50">50</button>
+                  <button type="button" data-bet="100">100</button>
+                  <button type="button" id="roulette-allin">All In</button>
+                </div>
+                <button id="roulette-spin">Spin</button>
+              </div>
+
+              <div class="roulette-panel-block roulette-result-strip" id="roulette-result-strip">
+                <span class="result-label">Last result</span>
+                <strong id="roulette-last-result">-</strong>
+                <span id="roulette-selection" class="roulette-selection">No bet selected.</span>
+              </div>
+
+              <div class="roulette-panel-block roulette-insights">
+                <h4>Session Stats</h4>
+                <div class="roulette-insights-grid">
+                  <div><span>Spins</span><strong id="roulette-stat-spins">0</strong></div>
+                  <div><span>Total Wagered</span><strong id="roulette-stat-wagered">0.00</strong></div>
+                  <div><span>Total Returned</span><strong id="roulette-stat-returned">0.00</strong></div>
+                  <div><span>Net</span><strong id="roulette-stat-net">0.00</strong></div>
+                </div>
+              </div>
+
+              <div class="roulette-panel-block roulette-history-wrap">
+                <h4>Last Spins</h4>
+                <div class="roulette-history" id="roulette-history" aria-label="Recent results"></div>
+              </div>
+            </aside>
+          </div>
+        </div>
+      </section>
+
+      <section class="roulette-how">
+        <h4>How It Works</h4>
+        <div class="how-content">
+          <p><strong>American Table Layout:</strong> Includes 0 and 00 pockets.</p>
+          <p><strong>Number bet:</strong> Pick a single number and win <strong>35:1</strong>.</p>
+          <p><strong>Outside bets:</strong> Red/Black, Odd/Even, High/Low pay <strong>1:1</strong>. Dozens and Columns pay <strong>2:1</strong>.</p>
+          <p><strong>Payout:</strong> If you win, your original stake is returned with profit.</p>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="scripts/main.js"></script>
+  <script src="scripts/roulette.js"></script>
+</body>
+</html>

@@ -26,6 +26,7 @@
             '<li><a href="crash.html">🚀 <span>Crash</span></a></li>' +
             '<li><a href="blackjack.html">🃏 <span>Blackjack</span></a></li>' +
             '<li><a href="plinko.html">🔺 <span>Plinko</span></a></li>' +
+            '<li><a href="roulette.html">🎯 <span>Roulette</span></a></li>' +
             '<li><a href="stockmarket.html">〽️ <span>Stock Market</span></a></li>' +
           '</ul>' +
         '</div>' +
