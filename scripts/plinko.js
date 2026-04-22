@@ -1020,11 +1020,22 @@ function getValidatedBet() {
 }
 
 function dropSingleBall() {
-  const bet = getValidatedBet();
-  if (!bet) return;
+  const bet = Number(parseFloat(betInput.value).toFixed(2));
+  const isAuto = autoDropInterval !== null;
 
-  updateCredits(-bet);
-  spawnBall(bet);
+  if (isAuto && Number.isFinite(bet) && bet > 0 && bet > credits) {
+    stopAutoDrop(false);
+    autoToggleEl.checked = false;
+    showPopup('Auto-drop stopped: not enough credits.');
+    setStatus('Auto-drop stopped: out of credits.');
+    return;
+  }
+
+  const validBet = getValidatedBet();
+  if (!validBet) return;
+
+  updateCredits(-validBet);
+  spawnBall(validBet);
   setStatus(`Dropped 1 ball • ${getDifficultyConfig().label}`);
   updateHud();
   updateStatsPanel();
