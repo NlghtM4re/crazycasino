@@ -69,10 +69,18 @@
                 <button id="roulette-spin">Spin</button>
               </div>
 
+              <div class="roulette-panel-block roulette-bets-list-block">
+                <div class="roulette-bets-header">
+                  <span>Active Bets</span>
+                  <button type="button" id="roulette-clear-bets">Clear All</button>
+                </div>
+                <div id="roulette-selection" class="roulette-selection"></div>
+                <div class="roulette-bets-total">Total stake: <strong id="roulette-bets-total">$0.00</strong></div>
+              </div>
+
               <div class="roulette-panel-block roulette-result-strip" id="roulette-result-strip">
                 <span class="result-label">Last result</span>
                 <strong id="roulette-last-result">-</strong>
-                <span id="roulette-selection" class="roulette-selection">No bet selected.</span>
               </div>
 
               <div class="roulette-panel-block roulette-insights">
@@ -95,12 +103,26 @@
       </section>
 
       <section class="roulette-how">
-        <h4>How It Works</h4>
+        <h4>How to Play Roulette</h4>
         <div class="how-content">
-          <p><strong>American Table Layout:</strong> Includes 0 and 00 pockets.</p>
-          <p><strong>Number bet:</strong> Pick a single number and win <strong>35:1</strong>.</p>
-          <p><strong>Outside bets:</strong> Red/Black, Odd/Even, High/Low pay <strong>1:1</strong>. Dozens and Columns pay <strong>2:1</strong>.</p>
-          <p><strong>Payout:</strong> If you win, your original stake is returned with profit.</p>
+          <p><strong>Wheel Type:</strong> This is an American layout with <strong>0</strong> and <strong>00</strong>.</p>
+
+          <p><strong>Step 1:</strong> Enter your bet amount or use the quick chips.</p>
+          <p><strong>Step 2:</strong> Click one or more betting zones on the table (number, dozen, column, or outside bets).</p>
+          <p><strong>Step 3:</strong> Press <strong>Spin</strong> and wait for the final pocket result.</p>
+
+          <p><strong>Bet Types and Payouts:</strong></p>
+          <ul>
+            <li><strong>Straight Number (single number):</strong> 35:1</li>
+            <li><strong>Dozens (1-12, 13-24, 25-36):</strong> 2:1</li>
+            <li><strong>Columns (2:1 buttons):</strong> 2:1</li>
+            <li><strong>Red/Black, Odd/Even, 1-18, 19-36:</strong> 1:1</li>
+          </ul>
+
+          <p><strong>Important:</strong> If the ball lands on <strong>0</strong> or <strong>00</strong>, outside even-money bets lose.</p>
+          <p><strong>Payout Rule:</strong> Winnings return your original stake plus profit in the ratio shown above. If you place multiple bets, each winning bet pays independently in the same spin.</p>
+
+          <p><strong>Quick Tips:</strong> Use outside bets for steadier rounds and straight numbers for high-risk, high-reward shots.</p>
         </div>
       </section>
     </main>

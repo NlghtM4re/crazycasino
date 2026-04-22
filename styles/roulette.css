@@ -271,8 +271,106 @@
 }
 
 .roulette-selection {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
   color: #cbd5e1;
   font-size: 0.86rem;
+}
+
+.roulette-no-bets {
+  color: #64748b;
+  font-size: 0.84rem;
+  font-style: italic;
+}
+
+.roulette-bets-list-block {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.roulette-bets-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.roulette-bets-header span {
+  color: #10b981;
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+.roulette-bets-header button {
+  padding: 3px 8px;
+  font-size: 0.75rem;
+  background: transparent;
+  border: 1px solid #475569;
+  color: #94a3b8;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.roulette-bets-header button:hover {
+  border-color: #f87171;
+  color: #f87171;
+}
+
+.roulette-bets-total {
+  color: #94a3b8;
+  font-size: 0.82rem;
+  border-top: 1px solid #243041;
+  padding-top: 6px;
+  margin-top: 2px;
+}
+
+.roulette-bets-total strong {
+  color: #e2e8f0;
+}
+
+.roulette-bet-row {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  align-items: center;
+  gap: 6px;
+  background: rgba(30, 41, 59, 0.6);
+  border: 1px solid #334155;
+  border-radius: 7px;
+  padding: 5px 7px;
+}
+
+.roulette-bet-row-label {
+  font-size: 0.84rem;
+  color: #e2e8f0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.roulette-bet-row-amount {
+  width: 68px;
+  padding: 4px 6px;
+  font-size: 0.82rem;
+  background: #0f172a;
+  border: 1px solid #475569;
+  color: #f8fafc;
+  border-radius: 5px;
+  text-align: right;
+}
+
+.roulette-bet-row-remove {
+  background: transparent;
+  border: none;
+  color: #64748b;
+  font-size: 1.05rem;
+  cursor: pointer;
+  padding: 0 2px;
+  line-height: 1;
+}
+
+.roulette-bet-row-remove:hover {
+  color: #f87171;
 }
 
 .roulette-insights {
@@ -319,15 +417,16 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
-  max-height: none;
   overflow-y: auto;
-  flex: 1;
+  flex: 1 1 auto;
   min-height: 0;
 }
 
 .roulette-history-wrap {
-  flex: 1;
-  min-height: 0;
+  flex: 0 0 auto;
+  height: 300px;
+  min-height: 300px;
+  max-height: 300px;
   display: flex;
   flex-direction: column;
 }
@@ -456,12 +555,13 @@
   }
 
   .roulette-history-wrap {
-    flex: initial;
+    height: 220px;
+    min-height: 220px;
+    max-height: 220px;
   }
 
   .roulette-history {
-    max-height: 140px;
-    flex: initial;
+    max-height: none;
   }
 
   .roulette-side-panel {

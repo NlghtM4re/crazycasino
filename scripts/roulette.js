@@ -36,13 +36,15 @@ const tableEl = document.getElementById("roulette-table");
 const straightGridEl = document.getElementById("roulette-straight-grid");
 const historyEl = document.getElementById("roulette-history");
 const allInButton = document.getElementById("roulette-allin");
+const clearBetsButton = document.getElementById("roulette-clear-bets");
+const betsTotalEl = document.getElementById("roulette-bets-total");
 
 const statSpinsEl = document.getElementById("roulette-stat-spins");
 const statWageredEl = document.getElementById("roulette-stat-wagered");
 const statReturnedEl = document.getElementById("roulette-stat-returned");
 const statNetEl = document.getElementById("roulette-stat-net");
 
-let selectedBet = null;
+let selectedBets = [];
 let wheelAngle = 0;
 let isSpinning = false;
 let stats = {
@@ -88,21 +90,113 @@ function getNumberColor(number) {
   return RED_NUMBERS.has(numeric) ? "red" : "black";
 }
 
-function clearSelections() {
-  tableEl.querySelectorAll("button").forEach((button) => {
-    button.classList.remove("active");
+function getBetKey(bet) {
+  return `${bet.type}:${bet.payload ?? ""}`;
+}
+
+function getBetLabel(bet) {
+  const definition = BET_DEFINITIONS[bet.type];
+  if (!definition) return "Unknown";
+
+  if (bet.type === "straight") {
+    return `Number ${bet.payload}`;
+  }
+
+  return definition.label;
+}
+
+function updateTotalDisplay() {
+  const total = selectedBets.reduce((sum, bet) => sum + bet.amount, 0);
+  betsTotalEl.textContent = `$${formatCurrency(total)}`;
+}
+
+function updateSelectionDisplay() {
+  selectionEl.innerHTML = "";
+
+  if (selectedBets.length === 0) {
+    const empty = document.createElement("span");
+    empty.className = "roulette-no-bets";
+    empty.textContent = "No bets placed. Select a zone on the table.";
+    selectionEl.appendChild(empty);
+    betsTotalEl.textContent = "$0.00";
+    return;
+  }
+
+  selectedBets.forEach((bet, index) => {
+    const row = document.createElement("div");
+    row.className = "roulette-bet-row";
+
+    const label = document.createElement("span");
+    label.className = "roulette-bet-row-label";
+    label.textContent = getBetLabel(bet);
+
+    const amountInput = document.createElement("input");
+    amountInput.type = "number";
+    amountInput.className = "roulette-bet-row-amount";
+    amountInput.min = "0.01";
+    amountInput.step = "0.01";
+    amountInput.value = bet.amount.toFixed(2);
+    amountInput.addEventListener("change", () => {
+      const val = parseFloat(amountInput.value);
+      if (Number.isFinite(val) && val > 0) {
+        selectedBets[index].amount = val;
+        updateTotalDisplay();
+      } else {
+        amountInput.value = selectedBets[index].amount.toFixed(2);
+      }
+    });
+
+    const removeBtn = document.createElement("button");
+    removeBtn.type = "button";
+    removeBtn.className = "roulette-bet-row-remove";
+    removeBtn.textContent = "×";
+    removeBtn.addEventListener("click", () => {
+      selectedBets.splice(index, 1);
+      syncActiveButtons();
+      updateSelectionDisplay();
+    });
+
+    row.appendChild(label);
+    row.appendChild(amountInput);
+    row.appendChild(removeBtn);
+    selectionEl.appendChild(row);
   });
+
+  updateTotalDisplay();
 }
 
 function setSelectedBet(type, payload = null) {
-  selectedBet = { type, payload };
-  const definition = BET_DEFINITIONS[type];
+  const bet = { type, payload };
+  const key = getBetKey(bet);
+  const existingIndex = selectedBets.findIndex((item) => getBetKey(item) === key);
 
-  if (type === "straight") {
-    selectionEl.textContent = `Selected: Number ${payload} (${definition.multiplier}:1)`;
+  if (existingIndex >= 0) {
+    selectedBets.splice(existingIndex, 1);
   } else {
-    selectionEl.textContent = `Selected: ${definition.label} (${definition.multiplier}:1)`;
+    const amount = parseFloat(betInput.value);
+    if (!Number.isFinite(amount) || amount <= 0) {
+      showPopup("Enter a valid bet amount before selecting a bet.");
+      return;
+    }
+    selectedBets.push({ type, payload, amount });
   }
+
+  updateSelectionDisplay();
+}
+
+function clearSelections() {
+  selectedBets = [];
+  syncActiveButtons();
+  updateSelectionDisplay();
+}
+
+function syncActiveButtons() {
+  const selected = new Set(selectedBets.map(getBetKey));
+
+  tableEl.querySelectorAll("button[data-type]").forEach((button) => {
+    const key = `${button.dataset.type}:${button.dataset.payload ?? ""}`;
+    button.classList.toggle("active", selected.has(key));
+  });
 }
 
 function createBetButton({ label, type, payload = null, className = "roulette-bet-btn" }) {
@@ -217,8 +311,8 @@ function addHistoryItem({ number, betLabel, won, amount }) {
   }
 }
 
-function checkBetWin(number) {
-  const { type, payload } = selectedBet;
+function checkBetWin(number, bet) {
+  const { type, payload } = bet;
   const numeric = toNumeric(number);
 
   switch (type) {
@@ -325,31 +419,41 @@ function normalizePositiveAngle(angle) {
   return ((angle % full) + full) % full;
 }
 
-function settleRound(number, betAmount) {
-  const definition = BET_DEFINITIONS[selectedBet.type];
-  const betLabel = selectedBet.type === "straight"
-    ? `Number ${selectedBet.payload}`
-    : definition.label;
-  const won = checkBetWin(number);
+function settleRound(number, placedBets) {
   const resultColor = getNumberColor(number);
+  const totalWager = placedBets.reduce((sum, bet) => sum + bet.amount, 0);
+
+  let totalPayout = 0;
+  let totalProfit = 0;
+  let winningCount = 0;
+
+  placedBets.forEach((bet) => {
+    if (!checkBetWin(number, bet)) return;
+
+    const definition = BET_DEFINITIONS[bet.type];
+    const payout = bet.amount * (definition.multiplier + 1);
+    totalPayout += payout;
+    totalProfit += payout - bet.amount;
+    winningCount += 1;
+  });
+
+  const betSummary = placedBets.map((bet) => `${getBetLabel(bet)} $${formatCurrency(bet.amount)}`).join(", ");
 
   lastResultEl.textContent = `${number} (${resultColor})`;
 
   stats.spins += 1;
-  stats.wagered += betAmount;
+  stats.wagered += totalWager;
 
-  if (won) {
-    const payout = betAmount * (definition.multiplier + 1);
-    const profit = payout - betAmount;
-    updateCredits(payout);
-    stats.returned += payout;
-    addHistoryItem({ number, betLabel, won: true, amount: profit });
+  if (totalPayout > 0) {
+    updateCredits(totalPayout);
+    stats.returned += totalPayout;
+    addHistoryItem({ number, betLabel: betSummary, won: true, amount: totalProfit });
 
-    statusEl.textContent = `Win! ${definition.label} hit on ${number}. +$${formatCurrency(profit)}`;
+    statusEl.textContent = `Win! ${winningCount}/${placedBets.length} bets hit on ${number}. +$${formatCurrency(totalProfit)}`;
     statusEl.style.color = "#34d399";
   } else {
-    addHistoryItem({ number, betLabel, won: false, amount: betAmount });
-    statusEl.textContent = `Lost. ${number} did not match ${definition.label}.`;
+    addHistoryItem({ number, betLabel: betSummary, won: false, amount: totalWager });
+    statusEl.textContent = `Lost. ${number} did not hit any selected bet.`;
     statusEl.style.color = "#f87171";
   }
 
@@ -361,26 +465,23 @@ function settleRound(number, betAmount) {
 function spinWheel() {
   if (isSpinning) return;
 
-  const betAmount = parseFloat(betInput.value);
-  if (!Number.isFinite(betAmount) || betAmount <= 0) {
-    showPopup("Please enter a valid bet amount.");
+  if (selectedBets.length === 0) {
+    showPopup("Select at least one bet before spinning.");
     return;
   }
 
-  if (betAmount > credits) {
+  const totalWager = selectedBets.reduce((sum, bet) => sum + bet.amount, 0);
+  if (totalWager > credits) {
     showPopup("Insufficient credits.");
     return;
   }
 
-  if (!selectedBet) {
-    showPopup("Select a bet type before spinning.");
-    return;
-  }
+  const placedBets = selectedBets.map((bet) => ({ ...bet }));
 
-  updateCredits(-betAmount);
+  updateCredits(-totalWager);
   isSpinning = true;
   spinButton.disabled = true;
-  statusEl.textContent = "Spinning...";
+  statusEl.textContent = `Spinning ${placedBets.length} bet${placedBets.length > 1 ? "s" : ""}...`;
   statusEl.style.color = "#93c5fd";
 
   const resultNumber = ROULETTE_ORDER[Math.floor(Math.random() * ROULETTE_ORDER.length)];
@@ -406,7 +507,7 @@ function spinWheel() {
     } else {
       wheelAngle = normalizePositiveAngle(targetAngle);
       drawWheel(wheelAngle);
-      settleRound(resultNumber, betAmount);
+      settleRound(resultNumber, placedBets);
     }
   }
 
@@ -428,11 +529,12 @@ function initQuickBets() {
 function initOutsideBets() {
   tableEl.querySelectorAll("button[data-type]").forEach((button) => {
     button.addEventListener("click", () => {
+      if (isSpinning) return;
+
       const type = button.dataset.type;
       const payload = button.dataset.payload ?? null;
-      clearSelections();
-      button.classList.add("active");
       setSelectedBet(type, payload);
+      syncActiveButtons();
     });
   });
 }
@@ -444,6 +546,11 @@ function init() {
   updateStats();
   resizeWheelCanvas();
   drawWheel();
+  updateSelectionDisplay();
+
+  clearBetsButton.addEventListener("click", () => {
+    if (!isSpinning) clearSelections();
+  });
 
   window.addEventListener("resize", resizeWheelCanvas);
 
