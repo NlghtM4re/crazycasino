@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Treasure Map - Crazy Casino</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles/styles.css" />
+  <link rel="stylesheet" href="styles/treasuremap.css" />
+  <script>
+  (function() {
+    if (localStorage.getItem("sidebarCollapsed") === "true") {
+      document.documentElement.classList.add("sidebar-collapsed");
+    }
+  })();
+  </script>
+</head>
+<body>
+  <div class="app">
+    <script src="scripts/layout.js"></script>
+    <main class="main-content">
+      <section id="treasuremap-section" class="treasuremap-section">
+        <div class="treasuremap-hero game-page-hero">
+          <h2>Treasure Map</h2>
+          <p>Navigate the grid, reveal treasures, and cash out before hitting a trap.</p>
+        </div>
+
+        <div class="game-box treasuremap-shell">
+          <div class="treasuremap-layout">
+            <div class="treasuremap-main-column">
+              <section class="support-card map-stage-card" aria-labelledby="map-stage-title">
+                <div class="map-stage-header">
+                  <div>
+                    <span class="panel-kicker">Expedition Board</span>
+                    <h3 id="map-stage-title">Pick a route and avoid the traps</h3>
+                  </div>
+                  <div class="map-stage-badges">
+                    <span id="active-size-badge" class="map-badge">4 x 4</span>
+                    <span id="active-difficulty-badge" class="map-badge">Easy</span>
+                  </div>
+                </div>
+
+                <div id="game-message" class="game-message"></div>
+
+                <div class="game-grid-container">
+                  <div id="game-grid" class="treasuremap-grid"></div>
+                </div>
+              </section>
+
+              <div class="treasuremap-bottom-panels">
+                <section class="support-card result-panel" aria-labelledby="last-result-title">
+                  <div class="panel-heading-row">
+                    <div>
+                      <span class="panel-kicker">History</span>
+                      <h3 id="last-result-title">Last Game Result</h3>
+                    </div>
+                  </div>
+
+                  <div class="result-summary-row">
+                    <div>
+                      <span class="mini-label">Outcome</span>
+                      <div id="last-result-outcome" class="result-outcome neutral">No game yet</div>
+                    </div>
+                    <div>
+                      <span class="mini-label">Payout</span>
+                      <div id="last-result-payout" class="result-payout">$0.00</div>
+                    </div>
+                  </div>
+
+                  <div class="last-result-grid">
+                    <div class="result-item">
+                      <span class="mini-label">Bet</span>
+                      <strong id="last-result-bet">$0.00</strong>
+                    </div>
+                    <div class="result-item">
+                      <span class="mini-label">Map</span>
+                      <strong id="last-result-map">4 x 4</strong>
+                    </div>
+                    <div class="result-item">
+                      <span class="mini-label">Difficulty</span>
+                      <strong id="last-result-difficulty">Easy</strong>
+                    </div>
+                    <div class="result-item">
+                      <span class="mini-label">Revealed</span>
+                      <strong id="last-result-revealed">0 tiles</strong>
+                    </div>
+                  </div>
+                </section>
+              </div>
+            </div>
+
+            <aside class="treasuremap-panel" aria-label="Treasure Map controls">
+              <div class="treasuremap-controls-grid">
+                <div class="control-card bet-controls card-span-2">
+                  <label for="bet" class="bet-amount-display">Bet Amount</label>
+                  <label class="bet-amount-display-no">Bet:</label>
+                  <div class="control-inline bet-inline">
+                    <button id="min-bet-btn" onclick="setMinBet()">MIN</button>
+                    <input type="number" id="bet" placeholder="$1" min="0.01" step="0.01" value="1" />
+                    <button id="max-bet-btn" onclick="setMaxBet()">MAX</button>
+                  </div>
+                </div>
+
+                <div class="control-card difficulty-size-controls card-span-2">
+                  <div class="settings-group">
+                    <div class="settings-section">
+                      <label><span class="settings-icon">⚔️</span> Difficulty</label>
+                      <div class="segment-grid difficulty-segment">
+                        <button id="easy-btn" onclick="setDifficulty('easy')" class="difficulty-btn active" data-difficulty="easy">Easy</button>
+                        <button id="medium-btn" onclick="setDifficulty('medium')" class="difficulty-btn" data-difficulty="medium">Med</button>
+                        <button id="hard-btn" onclick="setDifficulty('hard')" class="difficulty-btn" data-difficulty="hard">Hard</button>
+                      </div>
+                    </div>
+                    <div class="settings-divider"></div>
+                    <div class="settings-section">
+                      <label><span class="settings-icon">🗺️</span> Map Size</label>
+                      <div class="segment-grid size-segment">
+                        <button id="size-small-btn" onclick="setMapSize('small')" class="size-btn active" data-size="small">4x4</button>
+                        <button id="size-medium-btn" onclick="setMapSize('medium')" class="size-btn" data-size="medium">5x5</button>
+                        <button id="size-large-btn" onclick="setMapSize('large')" class="size-btn" data-size="large">6x6</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="control-card multiplier-card">
+                  <div class="multiplier-section">
+                    <label>💰 Multiplier</label>
+                    <div id="multiplier-display" class="multiplier-display">1.00x</div>
+                    <div id="multiplier-subtext" class="panel-hint">Treasure tiles add bigger boosts.</div>
+                  </div>
+                </div>
+
+                <div class="control-card round-stats-card">
+                  <label>📊 Round Stats</label>
+                  <div class="overview-grid-new">
+                    <div class="overview-item-new">
+                      <span class="stat-icon">💣</span>
+                      <div class="stat-content">
+                        <span class="mini-label">Traps</span>
+                        <strong id="trap-count-display">3</strong>
+                      </div>
+                    </div>
+                    <div class="overview-item-new">
+                      <span class="stat-icon">💎</span>
+                      <div class="stat-content">
+                        <span class="mini-label">Treasures</span>
+                        <strong id="treasure-count-display">4</strong>
+                      </div>
+                    </div>
+                    <div class="overview-item-new full-width">
+                      <span class="stat-icon">📍</span>
+                      <div class="stat-content">
+                        <span class="mini-label">Route Length</span>
+                        <strong id="route-length-display">16 tiles</strong>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="control-card action-card card-span-2">
+                  <label>Round</label>
+                  <div class="game-actions-row">
+                    <button id="start-game-btn" onclick="startGame()" class="btn-primary">Start Game</button>
+                    <button id="cashout-game-btn" onclick="cashOut()" class="btn-success" style="display: none;">Cash Out</button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="game-stats">
+                <div class="stat-item">
+                  <span class="stat-label">Tiles Revealed:</span>
+                  <span id="tiles-revealed" class="stat-value">0</span>
+                </div>
+                <div class="stat-item">
+                  <span class="stat-label">Potential Win:</span>
+                  <span id="potential-win" class="stat-value">$0.00</span>
+                </div>
+              </div>
+            </aside>
+          </div>
+        </div>
+
+        <section class="treasuremap-how">
+          <div class="how-container">
+            <h3>How to Play Treasure Map</h3>
+            <div class="how-content">
+              <p><strong>Objective:</strong> Navigate an expedition grid, find treasures to boost your multiplier, and cash out before hitting a trap.</p>
+
+              <p><strong>Game Setup:</strong></p>
+              <ul>
+                <li>Set your bet amount (MIN or MAX buttons available)</li>
+                <li>Choose your difficulty: <strong>Easy</strong> (fewer traps), <strong>Medium</strong> (balanced), or <strong>Hard</strong> (more treasures, higher risk)</li>
+                <li>Select your map size: <strong>4x4</strong> (16 tiles), <strong>5x5</strong> (25 tiles), or <strong>6x6</strong> (36 tiles)</li>
+              </ul>
+
+              <p><strong>Gameplay:</strong></p>
+              <ul>
+                <li><strong>💎 Treasure Tiles:</strong> Reveal treasures to boost your multiplier significantly</li>
+                <li><strong>✓ Safe Tiles:</strong> Reveal safe water tiles for smaller multiplier gains</li>
+                <li><strong>💣 Trap Tiles:</strong> Hitting a trap ends the expedition immediately with no payout</li>
+              </ul>
+
+              <p><strong>Winning Strategy:</strong></p>
+              <ul>
+                <li>Larger maps take longer to complete but hide more treasures and more traps</li>
+                <li>Your potential win is displayed live: bet amount × current multiplier</li>
+                <li>Cash out anytime to secure your winnings before triggering a trap</li>
+                <li>Higher difficulty means more treasures available for bigger multipliers</li>
+              </ul>
+            </div>
+          </div>
+        </section>
+      </section>
+    </main>
+    <script src="scripts/main.js"></script>
+    <script src="scripts/treasuremap.js"></script>
+  </div>
+</body>
+</html>

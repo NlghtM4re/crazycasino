@@ -23,6 +23,7 @@
           '<ul class="game-links">' +
             '<li><a href="slot.html">🍉 <span>Slot</span></a></li>' +
             '<li><a href="mines.html">💣 <span>Mines</span></a></li>' +
+            '<li><a href="treasuremap.html">🗺️ <span>Treasure Map</span></a></li>' +
             '<li><a href="crash.html">🚀 <span>Crash</span></a></li>' +
             '<li><a href="blackjack.html">🃏 <span>Blackjack</span></a></li>' +
             '<li><a href="plinko.html">🔺 <span>Plinko</span></a></li>' +
